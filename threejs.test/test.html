@@ -77,7 +77,11 @@
 			        camera.position.x += xSpeed;
 			    } else if (keyCode == 32) {
 			        camera.position.set(0, 0, 0);
-			    }
+			    }	else if (keyCode == 37) {
+							characterfirst.position.x-=0.05;
+					}	else if (keyCode == 39) {
+							characterfirst.position.x+=0.05;
+					}
 			};
 
 
