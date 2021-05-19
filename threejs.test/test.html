@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>My first three.js app</title>
+		<style>
+			body { margin: 0; }
+		</style>
+	</head>
+	<body>
+		<script src="js/three.js"></script>
+		<script>
+			const scene = new THREE.Scene();
+			var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+			camera.position.z=5;
+			const renderer = new THREE.WebGLRenderer();
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			document.body.appendChild( renderer.domElement );
+
+			//Function to load models
+			function loadModel(url){
+				var loader = new THREE.JSONLoader();
+				loader.load(url,modelLoaded);
+			}
+			//Callback function for loader
+			function modelLoaded(geometry, materials){
+				var mat=new THREE.MeshFaceMaterial(materials);
+				var object = new THREE.Mesh(geometry,mat);
+				scene.add(object);
+				render(); //only if no animation
+			}
+
+			var light=new THREE.DirectionalLight();
+			light.position.set(0,0,1);
+			scene.add(light);
+			//scene.add( new THREE.AmbientLight(0x110000))
+
+			tiers=33;
+			sides=33;
+			var spheregeo = new THREE.SphereGeometry(5,20,20);
+			var smaterial = new THREE.MeshPhongMaterial( {polygonOffset:true,polygonOffsetUnits:1,polygonOffsetFactor:1,color: 0xffcc00} );
+			var sphere = new THREE.Mesh( spheregeo, smaterial );
+			sphere.position.z=-1
+			sphere.position.y=-3;
+			scene.add( sphere );
+
+			var geometry = new THREE.TorusGeometry();
+			var material = new THREE.MeshBasicMaterial( { color: 0x00ffff } );
+			var cube = new THREE.Mesh( geometry, material );
+			//scene.add( cube );
+
+			var character=new THREE.SphereGeometry(0.25,32,32);
+			var characterfirst=new THREE.Mesh(character, material);
+			characterfirst.position.z=3;
+			scene.add(characterfirst);
+
+			var geo= new THREE.BoxGeometry();
+			var mat= new THREE.MeshBasicMaterial({color: 0xff0000});
+			var box=new THREE.Mesh(geo,mat);
+			//scene.add(box);
+
+
+			//key controls
+			var xSpeed = 0.1;
+			var ySpeed = 0.1;
+			document.addEventListener("keydown", onDocumentKeyDown, false);
+			function onDocumentKeyDown(event) {
+			    var keyCode = event.which;
+			    if (keyCode == 87) {
+			        camera.position.z -= ySpeed;
+							console.log("up key");
+			    } else if (keyCode == 83) {
+			        camera.position.z += ySpeed;
+			    } else if (keyCode == 65) {
+			        camera.position.x -= xSpeed;
+			    } else if (keyCode == 68) {
+			        camera.position.x += xSpeed;
+			    } else if (keyCode == 32) {
+			        camera.position.set(0, 0, 0);
+			    }
+			};
+
+
+
+			var t=0;
+			var x=0;
+			const animate = function () {
+				t += 0.01;
+				x +=0.2;
+				requestAnimationFrame( animate );
+
+				cube.rotation.x += 0.01;
+				cube.rotation.y += 0.01;
+
+				sphere.rotation.x += 0.01;
+				//sphere.rotation.y += 0.01;
+
+				characterfirst.position.y+=(Math.sin(x)/100);
+
+				box.scale.y= Math.abs(Math.sin(t));
+				box.scale.x= Math.abs(Math.sin(t));
+
+				renderer.render( scene, camera );
+			};
+
+			animate();
+		</script>
+	</body>
+</html>
