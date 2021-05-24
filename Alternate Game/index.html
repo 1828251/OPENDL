@@ -87,11 +87,11 @@
 			scene.add(trigger);
 
 			var geometry = new THREE.TorusGeometry();
-			var material = new THREE.MeshBasicMaterial( { color: 0xff0000 } );
+			var material = new THREE.MeshPhongMaterial({polygonOffset:true,polygonOffsetUnits:1,polygonOffsetFactor:1,color: 0xff00ff});
 			var cube = new THREE.Mesh( geometry, material );
 			//scene.add( cube );
 
-			var character=new THREE.SphereGeometry(0.4,32,32);
+			var character=new THREE.DodecahedronGeometry(0.4);
 			var characterfirst=new THREE.Mesh(character, material);
 			characterfirst.position.z=2.2;
 			scene.add(characterfirst);
@@ -154,7 +154,13 @@
 				box.scale.x= Math.abs(Math.sin(t));
 
 				if (Math.abs(characterfirst.position.z-trigger.position.z)<0.5){
-					gate.position.y=1.5;
+					//triggmat.color=0xff00ff;
+					if(gate.position.y<1.2){
+						gate.position.y+=0.01;
+					}
+					else{
+						gate.position.x+=0.02;	
+					}
 				}
 
 				renderer.render( scene, camera );
