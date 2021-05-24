@@ -109,6 +109,10 @@
 			function onDocumentKeyDown(event) {
 			    var keyCode = event.which;
 			    if (keyCode == 87) {
+					if (Math.abs(gate.position.z-characterfirst.position.z)<0.5 && Math.abs(gate.position.y-characterfirst.position.y)<0.5){
+					console.log("hit");
+					exit;
+				}
 			        camera.position.z -= ySpeed;
 					characterfirst.position.z-= ySpeed;
 							console.log("up key");
@@ -163,6 +167,10 @@
 						gate.position.x+=0.02;	
 						}
 					}
+				}
+
+				if (Math.abs(gate.position.z-characterfirst.position.z)<0.5 && Math.abs(gate.position.y-characterfirst.position.y)<0.5){
+					console.log("hit");
 				}
 
 				renderer.render( scene, camera );
