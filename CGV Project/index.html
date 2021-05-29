@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Runner</title>
+		<style>
+			body { margin: 0; }
+		</style>
+        <link rel="stylesheet" type="text/css" href="./css/index.css"/>
+        
+	</head>
+	<body>
+        <audio autoplay loop >
+            <source src="./audio/levitate.mp3" type="audio/mp3"></sources>
+        </audio>
+
+        
+
+        <div id="TOP">
+            <h1>RUNNER</h1><br>
+            <h1>BROUGHT TO YOU BY OPEN-DL</h1>
+
+        </div>
+        
+        <div id ="Middle" class = "Options">
+            <div id='Buttons' class='buttons'>
+                <button type ="button" id ='level1'>Level 1</button><br><br>
+                <button type ="button" id = 'level2'>Level 2</button><br><br>
+                <button type ="button" id = 'level3'>Level 3</button><br><br>
+                <button type ="button" id = 'buttons'>How to play</button><br><br>
+                <button type ="button" id = 'credits'>Credits</button><br><br>
+            </div>
+        
+            <div id="Canvas" class="canvas">
+                <canvas id ="charac" width="20" height="20"></canvas>
+                <script type="module" src="./js/loadingScreen.js"></script>
+            </div>
+        
+         </div>
+	</body>
+</html>
+
+
+
+<script>
+
+    const level1 = document.getElementById('level1');
+    const level2 = document.getElementById('level2');
+    const level3 = document.getElementById('level3')
+
+    level1.onclick = function() {
+        window.location.href = "three.html";
+    }
+
+
+
+
+</script>

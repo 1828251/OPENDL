@@ -66,7 +66,7 @@ class BasicCharacterControllerProxy {
         loader.load('walk.fbx', (a) => { OnLoad('walk', a); });
         loader.load('run.fbx', (a) => { OnLoad('run', a); });
         loader.load('idle.fbx', (a) => { OnLoad('idle', a); });
-        loader.load('Taunt.fbx', (a) => { OnLoad('Taunt', a); });
+        loader.load('Jumping Up.fbx', (a) => { OnLoad('Jumping Up', a); });
       });
     }
   
@@ -107,10 +107,10 @@ class BasicCharacterControllerProxy {
   
       const acc = this.acceleration.clone();
       if (this.UserInput.keys.shift) {
-        acc.multiplyScalar(2.0);
+        acc.multiplyScalar(4.0);
       }
   
-      if (this.myState.CurrentState.Name == 'Taunt') {
+      if (this.myState.CurrentState.Name == 'Jumping Up') {
         acc.multiplyScalar(0.0);
       }
   

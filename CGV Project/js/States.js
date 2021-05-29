@@ -1,3 +1,4 @@
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.118/build/three.module.js';
 class stateController {
     constructor() {
       this.allStates = {};
@@ -43,7 +44,7 @@ class stateController {
       this.addState('idle', IdleState);
       this.addState('walk', WalkState);
       this.addState('run', RunState);
-      this.addState('Taunt', TauntState);
+      this.addState('Jumping Up', TauntState);
     }
   };
   
@@ -69,11 +70,11 @@ class stateController {
     }
   
     get Name() {
-      return 'Taunt';
+      return 'Jumping Up';
     }
   
     Enter(PreviousState) {
-      const CurrentAction = this.parent._proxy.allAnimations['Taunt'].action;
+      const CurrentAction = this.parent._proxy.allAnimations['Jumping Up'].action;
       const mixer = CurrentAction.getMixer();
       mixer.addEventListener('finished', this.DoneCallback);
   
@@ -96,7 +97,7 @@ class stateController {
     }
   
     clean() {
-      const action = this.parent._proxy.allAnimations['Taunt'].action;
+      const action = this.parent._proxy.allAnimations['Jumping Up'].action;
       
       action.getMixer().removeEventListener('finished', this.cleanCallback);
     }
@@ -237,7 +238,7 @@ class stateController {
       if (input.keys.forward || input.keys.backward) {
         this.parent.setState('walk');
       } else if (input.keys.space) {
-        this.parent.setState('Taunt');
+        this.parent.setState('Jumping Up');
       }
     }
   };
