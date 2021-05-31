@@ -124,6 +124,7 @@ class ThirdPersonCameraGame {
     //Creating all coins
     this.coinPositions=[];
     this.score=0;
+    this.scorekeeper=document.getElementById("info");
     this.x=0;
     var coin;
     for (var i=0;i<20;++i){
@@ -131,7 +132,7 @@ class ThirdPersonCameraGame {
       this.coinPositions.push(coin);
       this.scene.add(coin);
     }
-    
+
     const cubeTexture = new THREE.TextureLoader().load('./textures/dirtroad.jpg');
     cubeTexture.wrapS = THREE.RepeatWrapping;
     cubeTexture.wrapT = THREE.RepeatWrapping;
@@ -149,6 +150,8 @@ class ThirdPersonCameraGame {
         this.scene.add( newFloor );
         newFloor.scale.set(120,0,-10000);
     }
+
+    
 
     this.mixers = [];
     this.old_animation_frames = null;
@@ -194,11 +197,13 @@ class ThirdPersonCameraGame {
         }
       }
 
+      this.scorekeeper.innerHTML="score: "+this.score;
       //coin jumping
       this.x+=0.2;
       for (var i=0;i<this.coinPositions.length;++i){
         this.coinPositions[i].position.y+=(Math.sin(this.x)/10);
       }
+
       
       this.renderer.render(this.scene, this.camera);
       this.Step(t - this.old_animation_frames);
