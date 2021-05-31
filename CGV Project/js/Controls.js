@@ -110,10 +110,15 @@ class BasicCharacterControllerProxy {
         acc.multiplyScalar(4.0);
       }
   
-      if (this.myState.CurrentState.Name == 'Jumping Up') {
-        acc.multiplyScalar(0.0);
+      if (this.UserInput.keys.space) {
+        //acc.multiplyScalar(0.0);
+        if (this.myPosition.y >= -0.1 && this.myPosition.y < 0.5) {
+          velocity.y = 30;
+          console.log("seconds: " + timeInSeconds, "velocity: " + velocity.y, )
+        }  
       }
   
+
       if (this.UserInput.keys.forward) {
         velocity.z += acc.z * timeInSeconds;
       }
@@ -130,6 +135,10 @@ class BasicCharacterControllerProxy {
         quaternion.setFromAxisAngle(a, 4.0 * -Math.PI * timeInSeconds * this.acceleration.y);
         r.multiply(quaternion);
       }
+
+      // if (this.myPosition.y == 0.0) {
+      //     velocity.y = 0;
+      //   }
   
       controlObject.quaternion.copy(r);
   
@@ -139,19 +148,45 @@ class BasicCharacterControllerProxy {
       const forward = new THREE.Vector3(0, 0, 1);
       forward.applyQuaternion(controlObject.quaternion);
       forward.normalize();
+
+      const space =  new THREE.Vector3(0,1,0);
+      space.applyQuaternion(controlObject.quaternion);
+      space.normalize();
   
       const sideways = new THREE.Vector3(1, 0, 0);
       sideways.applyQuaternion(controlObject.quaternion);
       sideways.normalize();
+
+      const gravity = -75 * timeInSeconds;
+      if (velocity.y < -30) {
+        velocity.y = 0
+      }
   
       sideways.multiplyScalar(velocity.x * timeInSeconds);
       forward.multiplyScalar(velocity.z * timeInSeconds);
+      (this.myPosition.y > 0.0) ? space.multiplyScalar(timeInSeconds * (velocity.y + gravity * 0.05)) : space.multiplyScalar(velocity.y * timeInSeconds);
+      console.log("y velocity: ", velocity.y)
+     // space.setY(timeInSeconds * (velocity.y + gravity * 0.05));
+
   
       controlObject.position.add(forward);
       controlObject.position.add(sideways);
-  
+      controlObject.position.add(space);
+
+      //controlObject.position.add(space.y < 0 ? space : THREE.Vector3(0,1,0));
+      if (this.myPosition.y > -0.1 && velocity.y != 0) {
+        velocity.y += gravity;
+      } 
+      // else if (this.myPosition.y == 0.0 && velocity.y !== 0) {
+      //   velocity.y = 0;
+      // }
+      //velocity.y += gravity;
+      // if (velocity.y < -100) {
+      //   velocity.y = 0;
+      // }
+       
       this.myPosition.copy(controlObject.position);
-  
+      console.log(this.myPosition)
       if (this.Mixer) {
         this.Mixer.update(timeInSeconds);
       }
@@ -189,7 +224,7 @@ class BasicCharacterControllerProxy {
         case 68: // d
           this.keys.right = true;
           break;
-        case 32: // SPACE
+        case 17: // SPACE
           this.keys.space = true;
           break;
         case 16: // SHIFT
@@ -212,7 +247,7 @@ class BasicCharacterControllerProxy {
         case 68: // d
           this.keys.right = false;
           break;
-        case 32: // SPACE
+        case 17: // SPACE
           this.keys.space = false;
           break;
         case 16: // SHIFT
