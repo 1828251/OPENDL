@@ -103,33 +103,35 @@ class ThirdPersonCameraGame {
     texture.encoding = THREE.sRGBEncoding;
     this.scene.background = texture;
 
-    //coin
-    //var coingeo=new THREE.CylinderGeometry(5,5,2,10);
-    //var coinmat=new THREE.MeshPhongMaterial( {polygonOffset:true,polygonOffsetUnits:1,polygonOffsetFactor:1,color: 0xd4af37} );
-    //this.coin=new THREE.Mesh(coingeo,coinmat);
-    //this.coin.position.y=10;
-    //this.coin.position.z=-30;
-    //this.coin.rotation.x=Math.PI/2;
-    //this.scene.add(this.coin);
+    //Coin builder
     function Coins(z){
-      var coingeo=new THREE.CylinderGeometry(5,5,2,10);
-      var coinmat=new THREE.MeshPhongMaterial( {polygonOffset:true,polygonOffsetUnits:1,polygonOffsetFactor:1,color: 0xd4af37} );
+      var coingeo=new THREE.CylinderGeometry(5,5,2,15);
+      const cointexture = new THREE.TextureLoader().load( "./textures/cointexture.png" );
+			cointexture.wrapS = THREE.RepeatWrapping;
+			cointexture.wrapT = THREE.RepeatWrapping;
+			cointexture.repeat.set( 1, 1 );
+			const coinmat=new THREE.MeshBasicMaterial({map:cointexture});
+      //var coinmat=new THREE.MeshPhongMaterial( {polygonOffset:true,polygonOffsetUnits:1,polygonOffsetFactor:1,color: 0xd4af37} );
       var coin= new THREE.Mesh(coingeo,coinmat);
       coin.position.y=10;   
       coin.position.z=-30*z;   
+      coin.position.x=Math.floor(Math.random() * 100) -50;
+      coin.rotation.y=Math.PI/2;
       coin.rotation.x=Math.PI/2;
       return coin;
     }
 
+    //Creating all coins
     this.coinPositions=[];
     this.score=0;
+    this.x=0;
     var coin;
     for (var i=0;i<20;++i){
       coin=Coins(i);
       this.coinPositions.push(coin);
       this.scene.add(coin);
     }
-    //console.log(coinPositions);
+    
     const cubeTexture = new THREE.TextureLoader().load('./textures/dirtroad.jpg');
     cubeTexture.wrapS = THREE.RepeatWrapping;
     cubeTexture.wrapT = THREE.RepeatWrapping;
@@ -180,27 +182,24 @@ class ThirdPersonCameraGame {
       if (this.old_animation_frames === null) {
         this.old_animation_frames = t;
       }
-      //console.log(this.camera.position.z);
       this.request_animation_frame();
-      //if (Math.abs(this.control.myPosition.z-this.coin.position.z)<0.5){
-        //console.log("ani");
-      //}
-
+      
+      //checks for interaction between player and all the coins
       for (var i=0;i<this.coinPositions.length;++i){
-        //coin=Coins(i);
-        //coinPositions.push(coin);
-        //this.scene.add(coin);
-        //console.log(this.coinPositions);
-        
-        if (Math.abs(this.control.myPosition.z-this.coinPositions[i].position.z)<0.5 && Math.abs(this.control.myPosition.x-this.coinPositions[i].position.x)<5){
-          //console.log("ani");
+              if (Math.abs(this.control.myPosition.z-this.coinPositions[i].position.z)<0.5 && Math.abs(this.control.myPosition.x-this.coinPositions[i].position.x)<5){
           this.score+=1;
           console.log("score: "+this.score);
-          this.coinPositions[i].position.x=20;
-          
+          this.scene.remove(this.coinPositions[i]);
+          this.coinPositions.splice(i,1);
         }
       }
-     // console.log("score"+this.score);
+
+      //coin jumping
+      this.x+=0.2;
+      for (var i=0;i<this.coinPositions.length;++i){
+        this.coinPositions[i].position.y+=(Math.sin(this.x)/10);
+      }
+      
       this.renderer.render(this.scene, this.camera);
       this.Step(t - this.old_animation_frames);
       this.old_animation_frames = t;
