@@ -224,7 +224,7 @@ class BasicCharacterControllerProxy {
         case 68: // d
           this.keys.right = true;
           break;
-        case 17: // SPACE
+        case 32: // SPACE
           this.keys.space = true;
           break;
         case 16: // SHIFT
@@ -247,7 +247,7 @@ class BasicCharacterControllerProxy {
         case 68: // d
           this.keys.right = false;
           break;
-        case 17: // SPACE
+        case 32: // SPACE
           this.keys.space = false;
           break;
         case 16: // SHIFT
