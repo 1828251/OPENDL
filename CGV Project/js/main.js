@@ -133,6 +133,36 @@ class ThirdPersonCameraGame {
     ]);
     texture.encoding = THREE.sRGBEncoding;
     this.scene.background = texture;
+    //Coin builder
+    function Coins(z){
+      var coingeo=new THREE.CylinderGeometry(5,5,2,15);
+      const cointexture = new THREE.TextureLoader().load( "./textures/cointexture.png" );
+			cointexture.wrapS = THREE.RepeatWrapping;
+			cointexture.wrapT = THREE.RepeatWrapping;
+			cointexture.repeat.set( 1, 1 );
+			const coinmat=new THREE.MeshBasicMaterial({map:cointexture});
+      //var coinmat=new THREE.MeshPhongMaterial( {polygonOffset:true,polygonOffsetUnits:1,polygonOffsetFactor:1,color: 0xd4af37} );
+      var coin= new THREE.Mesh(coingeo,coinmat);
+      coin.position.y=10;   
+      coin.position.z=-30*z;   
+      coin.position.x=Math.floor(Math.random() * 100) -50;
+      coin.rotation.y=Math.PI/2;
+      coin.rotation.x=Math.PI/2;
+      return coin;
+    }
+
+    //Creating all coins
+    this.coinPositions=[];
+    this.score=0;
+    this.scorekeeper=document.getElementById("info");
+    this.x=0;
+    var coin;
+    for (var i=0;i<20;++i){
+      coin=Coins(i);
+      this.coinPositions.push(coin);
+      this.scene.add(coin);
+    }
+
 
     //Loading a texture to apply as the "floor"
     const cubeTexture = new THREE.TextureLoader().load('./textures/level1/dirtroad.jpg');
@@ -404,6 +434,24 @@ class ThirdPersonCameraGame {
         this.old_animation_frames = t;
       }
       this.request_animation_frame();
+
+       //checks for interaction between player and all the coins
+       for (var i=0;i<this.coinPositions.length;++i){
+        if (Math.abs(this.control.myPosition.z-this.coinPositions[i].position.z)<0.5 && Math.abs(this.control.myPosition.x-this.coinPositions[i].position.x)<5){
+          this.score+=1;
+          console.log("score: "+this.score);
+          this.scene.remove(this.coinPositions[i]);
+          this.coinPositions.splice(i,1);
+        }
+      }
+
+      this.scorekeeper.innerHTML="score: "+this.score;
+      //coin jumping
+      this.x+=0.2;
+      for (var i=0;i<this.coinPositions.length;++i){
+        this.coinPositions[i].position.y+=(Math.sin(this.x)/10);
+      }
+
      // console.log(this.control.myPosition);
      console.log(this.time-this.clock.getElapsedTime());
       this.ObstacleCollision(this.control.myPosition);
