@@ -23,7 +23,6 @@ class BasicCharacterControllerProxy {
       this.acceleration = new THREE.Vector3(1, 0.25, 50.0);
       this.speed = new THREE.Vector3(0, 0, 0);
       this.myPosition = new THREE.Vector3();
-  
       this.allAnimations = {};
       this.UserInput = new BasicCharacterControllerInput();
       this.myState = new CharacterController(
@@ -40,8 +39,9 @@ class BasicCharacterControllerProxy {
         fbx.traverse(c => {
           c.castShadow = true;
         });
-  
-        this.target = fbx;
+        
+       
+        this.target = fbx.rotateY(Math.PI);
         this.params.scene.add(this.target);
   
         this.Mixer = new THREE.AnimationMixer(this.target);

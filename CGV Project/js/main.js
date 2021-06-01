@@ -8,7 +8,7 @@ class ThirdPersonCamera {
   constructor(paramaters) {
     this.params = paramaters;
     this.camera = paramaters.camera;
-
+   
     this.myPosition = new THREE.Vector3();
     this.LookingAt = new THREE.Vector3();
   }
@@ -35,7 +35,6 @@ class ThirdPersonCamera {
 
     this.myPosition.lerp(idealOffset, t);
     this.LookingAt.lerp(idealLookat, t);
-
     this.camera.position.copy(this.myPosition);
     this.camera.lookAt(this.LookingAt);
   }
@@ -85,6 +84,7 @@ class ThirdPersonCameraGame {
 
     // creating the scene
     this.scene = new THREE.Scene();
+    
 
     // we add DirectionalLight to the scene
     let light = new THREE.DirectionalLight(0xFFFFFF, 1.0);
@@ -161,6 +161,8 @@ class ThirdPersonCameraGame {
   }
 
   ObstacleCollision(currPosition){
+
+    
     
   }
 
@@ -172,7 +174,7 @@ class ThirdPersonCameraGame {
 
     //the onload function is executed once all the models are loaded.
     manager.onLoad = function(){
-      console.log(ObstaclePositions);
+     // console.log(ObstaclePositions);
       return ObstaclePositions;
     }
 
@@ -367,7 +369,7 @@ class ThirdPersonCameraGame {
       scene: this.scene,
     }
     this.control = new BasicCharacterController(paramaters);
-
+    
     this.ThirdPersonCamera = new ThirdPersonCamera({
       camera: this.camera,
       target: this.control,
@@ -387,6 +389,7 @@ class ThirdPersonCameraGame {
       }
       this.request_animation_frame();
      // console.log(this.control.myPosition);
+      this.ObstacleCollision(this.control.myPosition);
       this.renderer.render(this.scene, this.camera);
       this.Step(t - this.old_animation_frames);
       this.old_animation_frames = t;
