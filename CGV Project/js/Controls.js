@@ -187,8 +187,6 @@ class BasicCharacterControllerProxy {
       // }
        
       this.myPosition.copy(controlObject.position);
-      console.log(this.myPosition)
-      console.log("seconds: " + timeInSeconds, "velocity: " + velocity.y, )
       if (this.Mixer) {
         this.Mixer.update(timeInSeconds);
       }
