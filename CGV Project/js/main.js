@@ -1,5 +1,4 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.118/build/three.module.js';
-// import {FBXLoader} from 'https://cdn.jsdelivr.net/npm/three@0.118.1/examples/jsm/loaders/FBXLoader.js';
 import {GLTFLoader} from 'https://cdn.jsdelivr.net/npm/three@0.118.1/examples/jsm/loaders/GLTFLoader.js';
 import {BasicCharacterController} from './Controls.js';
 
@@ -52,8 +51,12 @@ class ThirdPersonCameraGame {
     this.cementPos = [new THREE.Vector3(0,0,-1000)];
     this.scaffoldingPos = [new THREE.Vector3(0,0,-1600)];
     this.cranePos = [new THREE.Vector3(0,100,-3000)];
+    this.clock = new THREE.Clock();
+    this.time = 70;
     this.init();
   }
+
+  
 
   init() {
 
@@ -84,6 +87,17 @@ class ThirdPersonCameraGame {
 
     // creating the scene
     this.scene = new THREE.Scene();
+
+
+    //Creating a loading manager which we will use for  a loading screen while the scene loads.
+    const manager =  new THREE.LoadingManager(()=>{ 
+      const loadingScreen = document.getElementById( 'loading-screen' );
+      loadingScreen.classList.add( 'fade-out' );
+    
+      // optional: remove loader from DOM via event listener
+      loadingScreen.addEventListener( 'transitionend', this.onTransitionEnd );
+
+    });
     
 
     // we add DirectionalLight to the scene
@@ -134,10 +148,10 @@ class ThirdPersonCameraGame {
     var z = 13;
     const lowPoly = './models/level1/LowPolyBarrier/scene.gltf'
     //Loading the barriers on the side
-    this.LoadModel(lowPoly,this.scene,x,y,z);
+    this.LoadModel(lowPoly,this.scene,x,y,z,manager);
     var Obstacles = [];
     //loading all our obstacles into the scene
-    this.LoadObstacles(this.scene,Obstacles);
+    this.LoadObstacles(this.scene,Obstacles,manager);
     floor.scale.set(120,0,-10000);
     var d = -20000;
     //looping and ensuring our floor is long enough for the round.
@@ -156,7 +170,14 @@ class ThirdPersonCameraGame {
     //Loading our animated character
     this.LoadAnimatedModel();
     this.request_animation_frame();
+    this.clock.start();
     
+    
+  }
+  //Event listener which will remove the dom element once everything is loaded.
+  onTransitionEnd( event ) {
+
+    event.target.remove();
     
   }
 
@@ -166,18 +187,11 @@ class ThirdPersonCameraGame {
     
   }
 
-  LoadObstacles(scene,ObstaclePositions){
+  LoadObstacles(scene,ObstaclePositions,manager){
     //var ObstaclePositions = [];
 
     // Using the loading manager to return the ObstaclePositions once they are all loaded 
-    const manager = new THREE.LoadingManager(); 
-
-    //the onload function is executed once all the models are loaded.
-    manager.onLoad = function(){
-     // console.log(ObstaclePositions);
-      return ObstaclePositions;
-    }
-
+    //the onload function will executed once all the models are loaded.
     //Defining a gltf loader
     const loader = new GLTFLoader(manager);
     var Obstacles = new THREE.Object3D();
@@ -320,13 +334,15 @@ class ThirdPersonCameraGame {
       ObstaclePositions.push(new THREE.Vector3(0,100,-3000));
 
     });
+
+    return ObstaclePositions;
     
   }
-  LoadModel(path,scene,x,y,z){
+  LoadModel(path,scene,x,y,z,manager){
 
     // this obj will act as the parent for the barriers on the side to prevent user from falling off
     var obj =  new THREE.Object3D();
-    const loader = new GLTFLoader();
+    const loader = new GLTFLoader(manager);
   
     loader.load(path, function(gltf){
       //Load the model 
@@ -389,6 +405,7 @@ class ThirdPersonCameraGame {
       }
       this.request_animation_frame();
      // console.log(this.control.myPosition);
+     console.log(this.time-this.clock.getElapsedTime());
       this.ObstacleCollision(this.control.myPosition);
       this.renderer.render(this.scene, this.camera);
       this.Step(t - this.old_animation_frames);

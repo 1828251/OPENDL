@@ -34,7 +34,7 @@ h1{
 button{
     align-self: center;
     display: inline-block;
-    background-color: rgb(23, 112, 163);
+    background-color: #3498db;
     border-radius: 10px;
     border: 4px double #cccccc;
     color: #eeeeee;
