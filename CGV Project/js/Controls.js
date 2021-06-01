@@ -114,8 +114,9 @@ class BasicCharacterControllerProxy {
         acc.multiplyScalar(0.0);
       }
   
-      if (this.UserInput.keys.forward) {
-        velocity.z += acc.z * timeInSeconds;
+      if (this.UserInput.keys.forward) {          
+          velocity.z += acc.z * timeInSeconds;
+       
       }
       if (this.UserInput.keys.backward) {
         velocity.z -= acc.z * timeInSeconds;

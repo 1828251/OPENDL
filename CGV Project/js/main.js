@@ -1,7 +1,8 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.118/build/three.module.js';
 // import {FBXLoader} from 'https://cdn.jsdelivr.net/npm/three@0.118.1/examples/jsm/loaders/FBXLoader.js';
-// import {GLTFLoader} from 'https://cdn.jsdelivr.net/npm/three@0.118.1/examples/jsm/loaders/GLTFLoader.js';
+import {GLTFLoader} from 'https://cdn.jsdelivr.net/npm/three@0.118.1/examples/jsm/loaders/GLTFLoader.js';
 import {BasicCharacterController} from './Controls.js';
+
 
 class ThirdPersonCamera {
   constructor(paramaters) {
@@ -93,47 +94,17 @@ class ThirdPersonCameraGame {
 
     const loader = new THREE.CubeTextureLoader();
     const texture = loader.load([
-        './textures/posx.jpg',
-        './textures/negx.jpg',
-        './textures/posy.jpg',
-        './textures/negy.jpg',
-        './textures/posz.jpg',
-        './textures/negz.jpg',
+        './textures/level1/posx.jpg',
+        './textures/level1/negx.jpg',
+        './textures/level1/posy.jpg',
+        './textures/level1/negy.jpg',
+        './textures/level1/posz.jpg',
+        './textures/level1/negz.jpg',
     ]);
     texture.encoding = THREE.sRGBEncoding;
     this.scene.background = texture;
 
-    //Coin builder
-    function Coins(z){
-      var coingeo=new THREE.CylinderGeometry(5,5,2,15);
-      const cointexture = new THREE.TextureLoader().load( "./textures/cointexture.png" );
-			cointexture.wrapS = THREE.RepeatWrapping;
-			cointexture.wrapT = THREE.RepeatWrapping;
-			cointexture.repeat.set( 1, 1 );
-			const coinmat=new THREE.MeshBasicMaterial({map:cointexture});
-      //var coinmat=new THREE.MeshPhongMaterial( {polygonOffset:true,polygonOffsetUnits:1,polygonOffsetFactor:1,color: 0xd4af37} );
-      var coin= new THREE.Mesh(coingeo,coinmat);
-      coin.position.y=10;   
-      coin.position.z=-30*z;   
-      coin.position.x=Math.floor(Math.random() * 100) -50;
-      coin.rotation.y=Math.PI/2;
-      coin.rotation.x=Math.PI/2;
-      return coin;
-    }
-
-    //Creating all coins
-    this.coinPositions=[];
-    this.score=0;
-    this.scorekeeper=document.getElementById("info");
-    this.x=0;
-    var coin;
-    for (var i=0;i<20;++i){
-      coin=Coins(i);
-      this.coinPositions.push(coin);
-      this.scene.add(coin);
-    }
-
-    const cubeTexture = new THREE.TextureLoader().load('./textures/dirtroad.jpg');
+    const cubeTexture = new THREE.TextureLoader().load('./textures/level1/dirtroad.jpg');
     cubeTexture.wrapS = THREE.RepeatWrapping;
     cubeTexture.wrapT = THREE.RepeatWrapping;
     cubeTexture.repeat.set(1,40);
@@ -141,6 +112,12 @@ class ThirdPersonCameraGame {
     const material = new THREE.MeshBasicMaterial({map:cubeTexture});
     const floor = new THREE.Mesh( geometry, material );
     this.scene.add( floor );
+    var x = 0;
+    var y = 0;
+    var z = 13;
+    const lowPoly = './models/level1/LowPolyBarrier/scene.gltf'
+    this.LoadModel(lowPoly,this.scene,x,y,z);
+    this.LoadObstacles(this.scene);
     floor.scale.set(120,0,-10000);
     var d = -20000;
     for(var i =0;i<10;i++){
@@ -151,13 +128,181 @@ class ThirdPersonCameraGame {
         newFloor.scale.set(120,0,-10000);
     }
 
-    
+
 
     this.mixers = [];
     this.old_animation_frames = null;
 
     this.LoadAnimatedModel();
     this.request_animation_frame();
+  }
+
+  LoadObstacles(scene){
+
+    const loader = new GLTFLoader();
+    var Obstacles = new THREE.Object3D();
+    
+    var ObstaclePositions = [];
+
+    var obj1;
+    var obj2;
+    var obj3;
+
+    loader.load('./models/level1/barrels/scene.gltf',function(gltf){
+      obj1 = gltf.scene;
+      obj1.position.set(-40,0,-30);
+      ObstaclePositions.push(new THREE.Vector3(-40,0,-30));
+      //obj1.position.set(-40,0,d);
+      obj1.scale.set(0.05,0.05,0.05);
+      Obstacles.add(obj1);
+      //scene.add(obj1);
+      //group.add(obj1);
+      loader.load('./models/level1/wheelbarrow/scene.gltf',function(gltf){
+            obj2 = gltf.scene;
+            obj2.position.set(35,0,-50);
+            ObstaclePositions.push(new THREE.Vector3(35,0,-50));
+          // obj2.position.set(35,0,d-20);
+            obj2.rotation.y = -Math.PI/2;
+            obj2.scale.set(4,4,4);
+            Obstacles.add(obj2);
+          // scene.add(obj2);
+          // group.add(obj2);
+            loader.load('./models/level1/sandbags/scene.gltf',function(gltf){
+                    obj3 = gltf.scene;
+                    obj3.position.set(0,0,-90);
+                    ObstaclePositions.push(new THREE.Vector3(0,0,-90));
+                  // obj3.position.set(0,0,d-60);
+                    obj3.rotation.y = Math.PI/2;
+                    obj3.scale.set(0.1,0.1,0.1);
+                    Obstacles.add(obj3);
+                    //scene.add(obj3);
+                  //  console.log(Obstacles.clone());
+                  scene.add(Obstacles);
+
+                  var d = -300;
+                  for(var i=0;i<5;i++){
+                    scene.add(Obstacles.clone().translateZ(d));
+                    ObstaclePositions.push(new THREE.Vector3(-40,0,-30+d));
+                    ObstaclePositions.push(new THREE.Vector3(35,0,-50+d));
+                    ObstaclePositions.push(new THREE.Vector3(0,0,-60+d));
+                    d = d - 500;
+                  }
+                  
+                  });
+      });
+     
+    });
+  
+   
+    loader.load('./models/level1/spikes/scene.gltf',function(gltf){
+
+        var spikes = new THREE.Object3D();
+
+        var sp = gltf.scene;
+        var d = 0
+        for( var i=0;i<4;i++){
+          var spike = sp.clone();
+          spike.position.set(0,0,d);
+          spike.scale.set(125,125,125);
+          spikes.add(spike);
+          d = d - 60;
+
+        }
+        ObstaclePositions.push(new THREE.Vector3(0,0,-450));
+        ObstaclePositions.push(new THREE.Vector3(0,0,-510));
+        ObstaclePositions.push(new THREE.Vector3(0,0,-570));
+        ObstaclePositions.push(new THREE.Vector3(0,0,-630));
+
+        ObstaclePositions.push(new THREE.Vector3(0,0,-1750));
+        ObstaclePositions.push(new THREE.Vector3(0,0,-1810));
+        ObstaclePositions.push(new THREE.Vector3(0,0,-1870));
+        ObstaclePositions.push(new THREE.Vector3(0,0,-1930));
+
+        scene.add(spikes.clone().translateZ(-450));
+        scene.add(spikes.clone().translateZ(-1750));
+       
+
+    });
+  
+  
+    loader.load('./models/level1/Cones/scene.gltf',function(gltf){
+
+      var Cones = new THREE.Object3D();
+
+      var cone = gltf.scene;
+      cone.position.set(0,2,-200);
+      cone.scale.set(0.1,0.1,0.1);
+      Cones.add(cone);
+      var cone2 = cone.clone();
+      cone2.position.set(0,2,-2100);
+      Cones.add(cone2);
+      scene.add(Cones);
+
+      ObstaclePositions.push(new THREE.Vector3(0,2,-200));
+      ObstaclePositions.push(new THREE.Vector3(0,2,-2100));
+    });
+    loader.load('./models/level1/hori/scene.gltf',function(gltf){
+
+      var cement = gltf.scene;
+
+      cement.position.set(0,15,-1000);
+      cement.scale.set(0.1,0.1,0.1);
+      scene.add(cement);
+
+      ObstaclePositions.push(new THREE.Vector3(0,0,-1000));
+
+    });
+    loader.load('./models/level1/scaffolding/scene.gltf',function(gltf){
+
+      var scaffolding = gltf.scene;
+
+      scaffolding.position.set(0,0,-1600);
+      scene.add(scaffolding);
+
+      ObstaclePositions.push(new THREE.Vector3(0,0,-1600));
+    });
+    loader.load('./models/level1/crane/scene.gltf',function(gltf){
+
+      var crane = gltf.scene;
+      crane.position.set(0,100,-3000);
+      crane.scale.set(0.2,0.2,0.2);
+      scene.add(crane);
+      ObstaclePositions.push(new THREE.Vector3(0,100,-3000));
+
+    });
+  }
+  LoadModel(path,scene,x,y,z){
+    var obj =  new THREE.Object3D();
+    const loader = new GLTFLoader();
+  
+    loader.load(path, function(gltf){
+      var obj1 = gltf.scene;
+      obj1.position.set(x,y,z);
+     //obj1.scale.set(10,10,10);
+     obj1.rotation.y = Math.PI/2;
+     obj1.scale.set(0.05,0.05,0.05);
+     // scene.add(obj1);
+      obj.add(obj1);
+
+      var d = -50;
+      for(var i=0;i<60;i++){
+        var obj2 = obj1.clone();
+        var obj3 = obj1.clone();
+       obj2.rotation.y += Math.PI/2;
+        obj2.position.set(55,0,d);
+        obj2.scale.set(0.05,0.05,0.05);
+        //obj2.scale.set(10,10,10);
+        obj.add(obj2);
+       obj3.rotation.y += Math.PI/2;
+        obj3.position.set(-55,0,d);
+        obj3.scale.set(0.05,0.05,0.05);
+       // obj3.scale.set(10,10,10);
+        obj.add(obj3);
+        d = d -85;
+      }
+      scene.add(obj);
+    });
+
   }
 
   LoadAnimatedModel() {
@@ -179,32 +324,12 @@ class ThirdPersonCameraGame {
     this.renderer.setSize(window.innerWidth, window.innerHeight);
   }
 
-
   request_animation_frame() {
     requestAnimationFrame((t) => {
       if (this.old_animation_frames === null) {
         this.old_animation_frames = t;
       }
       this.request_animation_frame();
-      
-      //checks for interaction between player and all the coins
-      for (var i=0;i<this.coinPositions.length;++i){
-              if (Math.abs(this.control.myPosition.z-this.coinPositions[i].position.z)<0.5 && Math.abs(this.control.myPosition.x-this.coinPositions[i].position.x)<5){
-          this.score+=1;
-          console.log("score: "+this.score);
-          this.scene.remove(this.coinPositions[i]);
-          this.coinPositions.splice(i,1);
-        }
-      }
-
-      this.scorekeeper.innerHTML="score: "+this.score;
-      //coin jumping
-      this.x+=0.2;
-      for (var i=0;i<this.coinPositions.length;++i){
-        this.coinPositions[i].position.y+=(Math.sin(this.x)/10);
-      }
-
-      
       this.renderer.render(this.scene, this.camera);
       this.Step(t - this.old_animation_frames);
       this.old_animation_frames = t;
