@@ -109,12 +109,16 @@ class BasicCharacterControllerProxy {
       if (this.UserInput.keys.shift) {
         acc.multiplyScalar(4.0);
       }
+
+      const gravity = -85 * timeInSeconds;
+      if (velocity.y < -45.5 || this.myPosition.y < -0.1) {
+        velocity.y = 0
+      }
   
       if (this.UserInput.keys.space) {
         //acc.multiplyScalar(0.0);
-        if (this.myPosition.y >= -0.1 && this.myPosition.y < 0.5) {
-          velocity.y = 30;
-          console.log("seconds: " + timeInSeconds, "velocity: " + velocity.y, )
+        if (this.myPosition.y < 0.5) {
+          velocity.y = 45;
         }  
       }
   
@@ -157,15 +161,12 @@ class BasicCharacterControllerProxy {
       sideways.applyQuaternion(controlObject.quaternion);
       sideways.normalize();
 
-      const gravity = -75 * timeInSeconds;
-      if (velocity.y < -30) {
-        velocity.y = 0
-      }
+      
   
       sideways.multiplyScalar(velocity.x * timeInSeconds);
       forward.multiplyScalar(velocity.z * timeInSeconds);
       (this.myPosition.y > 0.0) ? space.multiplyScalar(timeInSeconds * (velocity.y + gravity * 0.05)) : space.multiplyScalar(velocity.y * timeInSeconds);
-      console.log("y velocity: ", velocity.y)
+      //console.log("y velocity: ", velocity.y)
      // space.setY(timeInSeconds * (velocity.y + gravity * 0.05));
 
   
@@ -187,6 +188,7 @@ class BasicCharacterControllerProxy {
        
       this.myPosition.copy(controlObject.position);
       console.log(this.myPosition)
+      console.log("seconds: " + timeInSeconds, "velocity: " + velocity.y, )
       if (this.Mixer) {
         this.Mixer.update(timeInSeconds);
       }
