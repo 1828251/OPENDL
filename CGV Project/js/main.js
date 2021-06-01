@@ -136,7 +136,7 @@ class ThirdPersonCameraGame {
     //Coin builder
     function Coins(z){
       var coingeo=new THREE.CylinderGeometry(5,5,2,15);
-      const cointexture = new THREE.TextureLoader().load( "./textures/cointexture.png" );
+      const cointexture = new THREE.TextureLoader().load( "./textures/level1/cointexture.png" );
 			cointexture.wrapS = THREE.RepeatWrapping;
 			cointexture.wrapT = THREE.RepeatWrapping;
 			cointexture.repeat.set( 1, 1 );
@@ -453,7 +453,7 @@ class ThirdPersonCameraGame {
       }
 
      // console.log(this.control.myPosition);
-     console.log(this.time-this.clock.getElapsedTime());
+    // console.log(this.time-this.clock.getElapsedTime());
       this.ObstacleCollision(this.control.myPosition);
       this.renderer.render(this.scene, this.camera);
       this.Step(t - this.old_animation_frames);
