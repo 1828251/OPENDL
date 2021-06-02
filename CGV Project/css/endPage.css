@@ -1,0 +1,37 @@
+body {
+    background-color: rgb(9, 30, 46);
+}
+#Info{
+    position: fixed;
+    top: 40%;
+    left: 50%;
+        
+    transform: translate(-50%, -50%);
+    
+}
+h1{
+    color: #eeeeee;
+    font-family: "Times New Roman", Times, serif;
+    transition:all .8s ease;
+    animation: slideUp .8s ease-in-out  forwards 1s;
+}
+h2{
+    color: #eeeeee;
+    font-family: "Times New Roman", Times, serif;
+    transition:all .8s ease;
+    animation: slideUp .8s ease-in-out  forwards 1s;
+
+
+}
+.canvas{
+    position:fixed;
+    
+ }
+ @keyframes slideUp {
+    0% {
+      transform: translateY(300px);
+    }
+    100% {
+      transform: translateY(0px);
+    }
+  }

@@ -13,6 +13,9 @@ class ThirdPersonCamera {
   }
 
   calc_offset() {
+    // Calculate the idea offset.
+    // THis represents the angle at which the position the camera will be
+    // we position the camera slightly to the right and over the shoulder of the character
     const idealOffset = new THREE.Vector3(-15, 20, -30);
     idealOffset.applyQuaternion(this.params.target.Rotation);
     idealOffset.add(this.params.target.Position);
@@ -20,6 +23,9 @@ class ThirdPersonCamera {
   }
 
   calc_look() {
+    //This is where the camera is looking
+    // We want the camera to be looking ahead of the player
+    // The camera looks at what the character is looking at but the camera is behind the character so we make it look a little ahead
     const idealLookat = new THREE.Vector3(0, 10, 50);
     idealLookat.applyQuaternion(this.params.target.Rotation);
     idealLookat.add(this.params.target.Position);
@@ -29,7 +35,8 @@ class ThirdPersonCamera {
   Update(timeGone) {
     const idealOffset = this.calc_offset();
     const idealLookat = this.calc_look();
-
+    //We are just updating the camera's position relative to the time gone.
+    // we add a certain delay to have the camera have a natural adjustment as the player moves through the scene
     const t = 1.0 - Math.pow(0.001, timeGone);
 
     this.myPosition.lerp(idealOffset, t);
@@ -154,10 +161,14 @@ class ThirdPersonCameraGame {
     //Creating all coins
     this.coinPositions=[];
     this.score=0;
-    this.scorekeeper=document.getElementById("info");
+    // setting DOM elements to display the score, time left and lives left.
+    this.scorekeeper=document.getElementById("Score");
+    this.liveskeeper = document.getElementById("Lives");
+    this.timekeeper = document.getElementById("time");
     this.x=0;
     var coin;
-    for (var i=0;i<20;++i){
+    //looping and creating coins in the scene
+    for (var i=0;i<100;++i){
       coin=Coins(i);
       this.coinPositions.push(coin);
       this.scene.add(coin);
@@ -169,6 +180,7 @@ class ThirdPersonCameraGame {
     cubeTexture.wrapS = THREE.RepeatWrapping;
     cubeTexture.wrapT = THREE.RepeatWrapping;
     cubeTexture.repeat.set(1,40);
+    //Platform which is a floor is represented by a cube
     const geometry = new THREE.BoxGeometry();
     const material = new THREE.MeshBasicMaterial({map:cubeTexture});
     const floor = new THREE.Mesh( geometry, material );
@@ -200,7 +212,6 @@ class ThirdPersonCameraGame {
     //Loading our animated character
     this.LoadAnimatedModel();
     this.request_animation_frame();
-    this.clock.start();
     
     
   }
@@ -258,7 +269,7 @@ class ThirdPersonCameraGame {
                     obj3.rotation.y = Math.PI/2;
                     obj3.scale.set(0.1,0.1,0.1);
                     Obstacles.add(obj3);
-                  scene.add(Obstacles);
+                    scene.add(Obstacles);
 
                   var d = -300;
                   //Looping and adding the obstacles along the z axis so it occurs multiple times
@@ -410,6 +421,8 @@ class ThirdPersonCameraGame {
   }
 
   LoadAnimatedModel() {
+    //Load our animated character aj
+    //The params are the camera and scene since we center the camera around AJ
     const paramaters = {
       camera: this.camera,
       scene: this.scene,
@@ -439,22 +452,39 @@ class ThirdPersonCameraGame {
        for (var i=0;i<this.coinPositions.length;++i){
         if (Math.abs(this.control.myPosition.z-this.coinPositions[i].position.z)<0.5 && Math.abs(this.control.myPosition.x-this.coinPositions[i].position.x)<5){
           this.score+=1;
-          console.log("score: "+this.score);
+          //console.log("score: "+this.score);
           this.scene.remove(this.coinPositions[i]);
           this.coinPositions.splice(i,1);
         }
       }
 
-      this.scorekeeper.innerHTML="score: "+this.score;
+     
       //coin jumping
       this.x+=0.2;
       for (var i=0;i<this.coinPositions.length;++i){
         this.coinPositions[i].position.y+=(Math.sin(this.x)/10);
       }
 
-     // console.log(this.control.myPosition);
-    // console.log(this.time-this.clock.getElapsedTime());
+      //Update the score of the player
+      this.scorekeeper.innerHTML = "Score: "+this.score;
+      //Check if the player has moved and start clock
+      if(!this.isPlayerMoved()){
+            this.clock.start();
+      }
+   
+      this.time = this.time-(this.clock.getElapsedTime()/1000)
+      if(this.time<20){
+        this.timekeeper.style.color = 'red';
+      }
+      this.timekeeper.innerHTML = "Time Left: "+this.time;
+      //Check if time is up or lives are finished
+      if(this.time <0 || this.Lives ==0){
+        //Call EndGame function
+         this.EndGame();
+      }
       this.ObstacleCollision(this.control.myPosition);
+      //this.scorekeeper.innerHTML += "Lives: "+this.Lives+"\n";
+      this.liveskeeper.innerHTML="Lives Left: "+this.Lives;
       this.renderer.render(this.scene, this.camera);
       this.Step(t - this.old_animation_frames);
       this.old_animation_frames = t;
@@ -463,7 +493,19 @@ class ThirdPersonCameraGame {
     
   }
 
+  isPlayerMoved(){
+    //Check if the player is still at the origin and hasn't moved
+    if(this.control.myPosition.x == 0 && this.control.myPosition.y==0 && this.control.myPosition.z==0){
+        return false;
+    }
+    
+    return true;
+
+  }
+
   Step(timeGone) {
+
+    // we get the time that has elapsed and update our mixers so the animations can also get updated accordingly
     const timeGoneS = timeGone * 0.001;
     if (this.mixers) {
       this.mixers.map(m => m.update(timeGoneS));
@@ -475,6 +517,21 @@ class ThirdPersonCameraGame {
 
     this.ThirdPersonCamera.Update(timeGoneS);
   }
+  EndGame(){
+    //get the players score and store it in local storage
+    var playerScore = this.score;
+    localStorage.setItem("playerScore", playerScore);
+
+    //Check if the player scored high enough to be considered a pass and store in local storage
+    var passed = "Failed";
+    if(playerScore>=20){
+      passed = "Passed";
+    }
+    localStorage.setItem("outcome",passed);
+    //Change the page to the end page which shows summary of details
+    window.location.replace("endPage.html");
+  }
+  
 }
 
 

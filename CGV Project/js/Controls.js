@@ -16,7 +16,15 @@ class BasicCharacterControllerProxy {
     constructor(paramaters) {
       this.init(paramaters);
     }
-  
+    
+    // in the init function we initialise the following:
+    // Decrease which will be the rate at which we decrease the movement of the player in order to change states from running to walking or idle
+    // Acceleration is used to increase the speed if the user if they press shift to bring about running etc
+    // Speed is used to represent the idle velocity 
+    // myPosition will store the value of the characters current position in the scene
+    // allAnimations just contains the animations for each state
+    // UserInput is an instance of the controller input which enables the player to move around
+    // State instantiates the current state of the character
     init(paramaters) {
       this.params = paramaters;
       this.Decrease = new THREE.Vector3(-0.0005, -0.0001, -5.0);
@@ -30,7 +38,9 @@ class BasicCharacterControllerProxy {
   
       this.LoadModels();
     }
-  
+
+    // We are loading the character models and all the animations related to the character.
+    // We use and FBX loader since the models are .fbx files
     LoadModels() {
       const loader = new FBXLoader();
       loader.setPath('./models/Character/');
@@ -39,18 +49,19 @@ class BasicCharacterControllerProxy {
         fbx.traverse(c => {
           c.castShadow = true;
         });
-        
-       
+        // we rotate the character by 180 degrees to face the correct direction
         this.target = fbx.rotateY(Math.PI);
+        // add AJ to the scene
         this.params.scene.add(this.target);
-  
+        
+        //Create an animation mixer
         this.Mixer = new THREE.AnimationMixer(this.target);
-  
+        //Loading manager to control the progress of models being loaded
         this.loadingManager = new THREE.LoadingManager();
         this.loadingManager.onLoad = () => {
           this.myState.setState('idle');
         };
-  
+        //Defining the onload function to load the users animations
         const OnLoad = (animName, anim) => {
           const clip = anim.animations[0];
           const action = this.Mixer.clipAction(clip);
@@ -60,7 +71,7 @@ class BasicCharacterControllerProxy {
             action: action,
           };
         };
-  
+        //Loading the additional animations that are used in the game
         const loader = new FBXLoader(this.loadingManager);
         loader.setPath('./models/Character/');
         loader.load('walk.fbx', (a) => { OnLoad('walk', a); });
@@ -70,10 +81,12 @@ class BasicCharacterControllerProxy {
       });
     }
   
+    // Return the current position of the character
     get Position() {
       return this.myPosition;
     }
-  
+    
+    // Get what direction the character is facing
     get Rotation() {
       if (!this.target) {
         return new THREE.Quaternion();
@@ -85,15 +98,17 @@ class BasicCharacterControllerProxy {
       if (!this.myState.CurrentState) {
         return;
       }
-  
+      //Update the state every time to check if there was a transitions
       this.myState.Update(timeInSeconds, this.UserInput);
-  
+      
+      //depending if there was a transition we will adjust the velocity of the character accordingly
       const velocity = this.speed;
       const frameDecceleration = new THREE.Vector3(
           velocity.x * this.Decrease.x,
           velocity.y * this.Decrease.y,
           velocity.z * this.Decrease.z
       );
+      //Decrease the frame rate accordingly
       frameDecceleration.multiplyScalar(timeInSeconds);
       frameDecceleration.z = Math.sign(frameDecceleration.z) * Math.min(
           Math.abs(frameDecceleration.z), Math.abs(velocity.z));
@@ -106,10 +121,14 @@ class BasicCharacterControllerProxy {
       const r = controlObject.quaternion.clone();
   
       const acc = this.acceleration.clone();
+      //Depending on the user input, adjust the velocity of the user input
+      //IF shift is pressed, increase velocity by 4 x
       if (this.UserInput.keys.shift) {
         acc.multiplyScalar(4.0);
       }
 
+      // Create a variable to mimic gravity 
+      // Use this for character to always be in falling state until interacting with a surface in the scene.
       const gravity = -85 * timeInSeconds;
       if (velocity.y < -45.5 || this.myPosition.y < -0.1) {
         velocity.y = 0
@@ -121,14 +140,16 @@ class BasicCharacterControllerProxy {
           velocity.y = 45;
         }  
       }
-  
+      //Moves user forward 
       if (this.UserInput.keys.forward) {
         velocity.z += acc.z * timeInSeconds;
 
       }
+      // Moves user backward
       if (this.UserInput.keys.backward) {
         velocity.z -= acc.z * timeInSeconds;
       }
+      // Rotate camera if user moves and rotates
       if (this.UserInput.keys.left) {
         a.set(0, 1, 0);
         quaternion.setFromAxisAngle(a, 4.0 * Math.PI * timeInSeconds * this.acceleration.y);
@@ -192,6 +213,9 @@ class BasicCharacterControllerProxy {
       }
     }
   };
+
+  // define onkeydown and onkeyup event listeners 
+  //  w,a,s,d,shift and space as player controls
   class BasicCharacterControllerInput {
     constructor() {
       this.init();    

@@ -1,23 +1,55 @@
-#info {
+#Score {
 	position: absolute;
 	top: 10px;
-    left:45%;
-	width: 10%;
+    left:35%;
+	width: 30%;
 	text-align: center;
 	z-index: 100;
 	display:block;
     font-size: 20px;
     font-style: italic;
-    color: red;
-    border-width: 2px;
+    color:white;
+    /* border-width: 2px;
     border-style:groove;
-    border-color: red;
+    border-color: red; */
+}
+#time{
+    position: absolute;
+	top: 10px;
+    left:0%;
+	width: 30%;
+	text-align: center;
+	z-index: 100;
+	display:block;
+    font-size: 20px;
+    font-style: italic;
+    color: white;
+    /* border-width: 2px;
+    border-style:groove;
+    border-color: red; */
+
+}
+#Lives{
+    position: absolute;
+	top: 10px;
+    left:70%;
+	width: 30%;
+	text-align: center;
+	z-index: 100;
+	display:block;
+    font-size: 20px;
+    font-style: italic;
+    color: white;
+    /* border-width: 2px;
+    border-style:groove;
+    border-color: red; */
+
 }
 h1{
     color: #eeeeee;
     font-family: "Times New Roman", Times, serif;
     position: fixed;
-    top: 22%;
+    top: 15%;
     left: 50%;
     
     transform: translate(-50%, -50%);
@@ -27,7 +59,7 @@ h2{
     color: #eeeeee;
     font-family: "Times New Roman", Times, serif;
     position: fixed;
-    top: 35%;
+    top: 25%;
     left: 50%;
     
     transform: translate(-50%, -50%);
@@ -37,7 +69,7 @@ h3{
     color: #eeeeee;
     font-family: "Times New Roman", Times, serif;
     position: fixed;
-    top: 45%;
+    top: 35%;
     left: 50%;
     
     transform: translate(-50%, -50%);

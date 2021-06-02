@@ -9,10 +9,15 @@ body {
     height:auto;
     z-index: 0;
     text-align:center;
+    /* animation: slideUp .8s ease-in-out  forwards 1s; */
+
+    
 }
 h1{
     color: #eeeeee;
     font-family: "Times New Roman", Times, serif;
+    animation: slideUp .8s ease-in-out  forwards 1s;
+
 }
 #Middle{
     position: fixed;
@@ -20,6 +25,8 @@ h1{
     left: 50%;
     
     transform: translate(-50%, -50%);
+    animation: slideUp .8s ease-in-out  forwards 1s;
+
 }
 .buttons{
     position: fixed;
@@ -27,6 +34,8 @@ h1{
     left: 50%;
    
     transform: translate(-50%, -50%);
+    /* animation: slideUp .8s ease-in-out  forwards 1s; */
+
 }
 .canvas{
    position:fixed;
@@ -50,3 +59,11 @@ button{
     margin: 5px;
     
 }
+@keyframes slideUp {
+    0% {
+      transform: translateY(300px);
+    }
+    100% {
+      transform: translateY(0px);
+    }
+  }

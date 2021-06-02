@@ -6,8 +6,13 @@ class LoadModelDemo {
     this.init();
   }
 
+  // we are defining a scene just like the actual game just to load our character onto the loading screen.
+
   init() {
+    // getting the canvas to which we will draw the character
     const mycanvas = document.getElementById('charac');
+
+    // defining a renderer to render the scene
     this.renderer = new THREE.WebGLRenderer({
       antialias: true,
       canvas: mycanvas
@@ -22,7 +27,8 @@ class LoadModelDemo {
     window.addEventListener('resize', () => {
       this.ResizeWindow();
     }, false);
-
+    // Defining a camera so we can actually see the character
+    // perspective camera 
     const fov = 60;
     const aspect = 1920 / 1080;
     const near = 1.0;
@@ -31,7 +37,7 @@ class LoadModelDemo {
     this.camera.position.set(-20, 5, 60);
 
     this.scene = new THREE.Scene();
-
+    // lights to light up the canvas 
     let light = new THREE.DirectionalLight(0xFFFFFF, 1.0);
     light.position.set(20, 100, 10);
     light.target.position.set(0, 0, 0);
@@ -49,7 +55,7 @@ class LoadModelDemo {
     light.shadow.camera.bottom = -100;
     this.scene.add(light);
     this.scene.background = new THREE.Color('rgb(9,30,46)');
-
+    // AmbientLight to add better lighting to the characters face
     light = new THREE.AmbientLight(0xFFFFFF, 2.5);
     this.scene.add(light);
 
@@ -60,21 +66,19 @@ class LoadModelDemo {
     this.RAF();
   }
 
+// Loading our animated model AJ.
+// FBX loader since our model is .fbx format
   LoadAnimatedModel() {
     const loader = new FBXLoader();
     loader.setPath('./models/Character/');
     loader.load('aj.fbx', (fbx) => {
+      // Scale the character so he can fit into the scene
       fbx.scale.setScalar(0.1);
       fbx.traverse(c => {
         c.castShadow = true;
       });
-
-      const params = {
-        target: fbx,
-        camera: this.camera,
-      }
-  
-
+      // define another FBX loader to load the Taunting animation
+      // We need a mixer for this.
       const anim = new FBXLoader();
       anim.setPath('./models/Character/');
       anim.load('Taunt.fbx', (anim) => {
@@ -93,6 +97,8 @@ class LoadModelDemo {
     this.renderer.setSize(window.innerWidth, window.innerHeight);
   }
 
+  // Update the animation with every new frame
+  // Frame updates and not real time updates are fine
   RAF() {
     requestAnimationFrame((t) => {
       if (this.previousRAF === null) {

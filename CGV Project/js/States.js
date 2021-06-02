@@ -1,4 +1,8 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.118/build/three.module.js';
+
+// state controller class which will be the base for all other state classes
+// Enables us to transition between states 
+// Updates the states and current animation
 class stateController {
     constructor() {
       this.allStates = {};
@@ -39,12 +43,12 @@ class stateController {
       this._proxy = proxy;
       this.init();
     }
-  
+  // Pass in all states and add them to the list of all possible states
     init() {
       this.addState('idle', IdleState);
       this.addState('walk', WalkState);
       this.addState('run', RunState);
-      this.addState('Jumping Up', TauntState);
+      this.addState('Jumping Up', JumpingState);
     }
   };
   
@@ -53,14 +57,16 @@ class stateController {
     constructor(parent) {
       this.parent = parent;
     }
+    // define functions to deal with entering and leaving a state smoothly
+    //Update animations smoothly
   
     Enter() {}
     Exit() {}
     Update() {}
   };
   
-  
-  class TauntState extends State {
+  // Creating a jump state for an idle player
+  class JumpingState extends State {
     constructor(parent) {
       super(parent);
   
@@ -72,7 +78,8 @@ class stateController {
     get Name() {
       return 'Jumping Up';
     }
-  
+    // Define a function that will take the previous state and smoothly transition into a jumping state
+    // This state will only become active from the idle state so it's just a matter of playing the animation
     Enter(PreviousState) {
       const CurrentAction = this.parent._proxy.allAnimations['Jumping Up'].action;
       const mixer = CurrentAction.getMixer();
@@ -90,7 +97,7 @@ class stateController {
         CurrentAction.play();
       }
     }
-  
+    //Always go back to the idle state when done
     Done() {
       this.clean();
       this.parent.setState('idle');
@@ -126,11 +133,14 @@ class stateController {
         const PreviousAction = this.parent._proxy.allAnimations[PreviousState.Name].action;
   
         CurrentAction.enabled = true;
-  
+        // If the previous state was running , slowly transition to the walk state by getting the duration of run state and and duration of walk state
+        // and multiplying the time spent in the previous state by the ratio.
         if (PreviousState.Name == 'run') {
           const ratio = CurrentAction.getClip().duration / PreviousAction.getClip().duration;
           CurrentAction.time = PreviousAction.time * ratio;
-        } else {
+        }
+        // if the previous state was idle, then just walk and no real transition fade is required.
+         else {
           CurrentAction.time = 0.0;
           CurrentAction.setEffectiveTimeScale(1.0);
           CurrentAction.setEffectiveWeight(1.0);

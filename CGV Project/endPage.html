@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Runner</title>
+		<style>
+			body { margin: 0; }
+			
+		</style>  
+        <script type="module" src="./js/loadingScreen.js"></script>
+		<link rel="stylesheet" type="text/css" href="./css/endPage.css"/>
+	</head>
+	<body>
+		<audio autoplay loop >
+            <source src="./audio/levitate.mp3" type="audio/mp3"></sources>
+        </audio>
+        <div id = "Info">
+            <h1>Game Over !</h1>
+            <h2 id="Outcome">Outcome</h2>
+            <h2 id ="score">Score</h2>
+        </div>
+
+        <div id="Canvas" class="canvas">
+            <canvas id ="charac" width="20" height="20"></canvas>
+            <script type="module" src="./js/loadingScreen.js"></script>
+        </div>
+		
+	</body>
+</html>
+<script>
+    var myScore = window.onload = localStorage.getItem('playerScore');
+    var outcome = window.onload =localStorage.getItem('outcome');
+    const h2 = document.getElementById('Outcome');
+    h2.innerHTML = "Level "+outcome+" !"
+    const score = document.getElementById('score');
+    score.innerHTML ="Total Coins Collected: "+myScore
+
+    setTimeout(function(){
+        window.location.replace("index.html");
+    },10000);
+
+</script>
