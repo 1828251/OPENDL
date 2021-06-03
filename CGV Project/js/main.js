@@ -191,9 +191,10 @@ class ThirdPersonCameraGame {
     const lowPoly = './models/level1/LowPolyBarrier/scene.gltf'
     //Loading the barriers on the side
     this.LoadModel(lowPoly,this.scene,x,y,z,manager);
-    var Obstacles = [];
+    this.Obstacles = [];
     //loading all our obstacles into the scene
-    this.LoadObstacles(this.scene,Obstacles,manager);
+    this.LoadObstacles(this.scene,this.Obstacles,manager);
+    
     floor.scale.set(120,0,-10000);
     var d = -20000;
     //looping and ensuring our floor is long enough for the round.
@@ -211,6 +212,7 @@ class ThirdPersonCameraGame {
     this.old_animation_frames = null;
     //Loading our animated character
     this.LoadAnimatedModel();
+    
     this.request_animation_frame();
     
     
@@ -223,9 +225,15 @@ class ThirdPersonCameraGame {
   }
 
   ObstacleCollision(currPosition){
-
-    
-    
+  //console.log(this.Obstacles);
+  if (this.Obstacles.length>30){
+  for (var k=0;k<this.Obstacles.length;++k){
+     if (Math.abs(currPosition.z-this.Obstacles[k].z)<5 && Math.abs(currPosition.x-this.Obstacles[k].x)<5){
+       console.log("obstacle hit");
+     }
+  }
+  }
+  //console.log(this.Obstacles);
   }
 
   LoadObstacles(scene,ObstaclePositions,manager){
@@ -476,12 +484,14 @@ class ThirdPersonCameraGame {
       if(this.time<20){
         this.timekeeper.style.color = 'red';
       }
+
       this.timekeeper.innerHTML = "Time Left: "+this.time;
       //Check if time is up or lives are finished
       if(this.time <0 || this.Lives ==0){
         //Call EndGame function
          this.EndGame();
       }
+      //console.log(ObstaclePositions);
       this.ObstacleCollision(this.control.myPosition);
       //this.scorekeeper.innerHTML += "Lives: "+this.Lives+"\n";
       this.liveskeeper.innerHTML="Lives Left: "+this.Lives;
