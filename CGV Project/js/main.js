@@ -3,6 +3,7 @@ import {GLTFLoader} from 'https://cdn.jsdelivr.net/npm/three@0.118.1/examples/js
 import {BasicCharacterController} from './Controls.js';
 
 
+
 class ThirdPersonCamera {
   constructor(paramaters) {
     this.params = paramaters;
@@ -225,7 +226,7 @@ class ThirdPersonCameraGame {
   }
 
   ObstacleCollision(currPosition){
-  //console.log(this.Obstacles);
+  //detects if characters comes into contact with an obstacle
   if (this.Obstacles.length>30){
   for (var k=0;k<this.Obstacles.length;++k){
      if (Math.abs(currPosition.z-this.Obstacles[k].z)<5 && Math.abs(currPosition.x-this.Obstacles[k].x)<5 && currPosition.y < 10){
