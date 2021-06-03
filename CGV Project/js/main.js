@@ -228,8 +228,8 @@ class ThirdPersonCameraGame {
   //console.log(this.Obstacles);
   if (this.Obstacles.length>30){
   for (var k=0;k<this.Obstacles.length;++k){
-     if (Math.abs(currPosition.z-this.Obstacles[k].z)<5 && Math.abs(currPosition.x-this.Obstacles[k].x)<5){
-       console.log("obstacle hit");
+     if (Math.abs(currPosition.z-this.Obstacles[k].z)<5 && Math.abs(currPosition.x-this.Obstacles[k].x)<5 && currPosition.y < 10){
+        this.control.UserInput.keys.backward = true
      }
   }
   }
