@@ -132,12 +132,12 @@ class ThirdPersonCameraGame {
     //Loading the texture for the scene background
     const loader = new THREE.CubeTextureLoader();
     const texture = loader.load([
-        './textures/level1/posx.jpg',
-        './textures/level1/negx.jpg',
-        './textures/level1/posy.jpg',
-        './textures/level1/negy.jpg',
-        './textures/level1/posz.jpg',
-        './textures/level1/negz.jpg',
+        './textures/level2/posx.jpg',
+        './textures/level2/negx.jpg',
+        './textures/level2/posy.jpg',
+        './textures/level2/negy.jpg',
+        './textures/level2/posz.jpg',
+        './textures/level2/negz.jpg',
     ]);
     texture.encoding = THREE.sRGBEncoding;
     this.scene.background = texture;
@@ -161,10 +161,10 @@ class ThirdPersonCameraGame {
 
 
     //Loading a texture to apply as the "floor"
-    const cubeTexture = new THREE.TextureLoader().load('./textures/level1/dirtroad.jpg');
+    const cubeTexture = new THREE.TextureLoader().load('./textures/level2/metal-textures.jpg');
     cubeTexture.wrapS = THREE.RepeatWrapping;
     cubeTexture.wrapT = THREE.RepeatWrapping;
-    cubeTexture.repeat.set(1,40);
+    cubeTexture.repeat.set(1,180);
     //Platform which is a floor is represented by a cube
     const geometry = new THREE.BoxGeometry();
     const material = new THREE.MeshBasicMaterial({map:cubeTexture});
