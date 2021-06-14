@@ -225,7 +225,7 @@ class ThirdPersonCameraGame {
     var backward=this.control.UserInput.keys.backward;
     var detected=false;
     for (var k=0;k<this.Obstacles.length;++k){
-      if (Math.abs(currPosition.z-this.Obstacles[k].position.z)<this.Dimensions[k][1]/2 && Math.abs(currPosition.x-this.Obstacles[k].position.x)<this.Dimensions[k][0]/2 && currPosition.y < 10){
+      if (Math.abs(currPosition.z-this.Obstacles[k].position.z)<(this.Dimensions[k][1]/2)+2 && Math.abs(currPosition.x-this.Obstacles[k].position.x)<(this.Dimensions[k][0]/2)+2 && currPosition.y < 10){
         console.log("hit");  
         detected=true;
       }

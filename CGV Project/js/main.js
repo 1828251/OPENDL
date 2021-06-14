@@ -161,7 +161,7 @@ class ThirdPersonCameraGame {
 
 
     //Loading a texture to apply as the "floor"
-    const cubeTexture = new THREE.TextureLoader().load('./textures/level1/dirtroad.jpg');
+    const cubeTexture = new THREE.TextureLoader().load('./textures/level1/road.jpg');
     cubeTexture.wrapS = THREE.RepeatWrapping;
     cubeTexture.wrapT = THREE.RepeatWrapping;
     cubeTexture.repeat.set(1,40);
@@ -175,8 +175,11 @@ class ThirdPersonCameraGame {
     var z = 13;
     const lowPoly = './models/level1/LowPolyBarrier/scene.gltf'
     //Loading the barriers on the side
+
+
     this.LoadModel(lowPoly,this.scene,x,y,z,manager);
     this.Obstacles = [];
+    this.Dimensions=[];
     //loading all our obstacles into the scene
     this.LoadObstacles(this.scene,this.Obstacles,manager);
     
@@ -204,174 +207,104 @@ class ThirdPersonCameraGame {
   }
   //Event listener which will remove the dom element once everything is loaded.
   onTransitionEnd( event ) {
-
     event.target.remove();
-    
   }
 
   ObstacleCollision(currPosition){
   //detects if characters comes into contact with an obstacle
-  if (this.Obstacles.length>30){
+    
+  var forward=this.control.UserInput.keys.forward;
+  var backward=this.control.UserInput.keys.backward;
+  var detected=false;
   for (var k=0;k<this.Obstacles.length;++k){
-     if (Math.abs(currPosition.z-this.Obstacles[k].z)<5 && Math.abs(currPosition.x-this.Obstacles[k].x)<5 && currPosition.y < 10){
-        this.control.UserInput.keys.backward = true
-     }
+    if (Math.abs(currPosition.z-this.Obstacles[k].position.z)<(this.Dimensions[k][1]/2)+2 && Math.abs(currPosition.x-this.Obstacles[k].position.x)<(this.Dimensions[k][0]/2)+2 && currPosition.y < 10){
+      console.log("hit");  
+      detected=true;
+    }
   }
-  }
-  //console.log(this.Obstacles);
+  return detected;
   }
 
   LoadObstacles(scene,ObstaclePositions,manager){
-    //var ObstaclePositions = [];
+    //Create traffic obstacles function
+    function Cones(z){
+      var conegeo = new THREE.ConeGeometry( 5, 20, 32 );
+      const conetexture = new THREE.TextureLoader().load("./textures/level1/trafficcone.jpg");
+            conetexture.wrapS=THREE.RepeatWrapping;
+            conetexture.wrapT=THREE.RepeatWrapping;
+            conetexture.repeat.set(1,1);
+      const conemat = new THREE.MeshBasicMaterial( {map: conetexture} );
+      var cone = new THREE.Mesh( conegeo, conemat);
+      cone.position.y=10;
+      cone.position.z=-60*z-15;
+      cone.position.x=Math.floor(Math.random() * 100) -50;
+      return cone;
+    }
 
-    // Using the loading manager to return the ObstaclePositions once they are all loaded 
-    //the onload function will executed once all the models are loaded.
-    //Defining a gltf loader
-    const loader = new GLTFLoader(manager);
-    var Obstacles = new THREE.Object3D();
-    
-
-    var obj1;
-    var obj2;
-    var obj3;
-
-    //All gltf model loading will follow this format 
-    loader.load('./models/level1/barrels/scene.gltf',function(gltf){
-      obj1 = gltf.scene;
-      obj1.position.set(-40,0,-30);
-      //Adding the position of the model to ObstaclePositions
-      ObstaclePositions.push(new THREE.Vector3(-40,0,-30));
-      obj1.scale.set(0.05,0.05,0.05);
-      console.log(new THREE.Box3.setObject(obj1).getsize());
-      //Obstacles is a 3d Object so we add these 3 sub-objects as its children and then add this whole Obstacles object to the scene
-      Obstacles.add(obj1);
-      loader.load('./models/level1/wheelbarrow/scene.gltf',function(gltf){
-            obj2 = gltf.scene;
-            obj2.position.set(35,0,-50);
-              //Adding the position of the model to ObstaclePositions
-            ObstaclePositions.push(new THREE.Vector3(35,0,-50));
-         
-            obj2.rotation.y = -Math.PI/2;
-            obj2.scale.set(4,4,4);
-            Obstacles.add(obj2);
-            loader.load('./models/level1/sandbags/scene.gltf',function(gltf){
-                    obj3 = gltf.scene;
-                    obj3.position.set(0,0,-90);
-                      //Adding the position of the model to ObstaclePositions
-                    ObstaclePositions.push(new THREE.Vector3(0,0,-90));
-                    obj3.rotation.y = Math.PI/2;
-                    obj3.scale.set(0.1,0.1,0.1);
-                    Obstacles.add(obj3);
-                    scene.add(Obstacles);
-
-                  var d = -300;
-                  //Looping and adding the obstacles along the z axis so it occurs multiple times
-                  for(var i=0;i<5;i++){
-                    scene.add(Obstacles.clone().translateZ(d));
-                    //Adding the position of the model to ObstaclePositions
-                    // d is just use to translate the object along the  z axis
-                    ObstaclePositions.push(new THREE.Vector3(-40,0,-30+d));
-                    ObstaclePositions.push(new THREE.Vector3(35,0,-50+d));
-                    ObstaclePositions.push(new THREE.Vector3(0,0,-60+d));
-                    d = d - 500;
-                  }
-                 
-                  
-                  });
-      });
-     
-    });
-  
+    //Creating cones and adding to the scene
+    var cone;
+    for (var i=0;i<10;++i){
+      cone=Cones(i);
+      //console.log(spike.max.z);
+      //console.log(new THREE.Box3().setFromObject(spike).max.z-new THREE.Box3().setFromObject(spike).min.z);
+      this.Dimensions[i]=[new THREE.Box3().setFromObject(cone).max.x-new THREE.Box3().setFromObject(cone).min.x,new THREE.Box3().setFromObject(cone).max.z-new THREE.Box3().setFromObject(cone).min.z];
+      ObstaclePositions.push(cone);
+      scene.add(cone);
+    }
    
-    loader.load('./models/level1/spikes/scene.gltf',function(gltf){
+    //Creating Blitz obstacles function 
+    function Blitz(z){
+      var blitzgeo = new THREE.BoxGeometry( 20, 20, 20 );
+      const blitztexture = new THREE.TextureLoader().load("./textures/level1/brick.jpg");
+            blitztexture.wrapS=THREE.RepeatWrapping;
+            blitztexture.wrapT=THREE.RepeatWrapping;
+            blitztexture.repeat.set(1,1);
+      const blitzmat = new THREE.MeshBasicMaterial( {map: blitztexture} );
+      var blitz = new THREE.Mesh( blitzgeo, blitzmat);
+      blitz.position.z=-60*z-15;
+      blitz.position.y=5;
+      blitz.position.x=Math.floor(Math.random() * 100) -50;
+      //blitz.rotation.z=90;
+      return blitz;
+    }
 
-        var spikes = new THREE.Object3D();
+    //Creating blitz and adding to the scene 
+    var blitz;
+    for (var i=10;i<20;++i){
+      blitz=Blitz(i);
+      this.Dimensions[i]=[new THREE.Box3().setFromObject(blitz).max.x-new THREE.Box3().setFromObject(blitz).min.x,new THREE.Box3().setFromObject(blitz).max.z-new THREE.Box3().setFromObject(blitz).min.z];
+      ObstaclePositions.push(blitz);
+      scene.add(blitz);
+    }
 
-        var sp = gltf.scene;
-        var d = 0
-        for( var i=0;i<4;i++){
-          var spike = sp.clone();
-          spike.position.set(0,0,d);
-          spike.scale.set(125,125,125);
-          spikes.add(spike);
-          d = d - 60;
+    //Creating cylinder obstacles function 
+    function Cylinder(z){
+      var cylindergeo = new THREE.TorusGeometry( 7, 3, 16, 100 );
+      const cylindertexture = new THREE.TextureLoader().load("./textures/level1/tyre.png");
+            cylindertexture.wrapS=THREE.RepeatWrapping;
+            cylindertexture.wrapT=THREE.RepeatWrapping;
+            cylindertexture.repeat.set(2,2);
+      const cylindermat = new THREE.MeshBasicMaterial( {map: cylindertexture} );
+      var cylinder = new THREE.Mesh( cylindergeo, cylindermat);
+      cylinder.position.z=-60*z-15;
+      cylinder.position.y=10;
+      cylinder.position.x=Math.floor(Math.random() * 100) -50;
+      return cylinder;
+    }
 
-        }
-        //Adding the position of the model to ObstaclePositions
-        // I add twice since the objects are translated along the z axis as well and are duplicated 
-        //The z value is just the value of d + the translation applied. 
-        // d takes on the values {0,-60,-120,-180}
-
-        ObstaclePositions.push(new THREE.Vector3(0,0,-450));
-        ObstaclePositions.push(new THREE.Vector3(0,0,-510));
-        ObstaclePositions.push(new THREE.Vector3(0,0,-570));
-        ObstaclePositions.push(new THREE.Vector3(0,0,-630));
-        
-        
-        ObstaclePositions.push(new THREE.Vector3(0,0,-1750));
-        ObstaclePositions.push(new THREE.Vector3(0,0,-1810));
-        ObstaclePositions.push(new THREE.Vector3(0,0,-1870));
-        ObstaclePositions.push(new THREE.Vector3(0,0,-1930));
-
-        //Cloning the spikes object twice and applying two different Z translations
-        scene.add(spikes.clone().translateZ(-450));
-        scene.add(spikes.clone().translateZ(-1750));
-       
-
-    });
-  
-  
-    loader.load('./models/level1/Cones/scene.gltf',function(gltf){
-
-      var Cones = new THREE.Object3D();
-
-      var cone = gltf.scene;
-      cone.position.set(0,2,-200);
-      cone.scale.set(0.1,0.1,0.1);
-      Cones.add(cone);
-      var cone2 = cone.clone();
-      cone2.position.set(0,2,-2100);
-      Cones.add(cone2);
-      scene.add(Cones);
-      //Adding the position of the model to ObstaclePositions
-      // We have two duplicates of this obstacle so it is added twice to ObstaclePositions
-      ObstaclePositions.push(new THREE.Vector3(0,2,-200));
-      ObstaclePositions.push(new THREE.Vector3(0,2,-2100));
-    });
-    loader.load('./models/level1/hori/scene.gltf',function(gltf){
-      //this is the cement mixer obstacle
-      var cement = gltf.scene;
-
-      cement.position.set(0,15,-1000);
-      cement.scale.set(0.1,0.1,0.1);
-      scene.add(cement);
-     //Adding the position of the model to ObstaclePositions
-      ObstaclePositions.push(new THREE.Vector3(0,0,-1000));
-
-    });
-    loader.load('./models/level1/scaffolding/scene.gltf',function(gltf){
-
-      var scaffolding = gltf.scene;
-
-      scaffolding.position.set(0,0,-1600);
-      scene.add(scaffolding);
-        //Adding the position of the model to ObstaclePositions
-      ObstaclePositions.push(new THREE.Vector3(0,0,-1600));
-    });
-    loader.load('./models/level1/crane/scene.gltf',function(gltf){
-      
-      var crane = gltf.scene;
-      crane.position.set(0,100,-3000);
-      crane.scale.set(0.2,0.2,0.2);
-      scene.add(crane);
-      //Adding the position of the model to ObstaclePositions
-      ObstaclePositions.push(new THREE.Vector3(0,100,-3000));
-
-    });
+    //Creating cylinders and adding to the scene 
+    var cylinder;
+    for (var i=20;i<30;++i){
+      cylinder=Cylinder(i);
+      this.Dimensions[i]=[new THREE.Box3().setFromObject(blitz).max.x-new THREE.Box3().setFromObject(blitz).min.x,new THREE.Box3().setFromObject(blitz).max.z-new THREE.Box3().setFromObject(blitz).min.z];
+      ObstaclePositions.push(cylinder);
+      scene.add(cylinder);
+    }
 
     return ObstaclePositions;
-    
   }
+
+
   LoadModel(path,scene,x,y,z,manager){
 
     // this obj will act as the parent for the barriers on the side to prevent user from falling off
@@ -476,6 +409,25 @@ class ThirdPersonCameraGame {
         //Call EndGame function
          this.EndGame();
       }
+
+
+      //Detecting collision and reacting
+      this.forward=this.control.UserInput.keys.forward;
+      this.backward=this.control.UserInput.keys.backward;
+      var detected=this.ObstacleCollision(this.control.myPosition);
+      if (this.hit==true && detected==false){
+        // this.control.UserInput.keys.forward=true;
+        this.control.UserInput.keys.backward=false;
+        this.hit=false;
+        
+      }
+      if (detected==true){
+            this.control.UserInput.keys.forward=false;
+            this.control.UserInput.keys.backward=true;
+            this.hit=true;
+      }
+
+
       //console.log(ObstaclePositions);
       this.ObstacleCollision(this.control.myPosition);
       //this.scorekeeper.innerHTML += "Lives: "+this.Lives+"\n";
