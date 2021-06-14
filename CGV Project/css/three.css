@@ -7,6 +7,7 @@
 	z-index: 100;
 	display:block;
     font-size: 20px;
+    font-family: 'Montserrat', sans-serif;
     font-style: italic;
     color:white;
     /* border-width: 2px;
@@ -22,6 +23,7 @@
 	z-index: 100;
 	display:block;
     font-size: 20px;
+    font-family: 'Montserrat', sans-serif;
     font-style: italic;
     color: white;
     /* border-width: 2px;
@@ -38,6 +40,7 @@
 	z-index: 100;
 	display:block;
     font-size: 20px;
+    font-family: 'Montserrat', sans-serif;
     font-style: italic;
     color: white;
     /* border-width: 2px;
@@ -47,7 +50,7 @@
 }
 h1{
     color: #eeeeee;
-    font-family: "Times New Roman", Times, serif;
+    font-family: 'Montserrat', sans-serif;
     position: fixed;
     top: 15%;
     left: 50%;
@@ -57,7 +60,7 @@ h1{
 }
 h2{
     color: #eeeeee;
-    font-family: "Times New Roman", Times, serif;
+    font-family: 'Montserrat', sans-serif;
     position: fixed;
     top: 25%;
     left: 50%;
@@ -67,7 +70,7 @@ h2{
 }
 h3{
     color: #eeeeee;
-    font-family: "Times New Roman", Times, serif;
+    font-family: 'Montserrat', sans-serif;
     position: fixed;
     top: 35%;
     left: 50%;
