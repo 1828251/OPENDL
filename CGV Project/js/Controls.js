@@ -13,6 +13,7 @@ class BasicCharacterControllerProxy {
   
   
   class BasicCharacterController {
+        
     constructor(paramaters) {
       this.init(paramaters);
     }
@@ -37,6 +38,8 @@ class BasicCharacterControllerProxy {
           new BasicCharacterControllerProxy(this.allAnimations));
   
       this.LoadModels();
+      //this.canMove = true;
+      //this.UserInput.move = this.canMove;
     }
 
     // We are loading the character models and all the animations related to the character.
@@ -80,6 +83,8 @@ class BasicCharacterControllerProxy {
         loader.load('Jumping Up.fbx', (a) => { OnLoad('Jumping Up', a); });
       });
     }
+
+    
   
     // Return the current position of the character
     get Position() {
@@ -97,6 +102,9 @@ class BasicCharacterControllerProxy {
     Update(timeInSeconds) {
       if (!this.myState.CurrentState) {
         return;
+      }
+      if (timeInSeconds > 0.5) {
+        timeInSeconds = 0.020840000000003783;
       }
       //Update the state every time to check if there was a transitions
       this.myState.Update(timeInSeconds, this.UserInput);
@@ -138,7 +146,9 @@ class BasicCharacterControllerProxy {
         //acc.multiplyScalar(0.0);
         if (this.myPosition.y < 0.5) {
           velocity.y = 45;
-        }  
+        } else if (this.myPosition.y < 0.5 && this.myPositiony > -1) {
+          velocity = 30;
+        }
       }
       //Moves user forward 
       if (this.UserInput.keys.forward) {
@@ -186,8 +196,11 @@ class BasicCharacterControllerProxy {
   
       sideways.multiplyScalar(velocity.x * timeInSeconds);
       forward.multiplyScalar(velocity.z * timeInSeconds);
-      (this.myPosition.y > 0.0) ? space.multiplyScalar(timeInSeconds * (velocity.y + gravity * 0.05)) : space.multiplyScalar(velocity.y * timeInSeconds);
-      //console.log("y velocity: ", velocity.y)
+      //(this.canMove) ? (this.myPosition.y > 0.0) ? space.multiplyScalar(timeInSeconds * (velocity.y + gravity * 0.05)) : space.multiplyScalar(velocity.y * timeInSeconds) : space.multiplyScalar(0);
+      (this.myPosition.y > 0.0) ? space.multiplyScalar(timeInSeconds * (velocity.y + gravity * 0.05)) : space.multiplyScalar(velocity.y * timeInSeconds)
+      //console.log("z velocity: ", velocity.z)
+      console.log("time",timeInSeconds,"y position:", this.myPosition.y)
+
      // space.setY(timeInSeconds * (velocity.y + gravity * 0.05));
 
   
@@ -230,8 +243,11 @@ class BasicCharacterControllerProxy {
         space: false,
         shift: false,
       };
-      document.addEventListener('keydown', (e) => this.OnKeyDown(e), false);
-      document.addEventListener('keyup', (e) => this.OnKeyUp(e), false);
+     // this.move = true;
+      //if (this.move === true) {
+        document.addEventListener('keydown', (e) => this.OnKeyDown(e), false);
+        document.addEventListener('keyup', (e) => this.OnKeyUp(e), false);
+      //}
     }
   
     OnKeyDown(event) {

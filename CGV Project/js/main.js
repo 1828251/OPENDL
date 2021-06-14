@@ -3,7 +3,8 @@ import {GLTFLoader} from 'https://cdn.jsdelivr.net/npm/three@0.118.1/examples/js
 import {BasicCharacterController} from './Controls.js';
 
 
-
+var isPlay = true;
+var oldFrame = -5;
 class ThirdPersonCamera {
   constructor(paramaters) {
     this.params = paramaters;
@@ -166,6 +167,17 @@ class ThirdPersonCameraGame {
     this.scorekeeper=document.getElementById("Score");
     this.liveskeeper = document.getElementById("Lives");
     this.timekeeper = document.getElementById("time");
+    var pauseBtn = document.getElementById('pause');
+    pauseBtn.onclick = () => {
+     // && (this.control.myPosition.y < 0.3 &&  (this.control.speed.y > -1)) && (this.control.speed.z < 0.1 && this.control.speed.z > -0.1)w
+      if (isPlay === true) {
+        isPlay = false;
+        //this.control.canMove = false;
+      } else {
+        isPlay = true;
+        //this.control.canMove = true;
+      }
+    };
     this.x=0;
     var coin;
     //looping and creating coins in the scene
@@ -214,15 +226,14 @@ class ThirdPersonCameraGame {
     //Loading our animated character
     this.LoadAnimatedModel();
     
+    if (isPlay) {
     this.request_animation_frame();
-    
+    }
     
   }
   //Event listener which will remove the dom element once everything is loaded.
   onTransitionEnd( event ) {
-
     event.target.remove();
-    
   }
 
   ObstacleCollision(currPosition){
@@ -451,12 +462,25 @@ class ThirdPersonCameraGame {
   }
 
   request_animation_frame() {
+    
     requestAnimationFrame((t) => {
+     var posUpdate;  
       if (this.old_animation_frames === null) {
         this.old_animation_frames = t;
       }
+      // if (isPlay === false) {
+      //   t = this.old_animation_frames;
+      //   this.x += 0;
+      //   this.time -= 0;
+      //   posUpdate = 0;
+      // } else {
+      //   this.x+=0.2;
+      //   this.time -= (this.clock.getElapsedTime()/1000);
+      //   posUpdate = (Math.sin(this.x)/10);
+      // } 
       this.request_animation_frame();
-
+      if (isPlay === true) {
+      
        //checks for interaction between player and all the coins
        for (var i=0;i<this.coinPositions.length;++i){
         if (Math.abs(this.control.myPosition.z-this.coinPositions[i].position.z)<0.5 && Math.abs(this.control.myPosition.x-this.coinPositions[i].position.x)<5){
@@ -469,9 +493,9 @@ class ThirdPersonCameraGame {
 
      
       //coin jumping
-      this.x+=0.2;
+      this.x += 0.2;
       for (var i=0;i<this.coinPositions.length;++i){
-        this.coinPositions[i].position.y+=(Math.sin(this.x)/10);
+        this.coinPositions[i].position.y += (Math.sin(this.x)/10);
       }
 
       //Update the score of the player
@@ -480,8 +504,8 @@ class ThirdPersonCameraGame {
       if(!this.isPlayerMoved()){
             this.clock.start();
       }
-   
-      this.time = this.time-(this.clock.getElapsedTime()/1000)
+
+      this.time -= (this.clock.getElapsedTime()/1000);
       if(this.time<20){
         this.timekeeper.style.color = 'red';
       }
@@ -499,9 +523,11 @@ class ThirdPersonCameraGame {
       this.renderer.render(this.scene, this.camera);
       this.Step(t - this.old_animation_frames);
       this.old_animation_frames = t;
+      } else {
+        this.clock.stop();
+      }
     });
-
-    
+  
   }
 
   isPlayerMoved(){

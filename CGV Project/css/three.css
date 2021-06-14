@@ -45,6 +45,18 @@
     border-color: red; */
 
 }
+#pause{
+    position: absolute;
+	top: 25px;
+    left:0%;
+	width: 30%;
+	text-align: center;
+	z-index: 100;
+    font-size: 20px;
+    cursor: pointer;
+    font-style: italic;
+    color: white;
+}
 h1{
     color: #eeeeee;
     font-family: "Times New Roman", Times, serif;
