@@ -242,7 +242,7 @@ class ThirdPersonCameraGame {
       //Adding the position of the model to ObstaclePositions
       ObstaclePositions.push(new THREE.Vector3(-40,0,-30));
       obj1.scale.set(0.05,0.05,0.05);
-
+      console.log(new THREE.Box3.setObject(obj1).getsize());
       //Obstacles is a 3d Object so we add these 3 sub-objects as its children and then add this whole Obstacles object to the scene
       Obstacles.add(obj1);
       loader.load('./models/level1/wheelbarrow/scene.gltf',function(gltf){
