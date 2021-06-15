@@ -98,7 +98,7 @@ class ThirdPersonCameraGame {
 
 
     //Creating a loading manager which we will use for  a loading screen while the scene loads.
-    const manager =  new THREE.LoadingManager(()=>{ 
+    this.manager =  new THREE.LoadingManager(()=>{ 
       const loadingScreen = document.getElementById( 'loading-screen' );
       loadingScreen.classList.add( 'fade-out' );
     
@@ -177,11 +177,11 @@ class ThirdPersonCameraGame {
     //Loading the barriers on the side
 
 
-    this.LoadModel(lowPoly,this.scene,x,y,z,manager);
+    this.LoadModel(lowPoly,this.scene,x,y,z,this.manager);
     this.Obstacles = [];
     this.Dimensions=[];
     //loading all our obstacles into the scene
-    this.LoadObstacles(this.scene,this.Obstacles,manager);
+    this.LoadObstacles(this.scene,this.Obstacles,this.manager);
     
     floor.scale.set(120,0,-10000);
     var d = -20000;
@@ -353,7 +353,7 @@ class ThirdPersonCameraGame {
       camera: this.camera,
       scene: this.scene,
     }
-    this.control = new BasicCharacterController(paramaters);
+    this.control = new BasicCharacterController(paramaters,this.manager);
     
     this.ThirdPersonCamera = new ThirdPersonCamera({
       camera: this.camera,

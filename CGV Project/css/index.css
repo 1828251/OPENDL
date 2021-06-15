@@ -31,7 +31,7 @@ h1{
 }
 #Middle{
     position: fixed;
-    top: 50%;
+    top: 60%;
     left: 50%;
     
     transform: translate(-50%, -50%);
@@ -69,11 +69,11 @@ button{
     margin: 5px;
     
 }
-@keyframes slideUp {
+/* @keyframes slideUp {
     0% {
       transform: translateY(300px);
     }
     100% {
       transform: translateY(0px);
     }
-  }
+  } */

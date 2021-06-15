@@ -51,14 +51,7 @@ class ThirdPersonCamera {
 class ThirdPersonCameraGame {
   constructor() {
     this.Lives = 3;
-    this.conesPos = [new THREE.Vector3(0,2,-200),new THREE.Vector3(0,2,-2100)];
-    this.spikesPos = [new THREE.Vector3(0,0,-450),new THREE.Vector3(0,0,-510),new THREE.Vector3(0,0,-570),new THREE.Vector3(0,0,-630),new THREE.Vector3(0,0,-1750),new THREE.Vector3(0,0,-1810),new THREE.Vector3(0,0,-1870),new THREE.Vector3(0,0,-1930)];
-    this.sandbagsPos = [new THREE.Vector3(0,0,-90), new THREE.Vector3(0,0,-360), new THREE.Vector3(0,0,-860), new THREE.Vector3(0,0,-1360), new THREE.Vector3(0,0,-1860), new THREE.Vector3(0,0,-2360)];
-    this.wheelbarrowsPos = [new THREE.Vector3(35,0,-50), new THREE.Vector3(35,0,-350), new THREE.Vector3(35,0,-850), new THREE.Vector3(35,0,-1350), new THREE.Vector3(35,0,-1850), new THREE.Vector3(35,0,-2350)];
-    this.barrelsPos = [new THREE.Vector3(-40,0,-30), new THREE.Vector3(-40,0,-330), new THREE.Vector3(-40,0,-830), new THREE.Vector3(-40,0,-1330), new THREE.Vector3(-40,0,-1830), new THREE.Vector3(-40,0,-2330)];
-    this.cementPos = [new THREE.Vector3(0,0,-1000)];
-    this.scaffoldingPos = [new THREE.Vector3(0,0,-1600)];
-    this.cranePos = [new THREE.Vector3(0,100,-3000)];
+    this.discoballs = [];
     this.clock = new THREE.Clock();
     this.time = 70;
     this.init();
@@ -98,7 +91,7 @@ class ThirdPersonCameraGame {
 
 
     //Creating a loading manager which we will use for  a loading screen while the scene loads.
-    const manager =  new THREE.LoadingManager(()=>{ 
+     this.manager =  new THREE.LoadingManager(()=>{ 
       const loadingScreen = document.getElementById( 'loading-screen' );
       loadingScreen.classList.add( 'fade-out' );
     
@@ -132,12 +125,12 @@ class ThirdPersonCameraGame {
     //Loading the texture for the scene background
     const loader = new THREE.CubeTextureLoader();
     const texture = loader.load([
-        './textures/level1/posx.jpg',
-        './textures/level1/negx.jpg',
-        './textures/level1/posy.jpg',
-        './textures/level1/negy.jpg',
-        './textures/level1/posz.jpg',
-        './textures/level1/negz.jpg',
+        './textures/level3/posx.png',
+        './textures/level3/negx.png',
+        './textures/level3/posy.png',
+        './textures/level3/negy.png',
+        './textures/level3/posz.png',
+        './textures/level3/negz.png',
     ]);
     texture.encoding = THREE.sRGBEncoding;
     this.scene.background = texture;
@@ -161,36 +154,44 @@ class ThirdPersonCameraGame {
 
 
     //Loading a texture to apply as the "floor"
-    const cubeTexture = new THREE.TextureLoader().load('./textures/level1/dirtroad.jpg');
-    cubeTexture.wrapS = THREE.RepeatWrapping;
-    cubeTexture.wrapT = THREE.RepeatWrapping;
-    cubeTexture.repeat.set(1,40);
-    //Platform which is a floor is represented by a cube
-    const geometry = new THREE.BoxGeometry();
-    const material = new THREE.MeshBasicMaterial({map:cubeTexture});
-    const floor = new THREE.Mesh( geometry, material );
-    this.scene.add( floor );
+    // const cubeTexture = new THREE.TextureLoader().load('./textures/level3/discofloor.jpg');
+    // const cubeTexture = new THREE.TextureLoader().load('./textures/level3/grid.jpeg');
+    // cubeTexture.wrapS = THREE.RepeatWrapping;
+    // cubeTexture.wrapT = THREE.RepeatWrapping;
+    // cubeTexture.repeat.set(10,100);
+    // //Platform which is a floor is represented by a cube
+    // var geometry = new THREE.BoxGeometry();
+    // const material = new THREE.MeshBasicMaterial({map:cubeTexture});
+    // const floor = new THREE.Mesh( geometry, material );
+    // this.scene.add( floor );
     var x = 0;
     var y = 0;
     var z = 13;
     const lowPoly = './models/level1/LowPolyBarrier/scene.gltf'
-    //Loading the barriers on the side
-    this.LoadModel(lowPoly,this.scene,x,y,z,manager);
-    this.Obstacles = [];
-    //loading all our obstacles into the scene
-    this.LoadObstacles(this.scene,this.Obstacles,manager);
+    // //Loading the barriers on the side
+    this.LoadModel(lowPoly,this.scene,x,y,z,this.manager);
+     this.Obstacles = [];
+    // //loading all our obstacles into the scene
+    this.LoadObstacles(this.scene,this.Obstacles,this.manager);
     
-    floor.scale.set(120,0,-10000);
-    var d = -20000;
-    //looping and ensuring our floor is long enough for the round.
-    for(var i =0;i<10;i++){
-        const newFloor = new THREE.Mesh( geometry, material );
-        newFloor.position.set(0,0,d);
-        d = d - 10000;
-        this.scene.add( newFloor );
-        newFloor.scale.set(120,0,-10000);
-    }
+    // floor.scale.set(120,0,-10000);
+    // var d = -20000;
+    // //looping and ensuring our floor is long enough for the round.
+    // for(var i =0;i<10;i++){
+    //     const newFloor = new THREE.Mesh( geometry, material );
+    //     newFloor.position.set(0,0,d);
+    //     d = d - 10000;
+    //     this.scene.add( newFloor );
+    //     newFloor.scale.set(120,0,-10000);
+    // }
+    var division = 2000;
+    var limit = 10000;
+    this.grid = new THREE.GridHelper(limit * 2, division, "blue", "blue");
 
+// 
+
+    this.scene.add(this.grid);
+    
 
 
     this.mixers = [];
@@ -221,155 +222,89 @@ class ThirdPersonCameraGame {
   //console.log(this.Obstacles);
   }
 
-  LoadObstacles(scene,ObstaclePositions,manager){
-    //var ObstaclePositions = [];
+  CreateDiscoBall(z,textureLoader){
+      const discogeom = new THREE.SphereGeometry(10,32,32);
+      var discotext;
+      if(z%2 == 0){
+         discotext = textureLoader.load('./textures/level3/discoball.jpg');
+      }
+      else{
+        discotext = textureLoader.load('./textures/level3/discoball.jpeg');
+      }
+      
+      discotext.wrapS=THREE.RepeatWrapping;
+      discotext.wrapT=THREE.RepeatWrapping;
+      discotext.repeat.set(2,2);
+      const material = new THREE.MeshBasicMaterial( {map:discotext} );
+      var discoball = new THREE.Mesh(discogeom,material)
+      discoball.position.set(Math.floor(Math.random() * 100) -50,15,-60*z-15);
+      discoball.scale.set(0.75,0.75,0.75);
+      return discoball;
+  }
 
+  CreatePyramid(z,textureLoader){
+    const geometry = new THREE.ConeGeometry( 20, 40,4 );
+    const material = new THREE.MeshStandardMaterial( {color: 0xffff00} );
+    // material.wireframe = true;
+    const pyramid = new THREE.Mesh( geometry, material );
+    pyramid.position.set(Math.floor(Math.random() * 100)+75,20,-60*z-15);
+    // pyramid.scale.set()
+    return pyramid;
+
+  }
+  CreateTree(z){
+    const mat  =  new THREE.MeshStandardMaterial({color:0x00ff00});
+    // mat.wireframe = true;
+    const group = new THREE.Group();
+    const level1 = new THREE.Mesh(
+        new THREE.ConeGeometry(1.5,2,8),
+        mat
+    )
+    level1.position.y = 4
+    group.add(level1)
+    const level2 = new THREE.Mesh(
+        new THREE.ConeGeometry(2,2,8),
+        mat
+    )
+    level2.position.y = 3
+    group.add(level2)
+    const level3 = new THREE.Mesh(
+        new THREE.ConeGeometry(3,2,8),
+        mat
+    )
+    level3.position.y = 2
+    group.add(level3)
+    const trunk = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.5,0.5,2),
+        new THREE.MeshLambertMaterial({color:0xbb6600})
+    )
+    trunk.position.y = 0
+    group.add(trunk)
+    group.scale.set(4,8,4);
+    group.position.set(Math.floor(Math.random() * 100) -50,5,-60*z-15);
+    
+    return group
+  }
+
+  LoadObstacles(scene,ObstaclePositions,manager){
     // Using the loading manager to return the ObstaclePositions once they are all loaded 
     //the onload function will executed once all the models are loaded.
     //Defining a gltf loader
-    const loader = new GLTFLoader(manager);
-    var Obstacles = new THREE.Object3D();
+    const textureLoader  = new THREE.TextureLoader(manager);
+    for(var i =0; i<100;i++){
+      var discoball = this.CreateDiscoBall(i,textureLoader);
+      this.discoballs.push(discoball);
+      this.scene.add(discoball);
+      var pyramid = this.CreatePyramid(i,textureLoader)
+      var pyramid2 = pyramid.clone();
+      pyramid2.position.x = -1*pyramid.position.x;
+      this.scene.add(pyramid);
+      this.scene.add(pyramid2);
+      var tree = this.CreateTree(i);
+      this.scene.add(tree);
+    }
     
-
-    var obj1;
-    var obj2;
-    var obj3;
-
-    //All gltf model loading will follow this format 
-    loader.load('./models/level1/barrels/scene.gltf',function(gltf){
-      obj1 = gltf.scene;
-      obj1.position.set(-40,0,-30);
-      //Adding the position of the model to ObstaclePositions
-      ObstaclePositions.push(new THREE.Vector3(-40,0,-30));
-      obj1.scale.set(0.05,0.05,0.05);
-
-      //Obstacles is a 3d Object so we add these 3 sub-objects as its children and then add this whole Obstacles object to the scene
-      Obstacles.add(obj1);
-      loader.load('./models/level1/wheelbarrow/scene.gltf',function(gltf){
-            obj2 = gltf.scene;
-            obj2.position.set(35,0,-50);
-              //Adding the position of the model to ObstaclePositions
-            ObstaclePositions.push(new THREE.Vector3(35,0,-50));
-         
-            obj2.rotation.y = -Math.PI/2;
-            obj2.scale.set(4,4,4);
-            Obstacles.add(obj2);
-            loader.load('./models/level1/sandbags/scene.gltf',function(gltf){
-                    obj3 = gltf.scene;
-                    obj3.position.set(0,0,-90);
-                      //Adding the position of the model to ObstaclePositions
-                    ObstaclePositions.push(new THREE.Vector3(0,0,-90));
-                    obj3.rotation.y = Math.PI/2;
-                    obj3.scale.set(0.1,0.1,0.1);
-                    Obstacles.add(obj3);
-                    scene.add(Obstacles);
-
-                  var d = -300;
-                  //Looping and adding the obstacles along the z axis so it occurs multiple times
-                  for(var i=0;i<5;i++){
-                    scene.add(Obstacles.clone().translateZ(d));
-                    //Adding the position of the model to ObstaclePositions
-                    // d is just use to translate the object along the  z axis
-                    ObstaclePositions.push(new THREE.Vector3(-40,0,-30+d));
-                    ObstaclePositions.push(new THREE.Vector3(35,0,-50+d));
-                    ObstaclePositions.push(new THREE.Vector3(0,0,-60+d));
-                    d = d - 500;
-                  }
-                 
-                  
-                  });
-      });
-     
-    });
-  
    
-    loader.load('./models/level1/spikes/scene.gltf',function(gltf){
-
-        var spikes = new THREE.Object3D();
-
-        var sp = gltf.scene;
-        var d = 0
-        for( var i=0;i<4;i++){
-          var spike = sp.clone();
-          spike.position.set(0,0,d);
-          spike.scale.set(125,125,125);
-          spikes.add(spike);
-          d = d - 60;
-
-        }
-        //Adding the position of the model to ObstaclePositions
-        // I add twice since the objects are translated along the z axis as well and are duplicated 
-        //The z value is just the value of d + the translation applied. 
-        // d takes on the values {0,-60,-120,-180}
-
-        ObstaclePositions.push(new THREE.Vector3(0,0,-450));
-        ObstaclePositions.push(new THREE.Vector3(0,0,-510));
-        ObstaclePositions.push(new THREE.Vector3(0,0,-570));
-        ObstaclePositions.push(new THREE.Vector3(0,0,-630));
-        
-        
-        ObstaclePositions.push(new THREE.Vector3(0,0,-1750));
-        ObstaclePositions.push(new THREE.Vector3(0,0,-1810));
-        ObstaclePositions.push(new THREE.Vector3(0,0,-1870));
-        ObstaclePositions.push(new THREE.Vector3(0,0,-1930));
-
-        //Cloning the spikes object twice and applying two different Z translations
-        scene.add(spikes.clone().translateZ(-450));
-        scene.add(spikes.clone().translateZ(-1750));
-       
-
-    });
-  
-  
-    loader.load('./models/level1/Cones/scene.gltf',function(gltf){
-
-      var Cones = new THREE.Object3D();
-
-      var cone = gltf.scene;
-      cone.position.set(0,2,-200);
-      cone.scale.set(0.1,0.1,0.1);
-      Cones.add(cone);
-      var cone2 = cone.clone();
-      cone2.position.set(0,2,-2100);
-      Cones.add(cone2);
-      scene.add(Cones);
-      //Adding the position of the model to ObstaclePositions
-      // We have two duplicates of this obstacle so it is added twice to ObstaclePositions
-      ObstaclePositions.push(new THREE.Vector3(0,2,-200));
-      ObstaclePositions.push(new THREE.Vector3(0,2,-2100));
-    });
-    loader.load('./models/level1/hori/scene.gltf',function(gltf){
-      //this is the cement mixer obstacle
-      var cement = gltf.scene;
-
-      cement.position.set(0,15,-1000);
-      cement.scale.set(0.1,0.1,0.1);
-      scene.add(cement);
-     //Adding the position of the model to ObstaclePositions
-      ObstaclePositions.push(new THREE.Vector3(0,0,-1000));
-
-    });
-    loader.load('./models/level1/scaffolding/scene.gltf',function(gltf){
-
-      var scaffolding = gltf.scene;
-
-      scaffolding.position.set(0,0,-1600);
-      scene.add(scaffolding);
-        //Adding the position of the model to ObstaclePositions
-      ObstaclePositions.push(new THREE.Vector3(0,0,-1600));
-    });
-    loader.load('./models/level1/crane/scene.gltf',function(gltf){
-      
-      var crane = gltf.scene;
-      crane.position.set(0,100,-3000);
-      crane.scale.set(0.2,0.2,0.2);
-      scene.add(crane);
-      //Adding the position of the model to ObstaclePositions
-      ObstaclePositions.push(new THREE.Vector3(0,100,-3000));
-
-    });
-
-    return ObstaclePositions;
     
   }
   LoadModel(path,scene,x,y,z,manager){
@@ -408,7 +343,7 @@ class ThirdPersonCameraGame {
         d = d -85;
       }
       // Now it's as simple as adding obj to the scene and all it's children will be placed as well.
-      scene.add(obj);
+      // scene.add(obj);
     });
 
   }
@@ -420,7 +355,7 @@ class ThirdPersonCameraGame {
       camera: this.camera,
       scene: this.scene,
     }
-    this.control = new BasicCharacterController(paramaters);
+    this.control = new BasicCharacterController(paramaters,this.manager);
     
     this.ThirdPersonCamera = new ThirdPersonCamera({
       camera: this.camera,
@@ -451,6 +386,13 @@ class ThirdPersonCameraGame {
         }
       }
 
+      this.discoballs.forEach(rotateDiscoBall);
+
+      function rotateDiscoBall(obj){
+        // obj.rotateOnAxis(new THREE.Vector3(0,1,0),Math.PI);
+        obj.rotation.y += 0.02;
+      }
+
      
       //coin jumping
       this.x+=0.2;
@@ -478,6 +420,7 @@ class ThirdPersonCameraGame {
       }
       //console.log(ObstaclePositions);
       this.ObstacleCollision(this.control.myPosition);
+
       //this.scorekeeper.innerHTML += "Lives: "+this.Lives+"\n";
       this.liveskeeper.innerHTML="Lives Left: "+this.Lives;
       this.renderer.render(this.scene, this.camera);

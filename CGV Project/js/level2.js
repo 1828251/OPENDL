@@ -98,7 +98,7 @@ class ThirdPersonCameraGame {
 
 
     //Creating a loading manager which we will use for  a loading screen while the scene loads.
-    const manager =  new THREE.LoadingManager(()=>{ 
+    this.manager =  new THREE.LoadingManager(()=>{ 
       const loadingScreen = document.getElementById( 'loading-screen' );
       loadingScreen.classList.add( 'fade-out' );
     
@@ -175,7 +175,7 @@ class ThirdPersonCameraGame {
     var z = 13;
     const lowPoly = './models/level1/LowPolyBarrier/scene.gltf'
     //Loading the barriers on the side
-    this.LoadModel(lowPoly,this.scene,x,y,z,manager);
+    this.LoadModel(lowPoly,this.scene,x,y,z,this.manager);
 
     this.clearPosition=[];
     this.movement=0;
@@ -183,7 +183,7 @@ class ThirdPersonCameraGame {
     this.Obstacles = [];
     this.Dimensions=[];
     //loading all our obstacles into the scene
-    this.LoadObstacles(this.scene,this.Obstacles,manager);
+    this.LoadObstacles(this.scene,this.Obstacles,this.manager);
     
     console.log(this.Obstacles);
     console.log(this.Dimensions);
@@ -215,7 +215,7 @@ class ThirdPersonCameraGame {
 
     event.target.remove();
     
-  }
+  }st
 
 
   ObstacleCollision(currPosition){
@@ -366,7 +366,7 @@ class ThirdPersonCameraGame {
       camera: this.camera,
       scene: this.scene,
     }
-    this.control = new BasicCharacterController(paramaters);
+    this.control = new BasicCharacterController(paramaters,this.manager);
     
     this.ThirdPersonCamera = new ThirdPersonCamera({
       camera: this.camera,
