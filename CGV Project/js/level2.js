@@ -132,12 +132,12 @@ class ThirdPersonCameraGame {
     //Loading the texture for the scene background
     const loader = new THREE.CubeTextureLoader();
     const texture = loader.load([
-        './textures/level1/posx.jpg',
-        './textures/level1/negx.jpg',
-        './textures/level1/posy.jpg',
-        './textures/level1/negy.jpg',
-        './textures/level1/posz.jpg',
-        './textures/level1/negz.jpg',
+        './textures/level2/posx.jpg',
+        './textures/level2/negx.jpg',
+        './textures/level2/posy.jpg',
+        './textures/level2/negy.jpg',
+        './textures/level2/posz.jpg',
+        './textures/level2/negz.jpg',
     ]);
     texture.encoding = THREE.sRGBEncoding;
     this.scene.background = texture;
@@ -161,10 +161,10 @@ class ThirdPersonCameraGame {
 
 
     //Loading a texture to apply as the "floor"
-    const cubeTexture = new THREE.TextureLoader().load('./textures/level1/road.jpg');
+    const cubeTexture = new THREE.TextureLoader().load('./textures/level2/lavafloor.jpg');
     cubeTexture.wrapS = THREE.RepeatWrapping;
     cubeTexture.wrapT = THREE.RepeatWrapping;
-    cubeTexture.repeat.set(1,40);
+    cubeTexture.repeat.set(2,200);
     //Platform which is a floor is represented by a cube
     const geometry = new THREE.BoxGeometry();
     const material = new THREE.MeshBasicMaterial({map:cubeTexture});
@@ -175,14 +175,19 @@ class ThirdPersonCameraGame {
     var z = 13;
     const lowPoly = './models/level1/LowPolyBarrier/scene.gltf'
     //Loading the barriers on the side
-
-
     this.LoadModel(lowPoly,this.scene,x,y,z,manager);
+
+    this.clearPosition=[];
+    this.movement=0;
+    this.hit=false;
     this.Obstacles = [];
     this.Dimensions=[];
     //loading all our obstacles into the scene
     this.LoadObstacles(this.scene,this.Obstacles,manager);
     
+    console.log(this.Obstacles);
+    console.log(this.Dimensions);
+
     floor.scale.set(120,0,-10000);
     var d = -20000;
     //looping and ensuring our floor is long enough for the round.
@@ -207,55 +212,63 @@ class ThirdPersonCameraGame {
   }
   //Event listener which will remove the dom element once everything is loaded.
   onTransitionEnd( event ) {
+
     event.target.remove();
+    
   }
+
 
   ObstacleCollision(currPosition){
   //detects if characters comes into contact with an obstacle
     
-  var forward=this.control.UserInput.keys.forward;
-  var backward=this.control.UserInput.keys.backward;
-  var detected=false;
-  for (var k=0;k<this.Obstacles.length;++k){
-    if (Math.abs(currPosition.z-this.Obstacles[k].position.z)<(this.Dimensions[k][1]/2)+2 && Math.abs(currPosition.x-this.Obstacles[k].position.x)<(this.Dimensions[k][0]/2)+2 && currPosition.y < 10){
-      console.log("hit");  
-      detected=true;
+    var forward=this.control.UserInput.keys.forward;
+    var backward=this.control.UserInput.keys.backward;
+    var detected=false;
+    for (var k=0;k<this.Obstacles.length;++k){
+      if (Math.abs(currPosition.z-this.Obstacles[k].position.z)<(this.Dimensions[k][1]/2)+2 && Math.abs(currPosition.x-this.Obstacles[k].position.x)<(this.Dimensions[k][0]/2)+2 && currPosition.y < 10){
+        console.log("hit");  
+        detected=true;
+      }
     }
-  }
-  return detected;
+    return detected;
   }
 
+
+  //Loading,creating and placing obstacles
   LoadObstacles(scene,ObstaclePositions,manager){
-    //Create traffic obstacles function
-    function Cones(z){
-      var conegeo = new THREE.ConeGeometry( 5, 20, 32 );
-      const conetexture = new THREE.TextureLoader().load("./textures/level1/trafficcone.jpg");
-            conetexture.wrapS=THREE.RepeatWrapping;
-            conetexture.wrapT=THREE.RepeatWrapping;
-            conetexture.repeat.set(1,1);
-      const conemat = new THREE.MeshBasicMaterial( {map: conetexture} );
-      var cone = new THREE.Mesh( conegeo, conemat);
-      cone.position.y=10;
-      cone.position.z=-60*z-15;
-      cone.position.x=Math.floor(Math.random() * 100) -50;
-      return cone;
+
+
+    //Create spike obstacles function
+    function Spikes(z){
+      var spikegeo = new THREE.ConeGeometry( 5, 20, 32 );
+      const spiketexture = new THREE.TextureLoader().load("./textures/level2/lavaspike.jpg");
+            spiketexture.wrapS=THREE.RepeatWrapping;
+            spiketexture.wrapT=THREE.RepeatWrapping;
+            spiketexture.repeat.set(1,1);
+      const spikemat = new THREE.MeshBasicMaterial( {map: spiketexture} );
+      var spike = new THREE.Mesh( spikegeo, spikemat);
+      spike.position.y=10;
+      spike.position.z=-60*z-15;
+      spike.position.x=Math.floor(Math.random() * 100) -50;
+      //scene.add( cone );
+      return spike;
     }
 
-    //Creating cones and adding to the scene
-    var cone;
+    //Creating spikes and adding to the scene
+    var spike;
     for (var i=0;i<10;++i){
-      cone=Cones(i);
+      spike=Spikes(i);
       //console.log(spike.max.z);
       //console.log(new THREE.Box3().setFromObject(spike).max.z-new THREE.Box3().setFromObject(spike).min.z);
-      this.Dimensions[i]=[new THREE.Box3().setFromObject(cone).max.x-new THREE.Box3().setFromObject(cone).min.x,new THREE.Box3().setFromObject(cone).max.z-new THREE.Box3().setFromObject(cone).min.z];
-      ObstaclePositions.push(cone);
-      scene.add(cone);
+      this.Dimensions[i]=[new THREE.Box3().setFromObject(spike).max.x-new THREE.Box3().setFromObject(spike).min.x,new THREE.Box3().setFromObject(spike).max.z-new THREE.Box3().setFromObject(spike).min.z];
+      ObstaclePositions.push(spike);
+      scene.add(spike);
     }
    
     //Creating Blitz obstacles function 
     function Blitz(z){
-      var blitzgeo = new THREE.BoxGeometry( 20, 20, 20 );
-      const blitztexture = new THREE.TextureLoader().load("./textures/level1/brick.jpg");
+      var blitzgeo = new THREE.BoxGeometry( 20, 15, 2 );
+      const blitztexture = new THREE.TextureLoader().load("./textures/level2/blitz.jpeg");
             blitztexture.wrapS=THREE.RepeatWrapping;
             blitztexture.wrapT=THREE.RepeatWrapping;
             blitztexture.repeat.set(1,1);
@@ -279,15 +292,15 @@ class ThirdPersonCameraGame {
 
     //Creating cylinder obstacles function 
     function Cylinder(z){
-      var cylindergeo = new THREE.TorusGeometry( 7, 3, 16, 100 );
-      const cylindertexture = new THREE.TextureLoader().load("./textures/level1/tyre.png");
+      var cylindergeo = new THREE.CylinderGeometry( 5,5,20,32 );
+      const cylindertexture = new THREE.TextureLoader().load("./textures/level2/lavaspike.jpeg");
             cylindertexture.wrapS=THREE.RepeatWrapping;
             cylindertexture.wrapT=THREE.RepeatWrapping;
-            cylindertexture.repeat.set(2,2);
+            cylindertexture.repeat.set(1,1);
       const cylindermat = new THREE.MeshBasicMaterial( {map: cylindertexture} );
       var cylinder = new THREE.Mesh( cylindergeo, cylindermat);
       cylinder.position.z=-60*z-15;
-      cylinder.position.y=10;
+      cylinder.position.y=5;
       cylinder.position.x=Math.floor(Math.random() * 100) -50;
       return cylinder;
     }
@@ -302,8 +315,8 @@ class ThirdPersonCameraGame {
     }
 
     return ObstaclePositions;
+    
   }
-
 
   LoadModel(path,scene,x,y,z,manager){
 
@@ -367,6 +380,7 @@ class ThirdPersonCameraGame {
     this.renderer.setSize(window.innerWidth, window.innerHeight);
   }
 
+  
   request_animation_frame() {
     requestAnimationFrame((t) => {
       if (this.old_animation_frames === null) {
@@ -384,6 +398,11 @@ class ThirdPersonCameraGame {
         }
       }
 
+      //Rotates Cone objects
+      this.movement+=0.2;
+      for (var i=0; i<10;++i){
+        this.Obstacles[i].rotation.y=this.movement/8;
+      }
      
       //coin jumping
       this.x+=0.2;
@@ -410,7 +429,6 @@ class ThirdPersonCameraGame {
          this.EndGame();
       }
 
-
       //Detecting collision and reacting
       this.forward=this.control.UserInput.keys.forward;
       this.backward=this.control.UserInput.keys.backward;
@@ -427,9 +445,9 @@ class ThirdPersonCameraGame {
             this.hit=true;
       }
 
+      
+      
 
-      //console.log(ObstaclePositions);
-      this.ObstacleCollision(this.control.myPosition);
       //this.scorekeeper.innerHTML += "Lives: "+this.Lives+"\n";
       this.liveskeeper.innerHTML="Lives Left: "+this.Lives;
       this.renderer.render(this.scene, this.camera);
