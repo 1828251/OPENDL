@@ -173,16 +173,22 @@ class ThirdPersonCameraGame {
     var x = 0;
     var y = 0;
     var z = 13;
-    const lowPoly = './models/level1/LowPolyBarrier/scene.gltf'
-    //Loading the barriers on the side
-
-
-    this.LoadModel(lowPoly,this.scene,x,y,z,this.manager);
+    
+    this.hit=false;
     this.Obstacles = [];
     this.Dimensions=[];
     //loading all our obstacles into the scene
     this.LoadObstacles(this.scene,this.Obstacles,this.manager);
-    
+        
+    const barriertext= './textures/level1/barrier.jpg'
+    //Loading the barriers on the side
+
+
+    this.LoadModel(barriertext,this.scene,x,y,z,this.manager,this.Obstacles,this.Dimensions);
+
+    console.log(this.Obstacles);
+    console.log(this.Dimensions);
+
     floor.scale.set(120,0,-10000);
     var d = -20000;
     //looping and ensuring our floor is long enough for the round.
@@ -296,7 +302,7 @@ class ThirdPersonCameraGame {
     var cylinder;
     for (var i=20;i<30;++i){
       cylinder=Cylinder(i);
-      this.Dimensions[i]=[new THREE.Box3().setFromObject(blitz).max.x-new THREE.Box3().setFromObject(blitz).min.x,new THREE.Box3().setFromObject(blitz).max.z-new THREE.Box3().setFromObject(blitz).min.z];
+      this.Dimensions[i]=[new THREE.Box3().setFromObject(cylinder).max.x-new THREE.Box3().setFromObject(cylinder).min.x,new THREE.Box3().setFromObject(cylinder).max.z-new THREE.Box3().setFromObject(cylinder).min.z];
       ObstaclePositions.push(cylinder);
       scene.add(cylinder);
     }
@@ -305,43 +311,51 @@ class ThirdPersonCameraGame {
   }
 
 
-  LoadModel(path,scene,x,y,z,manager){
+  LoadModel(path,scene,x,y,z,manager,Obstacles,Dimensions){
 
     // this obj will act as the parent for the barriers on the side to prevent user from falling off
     var obj =  new THREE.Object3D();
-    const loader = new GLTFLoader(manager);
+    const loader = new THREE.TextureLoader(manager);
   
-    loader.load(path, function(gltf){
+    loader.load(path, function(Texture){
       //Load the model 
-      var obj1 = gltf.scene;
 
-      //placing the model into the scene 
-      obj1.position.set(x,y,z);
-      obj1.rotation.y = Math.PI/2;
-      obj1.scale.set(0.05,0.05,0.05);
-      obj.add(obj1);
-
-      var d = -50;
-
-      //we loop since we need the barries throughout the scene
-      for(var i=0;i<60;i++){
-        // we clone objects and then adjust their scale and position and place them into the scene 
-        var obj2 = obj1.clone();
-        var obj3 = obj1.clone();
-        obj2.rotation.y += Math.PI/2;
-        obj2.position.set(55,0,d);
-        obj2.scale.set(0.05,0.05,0.05);
-        // we always add the object as a child of the parent object obj
-        obj.add(obj2);
-        obj3.rotation.y += Math.PI/2;
-        obj3.position.set(-55,0,d);
-        obj3.scale.set(0.05,0.05,0.05);
-         // we always add the object as a child of the parent object obj
-        obj.add(obj3);
-        d = d -85;
+      var barriergeo=new THREE.BoxGeometry( 20, 15, 20 );
+      Texture.wrapS=THREE.RepeatWrapping;
+      Texture.wrapT=THREE.RepeatWrapping;
+      Texture.repeat.set(2,2);
+      const barrierMat= new THREE.MeshBasicMaterial( {map: Texture} );
+      
+      //scene.add(barrier)
+      var barrierleft;
+      var barrierright;
+      for (var i=30;i<1000;i+=2){
+        barrierleft= new THREE.Mesh( barriergeo,barrierMat);
+        barrierright= new THREE.Mesh( barriergeo,barrierMat);
+        barrierleft.position.x=-65;
+        barrierleft.position.y=5;
+        barrierleft.position.z=-(i-30)*10;
+        barrierright.position.x=65;
+        barrierright.position.y=5;
+        barrierright.position.z=-(i-30)*10;
+        Dimensions[i]=[new THREE.Box3().setFromObject(barrierleft).max.x-new THREE.Box3().setFromObject(barrierleft).min.x,new THREE.Box3().setFromObject(barrierleft).max.z-new THREE.Box3().setFromObject(barrierleft).min.z];
+        Dimensions[i+1]=[new THREE.Box3().setFromObject(barrierright).max.x-new THREE.Box3().setFromObject(barrierright).min.x,new THREE.Box3().setFromObject(barrierright).max.z-new THREE.Box3().setFromObject(barrierright).min.z];
+        Obstacles.push(barrierleft);
+        Obstacles.push(barrierright);
+        scene.add(barrierleft);
+        scene.add(barrierright);
       }
-      // Now it's as simple as adding obj to the scene and all it's children will be placed as well.
-      scene.add(obj);
+
+      var barrier;
+      for (var i=1000;i<1007;++i){
+        barrier=new THREE.Mesh(barriergeo,barrierMat);
+        barrier.position.x=-(i-1000)*20+65;
+        barrier.position.y=5;
+        barrier.position.z=20;
+        Dimensions[i]=[new THREE.Box3().setFromObject(barrier).max.x-new THREE.Box3().setFromObject(barrier).min.x,new THREE.Box3().setFromObject(barrier).max.z-new THREE.Box3().setFromObject(barrier).min.z];
+        Obstacles.push(barrier);
+        scene.add(barrier);
+      }
     });
 
   }
@@ -418,12 +432,23 @@ class ThirdPersonCameraGame {
       if (this.hit==true && detected==false){
         // this.control.UserInput.keys.forward=true;
         this.control.UserInput.keys.backward=false;
+        this.control.UserInput.keys.forward=false;
         this.hit=false;
         
       }
       if (detected==true){
-            this.control.UserInput.keys.forward=false;
-            this.control.UserInput.keys.backward=true;
+            if(this.forward==true && this.hit==false){
+              this.control.UserInput.keys.forward=false;
+              this.control.UserInput.keys.backward=true;  
+              this.hit=true;
+              console.log("forward hit")
+            }
+            if(this.backward==true && this.hit ==false){
+              this.control.UserInput.keys.forward=true;
+              this.control.UserInput.keys.backward=false;   
+              this.hit=true; 
+              console.log("backward hit")
+            }
             this.hit=true;
       }
 

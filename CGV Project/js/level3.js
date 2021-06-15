@@ -102,7 +102,8 @@ class ThirdPersonCameraGame {
     
 
     // we add DirectionalLight to the scene
-    let light = new THREE.DirectionalLight(0xFFFFFF, 1.0);
+    // let light = new THREE.DirectionalLight(0xFFFFFF, 1.0);
+    let light = new THREE.DirectionalLight('#800080', 1.0);
     light.position.set(-100, 100, 100);
     light.target.position.set(0, 0, 0);
     light.castShadow = true;
@@ -149,6 +150,7 @@ class ThirdPersonCameraGame {
     for (var i=0;i<100;++i){
       coin=Coins(i);
       this.coinPositions.push(coin);
+      
       this.scene.add(coin);
     }
 
@@ -237,22 +239,13 @@ class ThirdPersonCameraGame {
       discotext.repeat.set(2,2);
       const material = new THREE.MeshBasicMaterial( {map:discotext} );
       var discoball = new THREE.Mesh(discogeom,material)
-      discoball.position.set(Math.floor(Math.random() * 100) -50,15,-60*z-15);
+      discoball.position.set(Math.floor(Math.random() * 100)-50,15,-60*z-15);
       discoball.scale.set(0.75,0.75,0.75);
       return discoball;
   }
 
-  CreatePyramid(z,textureLoader){
-    const geometry = new THREE.ConeGeometry( 20, 40,4 );
-    const material = new THREE.MeshStandardMaterial( {color: 0xffff00} );
-    // material.wireframe = true;
-    const pyramid = new THREE.Mesh( geometry, material );
-    pyramid.position.set(Math.floor(Math.random() * 100)+75,20,-60*z-15);
-    // pyramid.scale.set()
-    return pyramid;
-
-  }
-  CreateTree(z){
+  
+  CreateTree(){
     const mat  =  new THREE.MeshStandardMaterial({color:0x00ff00});
     // mat.wireframe = true;
     const group = new THREE.Group();
@@ -281,27 +274,34 @@ class ThirdPersonCameraGame {
     trunk.position.y = 0
     group.add(trunk)
     group.scale.set(4,8,4);
-    group.position.set(Math.floor(Math.random() * 100) -50,5,-60*z-15);
+    // group.position.set(Math.random() * 1000,5,-60*z-15);
     
     return group
   }
+
+  CreateCassettes(z,textureLoader){
+    const geom = new THREE.BoxGeometry(10,10,2);
+    const mat = textureLoader.load('./textures/level3/casette.jpeg');
+    const material = new THREE.MeshBasicMaterial( {map:mat});
+    var casette = new THREE.Mesh(geom,material);
+    casette.position.set(Math.floor(Math.random() * 100)-50,5,-60*z-15);
+
+    return casette;
+
+  }
+  
 
   LoadObstacles(scene,ObstaclePositions,manager){
     // Using the loading manager to return the ObstaclePositions once they are all loaded 
     //the onload function will executed once all the models are loaded.
     //Defining a gltf loader
     const textureLoader  = new THREE.TextureLoader(manager);
-    for(var i =0; i<100;i++){
+    for(var i =0; i<500;i++){
       var discoball = this.CreateDiscoBall(i,textureLoader);
       this.discoballs.push(discoball);
       this.scene.add(discoball);
-      var pyramid = this.CreatePyramid(i,textureLoader)
-      var pyramid2 = pyramid.clone();
-      pyramid2.position.x = -1*pyramid.position.x;
-      this.scene.add(pyramid);
-      this.scene.add(pyramid2);
-      var tree = this.CreateTree(i);
-      this.scene.add(tree);
+      var casette = this.CreateCassettes(i,textureLoader);
+      this.scene.add(casette);
     }
     
    
@@ -310,42 +310,52 @@ class ThirdPersonCameraGame {
   LoadModel(path,scene,x,y,z,manager){
 
     // this obj will act as the parent for the barriers on the side to prevent user from falling off
-    var obj =  new THREE.Object3D();
-    const loader = new GLTFLoader(manager);
+    var obj = new THREE.Object3D();
+    const loader = new THREE.FontLoader(manager);
+
+    loader.load( './js/fonts.json', function ( font ) {
+
+	  const geometry = new THREE.TextGeometry( 'Turn Around !', {
+		  font: font,
+		  size: 10,
+		  height: 5,
+		  curveSegments: 12,
+		  bevelEnabled: true,
+		  bevelThickness: 1,
+		  bevelSize: 0.5,
+		  bevelOffset: 0,
+		  bevelSegments: 3
+	    } );
+      var textMaterial = new THREE.MeshPhongMaterial( { color: '#bc12fe' } );
+
+      var mesh = new THREE.Mesh( geometry, textMaterial );
+      mesh.position.set( 40, 10, 30 );
+      mesh.rotation.y+=Math.PI;
   
-    loader.load(path, function(gltf){
-      //Load the model 
-      var obj1 = gltf.scene;
+      scene.add( mesh );
+    } );
+   
+    var Tree1 = this.CreateTree();
+    Tree1.position.set(x,y+8,10);
+    // this.scene.add(obj);
+    var d = 30;
 
-      //placing the model into the scene 
-      obj1.position.set(x,y,z);
-      obj1.rotation.y = Math.PI/2;
-      obj1.scale.set(0.05,0.05,0.05);
-      obj.add(obj1);
-
-      var d = -50;
-
-      //we loop since we need the barries throughout the scene
-      for(var i=0;i<60;i++){
-        // we clone objects and then adjust their scale and position and place them into the scene 
-        var obj2 = obj1.clone();
-        var obj3 = obj1.clone();
-        obj2.rotation.y += Math.PI/2;
-        obj2.position.set(55,0,d);
-        obj2.scale.set(0.05,0.05,0.05);
-        // we always add the object as a child of the parent object obj
-        obj.add(obj2);
-        obj3.rotation.y += Math.PI/2;
-        obj3.position.set(-55,0,d);
-        obj3.scale.set(0.05,0.05,0.05);
-         // we always add the object as a child of the parent object obj
-        obj.add(obj3);
-        d = d -85;
-      }
-      // Now it's as simple as adding obj to the scene and all it's children will be placed as well.
-      // scene.add(obj);
-    });
-
+    //we loop since we need the barries throughout the scene
+    for(var i=0;i<200;i++){
+      // we clone objects and then adjust their scale and position and place them into the scene 
+      var obj2 = Tree1.clone();
+      var obj3 = Tree1.clone();
+      obj2.position.set(60,8,d);
+      
+      // we always add the object as a child of the parent object obj
+      obj.add(obj2);
+      obj3.position.set(-60,8,d);
+      // we always add the object as a child of the parent object obj
+      obj.add(obj3);
+      d = d -22;
+    }
+    this.scene.add(obj);
+  
   }
 
   LoadAnimatedModel() {
