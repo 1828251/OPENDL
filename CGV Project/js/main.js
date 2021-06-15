@@ -174,7 +174,7 @@ class ThirdPersonCameraGame {
     var y = 0;
     var z = 13;
     
-    
+    this.hit=false;
     this.Obstacles = [];
     this.Dimensions=[];
     //loading all our obstacles into the scene
@@ -356,36 +356,6 @@ class ThirdPersonCameraGame {
         Obstacles.push(barrier);
         scene.add(barrier);
       }
-
-      // var obj1 = texture.scene;
-
-      // //placing the model into the scene 
-      // obj1.position.set(x,y,z);
-      // obj1.rotation.y = Math.PI/2;
-      // obj1.scale.set(0.05,0.05,0.05);
-      // obj.add(obj1);
-
-      // var d = -50;
-
-      // //we loop since we need the barries throughout the scene
-      // for(var i=0;i<60;i++){
-      //   // we clone objects and then adjust their scale and position and place them into the scene 
-      //   var obj2 = obj1.clone();
-      //   var obj3 = obj1.clone();
-      //   obj2.rotation.y += Math.PI/2;
-      //   obj2.position.set(55,0,d);
-      //   obj2.scale.set(0.05,0.05,0.05);
-      //   // we always add the object as a child of the parent object obj
-      //   obj.add(obj2);
-      //   obj3.rotation.y += Math.PI/2;
-      //   obj3.position.set(-55,0,d);
-      //   obj3.scale.set(0.05,0.05,0.05);
-      //    // we always add the object as a child of the parent object obj
-      //   obj.add(obj3);
-      //   d = d -85;
-      //}
-      // Now it's as simple as adding obj to the scene and all it's children will be placed as well.
-    // scene.add(obj);
     });
 
   }
@@ -462,12 +432,23 @@ class ThirdPersonCameraGame {
       if (this.hit==true && detected==false){
         // this.control.UserInput.keys.forward=true;
         this.control.UserInput.keys.backward=false;
+        this.control.UserInput.keys.forward=false;
         this.hit=false;
         
       }
       if (detected==true){
-            this.control.UserInput.keys.forward=false;
-            this.control.UserInput.keys.backward=true;
+            if(this.forward==true && this.hit==false){
+              this.control.UserInput.keys.forward=false;
+              this.control.UserInput.keys.backward=true;  
+              this.hit=true;
+              console.log("forward hit")
+            }
+            if(this.backward==true && this.hit ==false){
+              this.control.UserInput.keys.forward=true;
+              this.control.UserInput.keys.backward=false;   
+              this.hit=true; 
+              console.log("backward hit")
+            }
             this.hit=true;
       }
 
