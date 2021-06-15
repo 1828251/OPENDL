@@ -346,6 +346,17 @@ class ThirdPersonCameraGame {
         scene.add(barrierright);
       }
 
+      var barrier;
+      for (var i=1000;i<1007;++i){
+        barrier=new THREE.Mesh(barriergeo,barrierMat);
+        barrier.position.x=-(i-1000)*20+65;
+        barrier.position.y=5;
+        barrier.position.z=20;
+        Dimensions[i]=[new THREE.Box3().setFromObject(barrier).max.x-new THREE.Box3().setFromObject(barrier).min.x,new THREE.Box3().setFromObject(barrier).max.z-new THREE.Box3().setFromObject(barrier).min.z];
+        Obstacles.push(barrier);
+        scene.add(barrier);
+      }
+
       // var obj1 = texture.scene;
 
       // //placing the model into the scene 
