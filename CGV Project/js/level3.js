@@ -1,10 +1,9 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.118/build/three.module.js';
-import {GLTFLoader} from 'https://cdn.jsdelivr.net/npm/three@0.118.1/examples/jsm/loaders/GLTFLoader.js';
+import {OrbitControls} from 'https://threejsfundamentals.org/threejs/resources/threejs/r122/examples/jsm/controls/OrbitControls.js';
 import {BasicCharacterController} from './Controls.js';
 import {Coins} from './Coins.js'
 
-var isPlay = true;
-var oldFrame = -5;
+
 class ThirdPersonCamera {
   constructor(paramaters) {
     this.params = paramaters;
@@ -30,6 +29,7 @@ class ThirdPersonCamera {
       idealOffset = new THREE.Vector3(0, 15, 10);
     }
     // const idealOffset = new THREE.Vector3(0, 15, 10);
+    // const idealOffset = new THREE.Vector3(-15, 20, -30);
     idealOffset.applyQuaternion(this.params.target.Rotation);
     idealOffset.add(this.params.target.Position);
     return idealOffset;
@@ -63,14 +63,7 @@ class ThirdPersonCamera {
 class ThirdPersonCameraGame {
   constructor() {
     this.Lives = 3;
-    this.conesPos = [new THREE.Vector3(0,2,-200),new THREE.Vector3(0,2,-2100)];
-    this.spikesPos = [new THREE.Vector3(0,0,-450),new THREE.Vector3(0,0,-510),new THREE.Vector3(0,0,-570),new THREE.Vector3(0,0,-630),new THREE.Vector3(0,0,-1750),new THREE.Vector3(0,0,-1810),new THREE.Vector3(0,0,-1870),new THREE.Vector3(0,0,-1930)];
-    this.sandbagsPos = [new THREE.Vector3(0,0,-90), new THREE.Vector3(0,0,-360), new THREE.Vector3(0,0,-860), new THREE.Vector3(0,0,-1360), new THREE.Vector3(0,0,-1860), new THREE.Vector3(0,0,-2360)];
-    this.wheelbarrowsPos = [new THREE.Vector3(35,0,-50), new THREE.Vector3(35,0,-350), new THREE.Vector3(35,0,-850), new THREE.Vector3(35,0,-1350), new THREE.Vector3(35,0,-1850), new THREE.Vector3(35,0,-2350)];
-    this.barrelsPos = [new THREE.Vector3(-40,0,-30), new THREE.Vector3(-40,0,-330), new THREE.Vector3(-40,0,-830), new THREE.Vector3(-40,0,-1330), new THREE.Vector3(-40,0,-1830), new THREE.Vector3(-40,0,-2330)];
-    this.cementPos = [new THREE.Vector3(0,0,-1000)];
-    this.scaffoldingPos = [new THREE.Vector3(0,0,-1600)];
-    this.cranePos = [new THREE.Vector3(0,100,-3000)];
+    this.discoballs = [];
     this.clock = new THREE.Clock();
     this.time = 70;
     this.init();
@@ -110,7 +103,7 @@ class ThirdPersonCameraGame {
 
 
     //Creating a loading manager which we will use for  a loading screen while the scene loads.
-    this.manager =  new THREE.LoadingManager(()=>{ 
+     this.manager =  new THREE.LoadingManager(()=>{ 
       const loadingScreen = document.getElementById( 'loading-screen' );
       loadingScreen.classList.add( 'fade-out' );
     
@@ -121,16 +114,18 @@ class ThirdPersonCameraGame {
     
 
     // we add DirectionalLight to the scene
-    let light = new THREE.DirectionalLight(0xFFFFFF, 1.0);
+    // let light = new THREE.DirectionalLight(0xFFFFFF, 1.0);
+    let light = new THREE.DirectionalLight('#800080', 1.0);
     light.position.set(-100, 100, 100);
     light.target.position.set(0, 0, 0);
     light.castShadow = true;
     light.shadow.bias = -0.001;
-    light.shadow.mapSize.width = 512;
-    light.shadow.mapSize.height = 512;
-    light.shadow.camera.near = 0.5;
+    light.shadow.mapSize.width = 4096;
+    light.shadow.mapSize.height = 4096;
+    light.shadow.camera.near = 0.1;
     light.shadow.camera.far = 500.0;
     light.shadow.camera.near = 0.5;
+    light.shadow.camera.far = 500.0;
     light.shadow.camera.left = 50;
     light.shadow.camera.right = -50;
     light.shadow.camera.top = 50;
@@ -141,17 +136,22 @@ class ThirdPersonCameraGame {
     this.scene.add(light);
 
     //Loading the texture for the scene background
-    const loader = new THREE.CubeTextureLoader();
-    const texture = loader.load([
-        './textures/level1/posx.jpg',
-        './textures/level1/negx.jpg',
-        './textures/level1/posy.jpg',
-        './textures/level1/negy.jpg',
-        './textures/level1/posz.jpg',
-        './textures/level1/negz.jpg',
+    // const loader = new THREE.CubeTextureLoader();
+    this.texture = new THREE.CubeTextureLoader().load([
+        './textures/level3/posx.png',
+        './textures/level3/negx.png',
+        './textures/level3/posy.png',
+        './textures/level3/negy.png',
+        './textures/level3/posz.png',
+        './textures/level3/negz.png',
     ]);
-    texture.encoding = THREE.sRGBEncoding;
-    this.scene.background = texture;
+    this.texture.format = THREE.RGBFormat;
+    this.texture.encoding = THREE.sRGBEncoding;
+    this.scene.background = this.texture;
+
+    // this.pmrem = new THREE.PMREMGenerator(this.renderer);
+    // // this.pmrem.fromCubemap(texture);
+    // this.pmrem.fromScene(this.scene);
     
 
     //Creating all coins
@@ -161,97 +161,47 @@ class ThirdPersonCameraGame {
     this.scorekeeper=document.getElementById("Score");
     this.liveskeeper = document.getElementById("Lives");
     this.timekeeper = document.getElementById("time");
-    var pauseBtn = document.getElementById('pause');
-    pauseBtn.onclick = () => {
-     // && (this.control.myPosition.y < 0.3 &&  (this.control.speed.y > -1)) && (this.control.speed.z < 0.1 && this.control.speed.z > -0.1)w
-      if (isPlay === true) {
-        isPlay = false;
-        document.getElementById('pause-menu').classList.toggle('active');
-        //this.control.canMove = false;
-      } 
-      // else {
-      //   isPlay = true;
-      //   document.getElementById('pause-menu').classList.toggle('active');
-      //   //this.control.canMove = true;
-      // }
-    };
-    var resumeBtn = document.getElementById('resume');
-    resumeBtn.onclick = () => {
-      if (isPlay === false) {
-        isPlay = true;
-        document.getElementById('pause-menu').classList.toggle('active');
-      }
-    };
-    var exitBtn = document.getElementById('exit');
-    exitBtn.onclick = () => {
-      window.location.replace("index.html");
-    }
-    var muteBtn = document.getElementById('mute');
-    muteBtn.onclick = () => {
-      document.getElementById('level-music').muted = !(document.getElementById('level-music').muted);
-    }
     this.x=0;
     var coin;
     //looping and creating coins in the scene
     for (var i=0;i<100;++i){
       coin=Coins(i);
       this.coinPositions.push(coin);
+      
       this.scene.add(coin);
     }
 
-
-    //Loading a texture to apply as the "floor"
-    const cubeTexture = new THREE.TextureLoader().load('./textures/level1/road.jpg');
-    cubeTexture.wrapS = THREE.RepeatWrapping;
-    cubeTexture.wrapT = THREE.RepeatWrapping;
-    cubeTexture.repeat.set(1,40);
-    //Platform which is a floor is represented by a cube
-    const geometry = new THREE.BoxGeometry();
-    const material = new THREE.MeshBasicMaterial({map:cubeTexture});
-    const floor = new THREE.Mesh( geometry, material );
-    this.scene.add( floor );
     var x = 0;
     var y = 0;
     var z = 13;
-    
+    // //Loading the barriers on the side
+    // this.LoadModel(this.scene,x,y,z,this.manager);
+    // //loading all our obstacles into the scene
+
     this.hit=false;
     this.Obstacles = [];
     this.Dimensions=[];
-    //loading all our obstacles into the scene
     this.LoadObstacles(this.scene,this.Obstacles,this.manager);
-        
-    const barriertext= './textures/level1/barrier.jpg'
-    //Loading the barriers on the side
+    this.LoadModel(this.scene,x,y,z,this.manager,this.Obstacles,this.Dimensions);
+    var division = 2000;
+    var limit = 10000;
+    this.grid = new THREE.GridHelper(limit * 2, division, "blue", "blue");
 
-
-    this.LoadModel(barriertext,this.scene,x,y,z,this.manager,this.Obstacles,this.Dimensions);
-
+// 
     console.log(this.Obstacles);
     console.log(this.Dimensions);
-
-    floor.scale.set(120,0,-10000);
-    var d = -20000;
-    //looping and ensuring our floor is long enough for the round.
-    for(var i =0;i<10;i++){
-        const newFloor = new THREE.Mesh( geometry, material );
-        newFloor.position.set(0,0,d);
-        d = d - 10000;
-        this.scene.add( newFloor );
-        newFloor.scale.set(120,0,-10000);
-    }
-
+    this.scene.add(this.grid);
+    
 
 
     this.mixers = [];
     this.old_animation_frames = null;
     //Loading our animated character
     this.LoadAnimatedModel();
-    
-    if (isPlay) {
     document.addEventListener("keydown",(e) =>  this.onDocumentKeyDown(e), false);
     this.ChangeView = 0;
     this.request_animation_frame();
-    }
+    
     
   }
   onDocumentKeyDown(e) {
@@ -265,12 +215,13 @@ class ThirdPersonCameraGame {
    }
   //Event listener which will remove the dom element once everything is loaded.
   onTransitionEnd( event ) {
+
     event.target.remove();
+    
   }
 
   ObstacleCollision(currPosition){
   //detects if characters comes into contact with an obstacle
-    
   var forward=this.control.UserInput.keys.forward;
   var backward=this.control.UserInput.keys.backward;
   var detected=false;
@@ -281,135 +232,158 @@ class ThirdPersonCameraGame {
     }
   }
   return detected;
+  //console.log(this.Obstacles);
   }
+
+  CreateDiscoBall(z,textureLoader){
+      const discogeom = new THREE.SphereGeometry(10,32,32);
+      var discotext=textureLoader.load('./textures/level3/discoball.jpg');
+      discotext.wrapS=THREE.RepeatWrapping;
+      discotext.wrapT=THREE.RepeatWrapping;
+      discotext.repeat.set(2,2);
+      var material;
+      if(z%2 == 0){
+         material = new THREE.MeshBasicMaterial( {map:discotext} );
+      }
+      else{
+        material = new THREE.MeshBasicMaterial( { envMap: this.texture, color:"white"} );
+      }
+      
+      
+      var discoball = new THREE.Mesh(discogeom,material)
+      discoball.position.set(Math.floor(Math.random() * 100)-50,15,-60*z-15);
+      discoball.scale.set(0.75,0.75,0.75);
+      return discoball;
+  }
+
+  
+  CreateTree(){
+    const mat  =  new THREE.MeshStandardMaterial({color:0x00ff00});
+    // mat.wireframe = true;
+    const group = new THREE.Group();
+    const level1 = new THREE.Mesh(
+        new THREE.ConeGeometry(1.5,2,8),
+        mat
+    )
+    level1.position.y = 4
+    group.add(level1)
+    const level2 = new THREE.Mesh(
+        new THREE.ConeGeometry(2,2,8),
+        mat
+    )
+    level2.position.y = 3
+    group.add(level2)
+    const level3 = new THREE.Mesh(
+        new THREE.ConeGeometry(3,2,8),
+        mat
+    )
+    level3.position.y = 2
+    group.add(level3)
+    const trunk = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.5,0.5,2),
+        new THREE.MeshLambertMaterial({color:0xbb6600})
+    )
+    trunk.position.y = 0
+    group.add(trunk)
+    group.scale.set(4,8,4);
+    
+    return group
+  }
+
+  CreateCassettes(z,textureLoader){
+    const geom = new THREE.BoxGeometry(10,10,2);
+    const mat = textureLoader.load('./textures/level3/casette.jpeg');
+    const material = new THREE.MeshBasicMaterial( {map:mat});
+    var casette = new THREE.Mesh(geom,material);
+    casette.position.set(Math.floor(Math.random() * 100)-50,5,-60*z-15);
+
+    return casette;
+
+  }
+
+  
+  
 
   LoadObstacles(scene,ObstaclePositions,manager){
-    //Create traffic obstacles function
-    function Cones(z){
-      var conegeo = new THREE.ConeGeometry( 5, 20, 32 );
-      const conetexture = new THREE.TextureLoader().load("./textures/level1/trafficcone.jpg");
-            conetexture.wrapS=THREE.RepeatWrapping;
-            conetexture.wrapT=THREE.RepeatWrapping;
-            conetexture.repeat.set(1,1);
-      const conemat = new THREE.MeshBasicMaterial( {map: conetexture} );
-      var cone = new THREE.Mesh( conegeo, conemat);
-      cone.position.y=10;
-      cone.position.z=-60*z-15;
-      cone.position.x=Math.floor(Math.random() * 100) -50;
-      return cone;
+    // Using the loading manager to return the ObstaclePositions once they are all loaded 
+    //the onload function will executed once all the models are loaded.
+    //Defining a gltf loader
+    const textureLoader  = new THREE.TextureLoader(manager);
+    for(var i =0; i<500;i++){
+      var discoball = this.CreateDiscoBall(i,textureLoader);
+      this.discoballs.push(discoball);
+      this.Dimensions[i*2]=[new THREE.Box3().setFromObject(discoball).max.x-new THREE.Box3().setFromObject(discoball).min.x,new THREE.Box3().setFromObject(discoball).max.z-new THREE.Box3().setFromObject(discoball).min.z];
+      ObstaclePositions.push(discoball);
+      this.scene.add(discoball);
+      var casette = this.CreateCassettes(i,textureLoader);
+      this.Dimensions[i*2+1]=[new THREE.Box3().setFromObject(casette).max.x-new THREE.Box3().setFromObject(casette).min.x,new THREE.Box3().setFromObject(casette).max.z-new THREE.Box3().setFromObject(casette).min.z];
+      ObstaclePositions.push(casette);
+      this.scene.add(casette);
     }
-
-    //Creating cones and adding to the scene
-    var cone;
-    for (var i=0;i<10;++i){
-      cone=Cones(i);
-      //console.log(spike.max.z);
-      //console.log(new THREE.Box3().setFromObject(spike).max.z-new THREE.Box3().setFromObject(spike).min.z);
-      this.Dimensions[i]=[new THREE.Box3().setFromObject(cone).max.x-new THREE.Box3().setFromObject(cone).min.x,new THREE.Box3().setFromObject(cone).max.z-new THREE.Box3().setFromObject(cone).min.z];
-      ObstaclePositions.push(cone);
-      scene.add(cone);
-    }
+    
    
-    //Creating Blitz obstacles function 
-    function Blitz(z){
-      var blitzgeo = new THREE.BoxGeometry( 20, 20, 20 );
-      const blitztexture = new THREE.TextureLoader().load("./textures/level1/brick.jpg");
-            blitztexture.wrapS=THREE.RepeatWrapping;
-            blitztexture.wrapT=THREE.RepeatWrapping;
-            blitztexture.repeat.set(1,1);
-      const blitzmat = new THREE.MeshBasicMaterial( {map: blitztexture} );
-      var blitz = new THREE.Mesh( blitzgeo, blitzmat);
-      blitz.position.z=-60*z-15;
-      blitz.position.y=5;
-      blitz.position.x=Math.floor(Math.random() * 100) -50;
-      //blitz.rotation.z=90;
-      return blitz;
-    }
-
-    //Creating blitz and adding to the scene 
-    var blitz;
-    for (var i=10;i<20;++i){
-      blitz=Blitz(i);
-      this.Dimensions[i]=[new THREE.Box3().setFromObject(blitz).max.x-new THREE.Box3().setFromObject(blitz).min.x,new THREE.Box3().setFromObject(blitz).max.z-new THREE.Box3().setFromObject(blitz).min.z];
-      ObstaclePositions.push(blitz);
-      scene.add(blitz);
-    }
-
-    //Creating cylinder obstacles function 
-    function Cylinder(z){
-      var cylindergeo = new THREE.TorusGeometry( 7, 3, 16, 100 );
-      const cylindertexture = new THREE.TextureLoader().load("./textures/level1/tyre.png");
-            cylindertexture.wrapS=THREE.RepeatWrapping;
-            cylindertexture.wrapT=THREE.RepeatWrapping;
-            cylindertexture.repeat.set(2,2);
-      const cylindermat = new THREE.MeshBasicMaterial( {map: cylindertexture} );
-      var cylinder = new THREE.Mesh( cylindergeo, cylindermat);
-      cylinder.position.z=-60*z-15;
-      cylinder.position.y=10;
-      cylinder.position.x=Math.floor(Math.random() * 100) -50;
-      return cylinder;
-    }
-
-    //Creating cylinders and adding to the scene 
-    var cylinder;
-    for (var i=20;i<30;++i){
-      cylinder=Cylinder(i);
-      this.Dimensions[i]=[new THREE.Box3().setFromObject(cylinder).max.x-new THREE.Box3().setFromObject(cylinder).min.x,new THREE.Box3().setFromObject(cylinder).max.z-new THREE.Box3().setFromObject(cylinder).min.z];
-      ObstaclePositions.push(cylinder);
-      scene.add(cylinder);
-    }
-
-    return ObstaclePositions;
+    
   }
-
-
-  LoadModel(path,scene,x,y,z,manager,Obstacles,Dimensions){
+  LoadModel(scene,x,y,z,manager,Obstacles,Dimensions){
 
     // this obj will act as the parent for the barriers on the side to prevent user from falling off
-    var obj =  new THREE.Object3D();
-    const loader = new THREE.TextureLoader(manager);
+    var obj = new THREE.Object3D();
+    const loader = new THREE.FontLoader(manager);
+
+    loader.load( './js/fonts.json', function ( font ) {
+
+	  const geometry = new THREE.TextGeometry( 'Turn Around !', {
+		  font: font,
+		  size: 10,
+		  height: 5,
+		  curveSegments: 12,
+		  bevelEnabled: true,
+		  bevelThickness: 1,
+		  bevelSize: 0.5,
+		  bevelOffset: 0,
+		  bevelSegments: 3
+	    } );
+      var textMaterial = new THREE.MeshPhongMaterial( { color: '#bc12fe' } );
+
+      var mesh = new THREE.Mesh( geometry, textMaterial );
+      mesh.position.set( 40, 10, 30 );
+      mesh.rotation.y+=Math.PI;
   
-    loader.load(path, function(Texture){
-      //Load the model 
+      Dimensions[Dimensions.length]=[new THREE.Box3().setFromObject(mesh).max.x-new THREE.Box3().setFromObject(mesh).min.x,new THREE.Box3().setFromObject(mesh).max.z-new THREE.Box3().setFromObject(mesh).min.z];
+      Obstacles.push(mesh);
+      scene.add( mesh );
+    } );
+   
+    var Tree1 = this.CreateTree();
+    Tree1.position.set(x,y+8,10);
+    // this.scene.add(obj);
+    var d = 30;
 
-      var barriergeo=new THREE.BoxGeometry( 20, 15, 20 );
-      Texture.wrapS=THREE.RepeatWrapping;
-      Texture.wrapT=THREE.RepeatWrapping;
-      Texture.repeat.set(2,2);
-      const barrierMat= new THREE.MeshBasicMaterial( {map: Texture} );
+    //we loop since we need the barries throughout the scene
+    for(var i=0;i<200;i++){
+      // we clone objects and then adjust their scale and position and place them into the scene 
+      var obj2 = Tree1.clone();
+      var obj3 = Tree1.clone();
+      obj2.position.set(60,8,d);
       
-      //scene.add(barrier)
-      var barrierleft;
-      var barrierright;
-      for (var i=30;i<1000;i+=2){
-        barrierleft= new THREE.Mesh( barriergeo,barrierMat);
-        barrierright= new THREE.Mesh( barriergeo,barrierMat);
-        barrierleft.position.x=-65;
-        barrierleft.position.y=5;
-        barrierleft.position.z=-(i-30)*10;
-        barrierright.position.x=65;
-        barrierright.position.y=5;
-        barrierright.position.z=-(i-30)*10;
-        Dimensions[i]=[new THREE.Box3().setFromObject(barrierleft).max.x-new THREE.Box3().setFromObject(barrierleft).min.x,new THREE.Box3().setFromObject(barrierleft).max.z-new THREE.Box3().setFromObject(barrierleft).min.z];
-        Dimensions[i+1]=[new THREE.Box3().setFromObject(barrierright).max.x-new THREE.Box3().setFromObject(barrierright).min.x,new THREE.Box3().setFromObject(barrierright).max.z-new THREE.Box3().setFromObject(barrierright).min.z];
-        Obstacles.push(barrierleft);
-        Obstacles.push(barrierright);
-        scene.add(barrierleft);
-        scene.add(barrierright);
-      }
-
-      var barrier;
-      for (var i=1000;i<1007;++i){
-        barrier=new THREE.Mesh(barriergeo,barrierMat);
-        barrier.position.x=-(i-1000)*20+65;
-        barrier.position.y=5;
-        barrier.position.z=20;
-        Dimensions[i]=[new THREE.Box3().setFromObject(barrier).max.x-new THREE.Box3().setFromObject(barrier).min.x,new THREE.Box3().setFromObject(barrier).max.z-new THREE.Box3().setFromObject(barrier).min.z];
-        Obstacles.push(barrier);
-        scene.add(barrier);
-      }
-    });
-
+      // we always add the object as a child of the parent object obj
+      // obj.add(obj2);
+      obj3.position.set(-60,8,d);
+      // we always add the object as a child of the parent object obj
+      // obj.add(obj3);
+      Dimensions[Dimensions.length]=[new THREE.Box3().setFromObject(obj2).max.x-new THREE.Box3().setFromObject(obj2).min.x,new THREE.Box3().setFromObject(obj2).max.z-new THREE.Box3().setFromObject(obj2).min.z];
+      Obstacles.push(obj2);
+      Dimensions[Dimensions.length]=[new THREE.Box3().setFromObject(obj3).max.x-new THREE.Box3().setFromObject(obj3).min.x,new THREE.Box3().setFromObject(obj3).max.z-new THREE.Box3().setFromObject(obj3).min.z];
+      Obstacles.push(obj3);
+      this.scene.add(obj2);
+      this.scene.add(obj3);
+      d = d -22;
+    }
+    
+    // Dimensions[Dimensions.length]=[new THREE.Box3().setFromObject(obj).max.x-new THREE.Box3().setFromObject(obj).min.x,new THREE.Box3().setFromObject(obj).max.z-new THREE.Box3().setFromObject(obj).min.z];
+    // Obstacles.push(obj);
+    // this.scene.add(obj);
+  
   }
 
   LoadAnimatedModel() {
@@ -434,25 +408,13 @@ class ThirdPersonCameraGame {
   }
 
   request_animation_frame() {
-    
     requestAnimationFrame((t) => {
-     var posUpdate;  
       if (this.old_animation_frames === null) {
         this.old_animation_frames = t;
       }
-      // if (isPlay === false) {
-      //   t = this.old_animation_frames;
-      //   this.x += 0;
-      //   this.time -= 0;
-      //   posUpdate = 0;
-      // } else {
-      //   this.x+=0.2;
-      //   this.time -= (this.clock.getElapsedTime()/1000);
-      //   posUpdate = (Math.sin(this.x)/10);
-      // } 
+      this.counter
       this.request_animation_frame();
-      if (isPlay === true) {
-      
+
        //checks for interaction between player and all the coins
        for (var i=0;i<this.coinPositions.length;++i){
         if (Math.abs(this.control.myPosition.z-this.coinPositions[i].position.z)<0.5 && Math.abs(this.control.myPosition.x-this.coinPositions[i].position.x)<5){
@@ -463,11 +425,18 @@ class ThirdPersonCameraGame {
         }
       }
 
+      this.discoballs.forEach(rotateDiscoBall);
+
+      function rotateDiscoBall(obj){
+        // obj.rotateOnAxis(new THREE.Vector3(0,1,0),Math.PI);
+        obj.rotation.y += 0.02;
+      }
+
      
       //coin jumping
-      this.x += 0.2;
+      this.x+=0.2;
       for (var i=0;i<this.coinPositions.length;++i){
-        this.coinPositions[i].position.y += (Math.sin(this.x)/10);
+        this.coinPositions[i].position.y+=(Math.sin(this.x)/10);
       }
 
       //Update the score of the player
@@ -476,8 +445,8 @@ class ThirdPersonCameraGame {
       if(!this.isPlayerMoved()){
             this.clock.start();
       }
-
-      this.time -= (this.clock.getElapsedTime()/1000);
+   
+      this.time = this.time-(this.clock.getElapsedTime()/1000)
       if(this.time<20){
         this.timekeeper.style.color = 'red';
       }
@@ -488,7 +457,8 @@ class ThirdPersonCameraGame {
         //Call EndGame function
          this.EndGame();
       }
-
+      // //console.log(ObstaclePositions);
+      // this.ObstacleCollision(this.control.myPosition);
 
       //Detecting collision and reacting
       this.forward=this.control.UserInput.keys.forward;
@@ -517,19 +487,15 @@ class ThirdPersonCameraGame {
             this.hit=true;
       }
 
-
-      //console.log(ObstaclePositions);
-      this.ObstacleCollision(this.control.myPosition);
       //this.scorekeeper.innerHTML += "Lives: "+this.Lives+"\n";
       this.liveskeeper.innerHTML="Lives Left: "+this.Lives;
+      this.renderer.setClearColor( 0x000000 );
       this.renderer.render(this.scene, this.camera);
       this.Step(t - this.old_animation_frames);
       this.old_animation_frames = t;
-      } else {
-        this.clock.stop();
-      }
     });
-  
+
+    
   }
 
   isPlayerMoved(){

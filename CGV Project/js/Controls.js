@@ -13,9 +13,8 @@ class BasicCharacterControllerProxy {
   
   
   class BasicCharacterController {
-        
-    constructor(paramaters) {
-      this.init(paramaters);
+    constructor(paramaters,manager) {
+      this.init(paramaters,manager);
     }
     
     // in the init function we initialise the following:
@@ -26,7 +25,7 @@ class BasicCharacterControllerProxy {
     // allAnimations just contains the animations for each state
     // UserInput is an instance of the controller input which enables the player to move around
     // State instantiates the current state of the character
-    init(paramaters) {
+    init(paramaters,manager) {
       this.params = paramaters;
       this.Decrease = new THREE.Vector3(-0.0005, -0.0001, -5.0);
       this.acceleration = new THREE.Vector3(1, 0.25, 50.0);
@@ -37,15 +36,13 @@ class BasicCharacterControllerProxy {
       this.myState = new CharacterController(
           new BasicCharacterControllerProxy(this.allAnimations));
   
-      this.LoadModels();
-      //this.canMove = true;
-      //this.UserInput.move = this.canMove;
+      this.LoadModels(manager);
     }
 
     // We are loading the character models and all the animations related to the character.
     // We use and FBX loader since the models are .fbx files
-    LoadModels() {
-      const loader = new FBXLoader();
+    LoadModels(manager) {
+      const loader = new FBXLoader(manager);
       loader.setPath('./models/Character/');
       loader.load('aj.fbx', (fbx) => {
         fbx.scale.setScalar(0.1);
@@ -83,8 +80,7 @@ class BasicCharacterControllerProxy {
         loader.load('Jumping Up.fbx', (a) => { OnLoad('Jumping Up', a); });
       });
     }
-
-    
+   
   
     // Return the current position of the character
     get Position() {
