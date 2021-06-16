@@ -115,12 +115,11 @@ class ThirdPersonCameraGame {
     light.target.position.set(0, 0, 0);
     light.castShadow = true;
     light.shadow.bias = -0.001;
-    light.shadow.mapSize.width = 4096;
-    light.shadow.mapSize.height = 4096;
-    light.shadow.camera.near = 0.1;
-    light.shadow.camera.far = 500.0;
+    light.shadow.mapSize.width = 512;
+    light.shadow.mapSize.height = 512;
     light.shadow.camera.near = 0.5;
     light.shadow.camera.far = 500.0;
+    light.shadow.camera.near = 0.5;
     light.shadow.camera.left = 50;
     light.shadow.camera.right = -50;
     light.shadow.camera.top = 50;
@@ -172,12 +171,30 @@ class ThirdPersonCameraGame {
      // && (this.control.myPosition.y < 0.3 &&  (this.control.speed.y > -1)) && (this.control.speed.z < 0.1 && this.control.speed.z > -0.1)w
       if (isPlay === true) {
         isPlay = false;
+        document.getElementById('pause-menu').classList.toggle('active');
         //this.control.canMove = false;
-      } else {
+      } 
+      // else {
+      //   isPlay = true;
+      //   document.getElementById('pause-menu').classList.toggle('active');
+      //   //this.control.canMove = true;
+      // }
+    };
+    var resumeBtn = document.getElementById('resume');
+    resumeBtn.onclick = () => {
+      if (isPlay === false) {
         isPlay = true;
-        //this.control.canMove = true;
+        document.getElementById('pause-menu').classList.toggle('active');
       }
     };
+    var exitBtn = document.getElementById('exit');
+    exitBtn.onclick = () => {
+      window.location.replace("index.html");
+    }
+    var muteBtn = document.getElementById('mute');
+    muteBtn.onclick = () => {
+      document.getElementById('level-music').muted = !(document.getElementById('level-music').muted);
+    }
     this.x=0;
     var coin;
     //looping and creating coins in the scene

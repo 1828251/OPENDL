@@ -10,7 +10,7 @@
         
 	</head>
 	<body>
-        <audio autoplay loop >
+        <audio id="sound" autoplay loop >
             <source src="./audio/levitate.mp3" type="audio/mp3"></sources>
         </audio>
 
@@ -44,6 +44,8 @@
 
 
 <script>
+    var vid = document.getElementById("sound");
+    vid.volume = 0.4;       
 
     const level1 = document.getElementById('level1');
     const level2 = document.getElementById('level2');

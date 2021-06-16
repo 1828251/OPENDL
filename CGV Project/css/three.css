@@ -1,3 +1,35 @@
+.pause-menu-layout {
+    opacity: 0.0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    visibility: hidden;
+    height: 100%;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.75);
+    flex-direction: column;
+    display: grid;
+    /* justify-content: normal;
+    */
+    place-items: center;
+    z-index: 101;
+  }
+  
+  .pause-menu-layout.active {
+    opacity: 1.0;
+    visibility: visible;
+    transition: opacity 0.5s ease-in-out;
+  }
+  
+  .pause-menu-text {
+    position: relative;
+    margin: auto;
+    font-size: 5em;
+    color: white;
+    cursor: pointer;
+    /*text-shadow: 8px 8px black;*/
+  }
+
 #Score {
 	position: absolute;
 	top: 10px;
@@ -93,6 +125,8 @@ body {
 	margin: 0;
 	width: 100%;
 	height: 100%;
+    position: absolute;
+    padding: 0;
 }
 
 #loading-screen {
