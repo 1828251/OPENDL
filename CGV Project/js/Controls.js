@@ -80,6 +80,7 @@ class BasicCharacterControllerProxy {
         loader.load('Jumping Up.fbx', (a) => { OnLoad('Jumping Up', a); });
       });
     }
+   
   
     // Return the current position of the character
     get Position() {

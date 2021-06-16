@@ -1,5 +1,4 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.118/build/three.module.js';
-import {GLTFLoader} from 'https://cdn.jsdelivr.net/npm/three@0.118.1/examples/jsm/loaders/GLTFLoader.js';
 import {BasicCharacterController} from './Controls.js';
 import {Coins} from './Coins.js'
 
@@ -124,8 +123,8 @@ class ThirdPersonCameraGame {
     this.scene.add(light);
 
     //Loading the texture for the scene background
-    const loader = new THREE.CubeTextureLoader();
-    const texture = loader.load([
+    // const loader = new THREE.CubeTextureLoader();
+    this.texture = new THREE.CubeTextureLoader().load([
         './textures/level3/posx.png',
         './textures/level3/negx.png',
         './textures/level3/posy.png',
@@ -133,8 +132,13 @@ class ThirdPersonCameraGame {
         './textures/level3/posz.png',
         './textures/level3/negz.png',
     ]);
-    texture.encoding = THREE.sRGBEncoding;
-    this.scene.background = texture;
+    this.texture.format = THREE.RGBFormat;
+    this.texture.encoding = THREE.sRGBEncoding;
+    this.scene.background = this.texture;
+
+    // this.pmrem = new THREE.PMREMGenerator(this.renderer);
+    // // this.pmrem.fromCubemap(texture);
+    // this.pmrem.fromScene(this.scene);
     
 
     //Creating all coins
@@ -154,38 +158,15 @@ class ThirdPersonCameraGame {
       this.scene.add(coin);
     }
 
-
-    //Loading a texture to apply as the "floor"
-    // const cubeTexture = new THREE.TextureLoader().load('./textures/level3/discofloor.jpg');
-    // const cubeTexture = new THREE.TextureLoader().load('./textures/level3/grid.jpeg');
-    // cubeTexture.wrapS = THREE.RepeatWrapping;
-    // cubeTexture.wrapT = THREE.RepeatWrapping;
-    // cubeTexture.repeat.set(10,100);
-    // //Platform which is a floor is represented by a cube
-    // var geometry = new THREE.BoxGeometry();
-    // const material = new THREE.MeshBasicMaterial({map:cubeTexture});
-    // const floor = new THREE.Mesh( geometry, material );
-    // this.scene.add( floor );
     var x = 0;
     var y = 0;
     var z = 13;
-    const lowPoly = './models/level1/LowPolyBarrier/scene.gltf'
     // //Loading the barriers on the side
-    this.LoadModel(lowPoly,this.scene,x,y,z,this.manager);
+    this.LoadModel(this.scene,x,y,z,this.manager);
      this.Obstacles = [];
     // //loading all our obstacles into the scene
     this.LoadObstacles(this.scene,this.Obstacles,this.manager);
     
-    // floor.scale.set(120,0,-10000);
-    // var d = -20000;
-    // //looping and ensuring our floor is long enough for the round.
-    // for(var i =0;i<10;i++){
-    //     const newFloor = new THREE.Mesh( geometry, material );
-    //     newFloor.position.set(0,0,d);
-    //     d = d - 10000;
-    //     this.scene.add( newFloor );
-    //     newFloor.scale.set(120,0,-10000);
-    // }
     var division = 2000;
     var limit = 10000;
     this.grid = new THREE.GridHelper(limit * 2, division, "blue", "blue");
@@ -226,18 +207,19 @@ class ThirdPersonCameraGame {
 
   CreateDiscoBall(z,textureLoader){
       const discogeom = new THREE.SphereGeometry(10,32,32);
-      var discotext;
-      if(z%2 == 0){
-         discotext = textureLoader.load('./textures/level3/discoball.jpg');
-      }
-      else{
-        discotext = textureLoader.load('./textures/level3/discoball.jpeg');
-      }
-      
+      var discotext=textureLoader.load('./textures/level3/discoball.jpg');
       discotext.wrapS=THREE.RepeatWrapping;
       discotext.wrapT=THREE.RepeatWrapping;
       discotext.repeat.set(2,2);
-      const material = new THREE.MeshBasicMaterial( {map:discotext} );
+      var material;
+      if(z%2 == 0){
+         material = new THREE.MeshBasicMaterial( {map:discotext} );
+      }
+      else{
+        material = new THREE.MeshBasicMaterial( { envMap: this.texture, color:"white"} );
+      }
+      
+      
       var discoball = new THREE.Mesh(discogeom,material)
       discoball.position.set(Math.floor(Math.random() * 100)-50,15,-60*z-15);
       discoball.scale.set(0.75,0.75,0.75);
@@ -274,7 +256,6 @@ class ThirdPersonCameraGame {
     trunk.position.y = 0
     group.add(trunk)
     group.scale.set(4,8,4);
-    // group.position.set(Math.random() * 1000,5,-60*z-15);
     
     return group
   }
@@ -289,6 +270,8 @@ class ThirdPersonCameraGame {
     return casette;
 
   }
+
+  
   
 
   LoadObstacles(scene,ObstaclePositions,manager){
@@ -307,7 +290,7 @@ class ThirdPersonCameraGame {
    
     
   }
-  LoadModel(path,scene,x,y,z,manager){
+  LoadModel(scene,x,y,z,manager){
 
     // this obj will act as the parent for the barriers on the side to prevent user from falling off
     var obj = new THREE.Object3D();
