@@ -11,7 +11,7 @@
 		<link rel="stylesheet" type="text/css" href="./css/three.css"/>
 	</head>
 	<body>
-		<audio autoplay loop >
+		<audio id='level-music' autoplay loop >
             <source src="./audio/physical.mp3" type="audio/mp3"></sources>
         </audio>
 		<section id="loading-screen">
@@ -26,6 +26,18 @@
 			<div id="Score">Score</div>
 			<div id="time">Time</div>
 			<div id="Lives">Lives</div>
-		
-	</body>
-</html>
+			<div id='pause'>Pause</div>
+
+			<div class="pause-menu-layout" id="pause-menu">
+				<div class="pause-menu-text" id="resume">Resume</div>>
+				<div class="pause-menu-text" id="mute">Mute</div>
+				<div class="pause-menu-text" id="exit">Exit</div>
+			</div>	
+			
+		</body>
+	</html>
+	
+	<script>
+		var levelMusic = document.getElementById("level-music");
+		levelMusic.volume = 0.75;  
+	</script>

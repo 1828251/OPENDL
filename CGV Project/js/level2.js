@@ -3,7 +3,7 @@ import {GLTFLoader} from 'https://cdn.jsdelivr.net/npm/three@0.118.1/examples/js
 import {BasicCharacterController} from './Controls.js';
 import {Coins} from './Coins.js'
 
-
+var isPlay = true;
 class ThirdPersonCamera {
   constructor(paramaters) {
     this.params = paramaters;
@@ -159,6 +159,28 @@ class ThirdPersonCameraGame {
     this.scorekeeper=document.getElementById("Score");
     this.liveskeeper = document.getElementById("Lives");
     this.timekeeper = document.getElementById("time");
+    var pauseBtn = document.getElementById('pause');
+    pauseBtn.onclick = () => {
+      if (isPlay === true) {
+        isPlay = false;
+        document.getElementById('pause-menu').classList.toggle('active');
+      } 
+    };
+    var resumeBtn = document.getElementById('resume');
+    resumeBtn.onclick = () => {
+      if (isPlay === false) {
+        isPlay = true;
+        document.getElementById('pause-menu').classList.toggle('active');
+      }
+    };
+    var exitBtn = document.getElementById('exit');
+    exitBtn.onclick = () => {
+      window.location.replace("index.html");
+    }
+    var muteBtn = document.getElementById('mute');
+    muteBtn.onclick = () => {
+      document.getElementById('level-music').muted = !(document.getElementById('level-music').muted);
+    }
     this.x=0;
     var coin;
     //looping and creating coins in the scene
@@ -216,7 +238,11 @@ class ThirdPersonCameraGame {
     this.LoadAnimatedModel();
     document.addEventListener("keydown",(e) =>  this.onDocumentKeyDown(e), false);
     this.ChangeView = 0;
-    this.request_animation_frame();
+    if (isPlay) {
+      this.request_animation_frame();
+    } else {
+      this.clock.stop();
+    }
     
     
   }
@@ -406,6 +432,7 @@ class ThirdPersonCameraGame {
         this.old_animation_frames = t;
       }
       this.request_animation_frame();
+      if (isPlay === true) {
 
        //checks for interaction between player and all the coins
        for (var i=0;i<this.coinPositions.length;++i){
@@ -472,6 +499,7 @@ class ThirdPersonCameraGame {
       this.renderer.render(this.scene, this.camera);
       this.Step(t - this.old_animation_frames);
       this.old_animation_frames = t;
+      }
     });
 
     

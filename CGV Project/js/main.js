@@ -4,7 +4,6 @@ import {BasicCharacterController} from './Controls.js';
 import {Coins} from './Coins.js'
 
 var isPlay = true;
-var oldFrame = -5;
 class ThirdPersonCamera {
   constructor(paramaters) {
     this.params = paramaters;
@@ -163,17 +162,10 @@ class ThirdPersonCameraGame {
     this.timekeeper = document.getElementById("time");
     var pauseBtn = document.getElementById('pause');
     pauseBtn.onclick = () => {
-     // && (this.control.myPosition.y < 0.3 &&  (this.control.speed.y > -1)) && (this.control.speed.z < 0.1 && this.control.speed.z > -0.1)w
       if (isPlay === true) {
         isPlay = false;
         document.getElementById('pause-menu').classList.toggle('active');
-        //this.control.canMove = false;
       } 
-      // else {
-      //   isPlay = true;
-      //   document.getElementById('pause-menu').classList.toggle('active');
-      //   //this.control.canMove = true;
-      // }
     };
     var resumeBtn = document.getElementById('resume');
     resumeBtn.onclick = () => {
@@ -246,11 +238,13 @@ class ThirdPersonCameraGame {
     this.old_animation_frames = null;
     //Loading our animated character
     this.LoadAnimatedModel();
-    
-    if (isPlay) {
     document.addEventListener("keydown",(e) =>  this.onDocumentKeyDown(e), false);
     this.ChangeView = 0;
+    
+    if (isPlay) {
     this.request_animation_frame();
+    } else {
+      this.clock.stop();
     }
     
   }
@@ -435,21 +429,10 @@ class ThirdPersonCameraGame {
 
   request_animation_frame() {
     
-    requestAnimationFrame((t) => {
-     var posUpdate;  
+    requestAnimationFrame((t) => { 
       if (this.old_animation_frames === null) {
         this.old_animation_frames = t;
-      }
-      // if (isPlay === false) {
-      //   t = this.old_animation_frames;
-      //   this.x += 0;
-      //   this.time -= 0;
-      //   posUpdate = 0;
-      // } else {
-      //   this.x+=0.2;
-      //   this.time -= (this.clock.getElapsedTime()/1000);
-      //   posUpdate = (Math.sin(this.x)/10);
-      // } 
+      } 
       this.request_animation_frame();
       if (isPlay === true) {
       
@@ -457,7 +440,6 @@ class ThirdPersonCameraGame {
        for (var i=0;i<this.coinPositions.length;++i){
         if (Math.abs(this.control.myPosition.z-this.coinPositions[i].position.z)<0.5 && Math.abs(this.control.myPosition.x-this.coinPositions[i].position.x)<5){
           this.score+=1;
-          //console.log("score: "+this.score);
           this.scene.remove(this.coinPositions[i]);
           this.coinPositions.splice(i,1);
         }
@@ -525,8 +507,6 @@ class ThirdPersonCameraGame {
       this.renderer.render(this.scene, this.camera);
       this.Step(t - this.old_animation_frames);
       this.old_animation_frames = t;
-      } else {
-        this.clock.stop();
       }
     });
   

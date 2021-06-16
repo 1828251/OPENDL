@@ -3,7 +3,7 @@ import {OrbitControls} from 'https://threejsfundamentals.org/threejs/resources/t
 import {BasicCharacterController} from './Controls.js';
 import {Coins} from './Coins.js'
 
-
+var isPlay = true;
 class ThirdPersonCamera {
   constructor(paramaters) {
     this.params = paramaters;
@@ -161,6 +161,28 @@ class ThirdPersonCameraGame {
     this.scorekeeper=document.getElementById("Score");
     this.liveskeeper = document.getElementById("Lives");
     this.timekeeper = document.getElementById("time");
+    var pauseBtn = document.getElementById('pause');
+    pauseBtn.onclick = () => {
+      if (isPlay === true) {
+        isPlay = false;
+        document.getElementById('pause-menu').classList.toggle('active');
+      } 
+    };
+    var resumeBtn = document.getElementById('resume');
+    resumeBtn.onclick = () => {
+      if (isPlay === false) {
+        isPlay = true;
+        document.getElementById('pause-menu').classList.toggle('active');
+      }
+    };
+    var exitBtn = document.getElementById('exit');
+    exitBtn.onclick = () => {
+      window.location.replace("index.html");
+    }
+    var muteBtn = document.getElementById('mute');
+    muteBtn.onclick = () => {
+      document.getElementById('level-music').muted = !(document.getElementById('level-music').muted);
+    }
     this.x=0;
     var coin;
     //looping and creating coins in the scene
@@ -200,8 +222,12 @@ class ThirdPersonCameraGame {
     this.LoadAnimatedModel();
     document.addEventListener("keydown",(e) =>  this.onDocumentKeyDown(e), false);
     this.ChangeView = 0;
+    if (isPlay) {
     this.request_animation_frame();
-    
+    }
+    else {
+      this.clock.stop();
+    }
     
   }
   onDocumentKeyDown(e) {
@@ -406,7 +432,7 @@ class ThirdPersonCameraGame {
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(window.innerWidth, window.innerHeight);
   }
-
+  
   request_animation_frame() {
     requestAnimationFrame((t) => {
       if (this.old_animation_frames === null) {
@@ -414,7 +440,7 @@ class ThirdPersonCameraGame {
       }
       this.counter
       this.request_animation_frame();
-
+      if (isPlay) {
        //checks for interaction between player and all the coins
        for (var i=0;i<this.coinPositions.length;++i){
         if (Math.abs(this.control.myPosition.z-this.coinPositions[i].position.z)<0.5 && Math.abs(this.control.myPosition.x-this.coinPositions[i].position.x)<5){
@@ -493,6 +519,7 @@ class ThirdPersonCameraGame {
       this.renderer.render(this.scene, this.camera);
       this.Step(t - this.old_animation_frames);
       this.old_animation_frames = t;
+      } 
     });
 
     
