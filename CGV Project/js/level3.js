@@ -29,6 +29,7 @@ class ThirdPersonCamera {
       idealOffset = new THREE.Vector3(0, 15, 10);
     }
     // const idealOffset = new THREE.Vector3(0, 15, 10);
+    // const idealOffset = new THREE.Vector3(-15, 20, -30);
     idealOffset.applyQuaternion(this.params.target.Rotation);
     idealOffset.add(this.params.target.Position);
     return idealOffset;
@@ -99,7 +100,7 @@ class ThirdPersonCameraGame {
 
     // creating the scene
     this.scene = new THREE.Scene();
-  
+
 
     //Creating a loading manager which we will use for  a loading screen while the scene loads.
      this.manager =  new THREE.LoadingManager(()=>{ 
@@ -174,17 +175,21 @@ class ThirdPersonCameraGame {
     var y = 0;
     var z = 13;
     // //Loading the barriers on the side
-    this.LoadModel(this.scene,x,y,z,this.manager);
-     this.Obstacles = [];
+    // this.LoadModel(this.scene,x,y,z,this.manager);
     // //loading all our obstacles into the scene
+
+    this.hit=false;
+    this.Obstacles = [];
+    this.Dimensions=[];
     this.LoadObstacles(this.scene,this.Obstacles,this.manager);
-    
+    this.LoadModel(this.scene,x,y,z,this.manager,this.Obstacles,this.Dimensions);
     var division = 2000;
     var limit = 10000;
     this.grid = new THREE.GridHelper(limit * 2, division, "blue", "blue");
 
 // 
-
+    console.log(this.Obstacles);
+    console.log(this.Dimensions);
     this.scene.add(this.grid);
     
 
@@ -199,16 +204,15 @@ class ThirdPersonCameraGame {
     
     
   }
-
   onDocumentKeyDown(e) {
-   var code = e.keyCode;
-    if(code ==86){
-      if(this.ChangeView==2){
-        this.ChangeView = -1;
-      }
-      this.ChangeView+=1;
-    }
-  }
+    var code = e.keyCode;
+     if(code ==86){
+       if(this.ChangeView==2){
+         this.ChangeView = -1;
+       }
+       this.ChangeView+=1;
+     }
+   }
   //Event listener which will remove the dom element once everything is loaded.
   onTransitionEnd( event ) {
 
@@ -218,13 +222,16 @@ class ThirdPersonCameraGame {
 
   ObstacleCollision(currPosition){
   //detects if characters comes into contact with an obstacle
-  if (this.Obstacles.length>30){
+  var forward=this.control.UserInput.keys.forward;
+  var backward=this.control.UserInput.keys.backward;
+  var detected=false;
   for (var k=0;k<this.Obstacles.length;++k){
-     if (Math.abs(currPosition.z-this.Obstacles[k].z)<5 && Math.abs(currPosition.x-this.Obstacles[k].x)<5 && currPosition.y < 10){
-        this.control.UserInput.keys.backward = true
-     }
+    if (Math.abs(currPosition.z-this.Obstacles[k].position.z)<(this.Dimensions[k][1]/2)+2 && Math.abs(currPosition.x-this.Obstacles[k].position.x)<(this.Dimensions[k][0]/2)+2 && currPosition.y < 10){
+      console.log("hit");  
+      detected=true;
+    }
   }
-  }
+  return detected;
   //console.log(this.Obstacles);
   }
 
@@ -305,15 +312,19 @@ class ThirdPersonCameraGame {
     for(var i =0; i<500;i++){
       var discoball = this.CreateDiscoBall(i,textureLoader);
       this.discoballs.push(discoball);
+      this.Dimensions[i*2]=[new THREE.Box3().setFromObject(discoball).max.x-new THREE.Box3().setFromObject(discoball).min.x,new THREE.Box3().setFromObject(discoball).max.z-new THREE.Box3().setFromObject(discoball).min.z];
+      ObstaclePositions.push(discoball);
       this.scene.add(discoball);
       var casette = this.CreateCassettes(i,textureLoader);
+      this.Dimensions[i*2+1]=[new THREE.Box3().setFromObject(casette).max.x-new THREE.Box3().setFromObject(casette).min.x,new THREE.Box3().setFromObject(casette).max.z-new THREE.Box3().setFromObject(casette).min.z];
+      ObstaclePositions.push(casette);
       this.scene.add(casette);
     }
     
    
     
   }
-  LoadModel(scene,x,y,z,manager){
+  LoadModel(scene,x,y,z,manager,Obstacles,Dimensions){
 
     // this obj will act as the parent for the barriers on the side to prevent user from falling off
     var obj = new THREE.Object3D();
@@ -338,6 +349,8 @@ class ThirdPersonCameraGame {
       mesh.position.set( 40, 10, 30 );
       mesh.rotation.y+=Math.PI;
   
+      Dimensions[Dimensions.length]=[new THREE.Box3().setFromObject(mesh).max.x-new THREE.Box3().setFromObject(mesh).min.x,new THREE.Box3().setFromObject(mesh).max.z-new THREE.Box3().setFromObject(mesh).min.z];
+      Obstacles.push(mesh);
       scene.add( mesh );
     } );
    
@@ -354,13 +367,22 @@ class ThirdPersonCameraGame {
       obj2.position.set(60,8,d);
       
       // we always add the object as a child of the parent object obj
-      obj.add(obj2);
+      // obj.add(obj2);
       obj3.position.set(-60,8,d);
       // we always add the object as a child of the parent object obj
-      obj.add(obj3);
+      // obj.add(obj3);
+      Dimensions[Dimensions.length]=[new THREE.Box3().setFromObject(obj2).max.x-new THREE.Box3().setFromObject(obj2).min.x,new THREE.Box3().setFromObject(obj2).max.z-new THREE.Box3().setFromObject(obj2).min.z];
+      Obstacles.push(obj2);
+      Dimensions[Dimensions.length]=[new THREE.Box3().setFromObject(obj3).max.x-new THREE.Box3().setFromObject(obj3).min.x,new THREE.Box3().setFromObject(obj3).max.z-new THREE.Box3().setFromObject(obj3).min.z];
+      Obstacles.push(obj3);
+      this.scene.add(obj2);
+      this.scene.add(obj3);
       d = d -22;
     }
-    this.scene.add(obj);
+    
+    // Dimensions[Dimensions.length]=[new THREE.Box3().setFromObject(obj).max.x-new THREE.Box3().setFromObject(obj).min.x,new THREE.Box3().setFromObject(obj).max.z-new THREE.Box3().setFromObject(obj).min.z];
+    // Obstacles.push(obj);
+    // this.scene.add(obj);
   
   }
 
@@ -385,13 +407,12 @@ class ThirdPersonCameraGame {
     this.renderer.setSize(window.innerWidth, window.innerHeight);
   }
 
-
   request_animation_frame() {
     requestAnimationFrame((t) => {
       if (this.old_animation_frames === null) {
         this.old_animation_frames = t;
       }
-      this.counter 
+      this.counter
       this.request_animation_frame();
 
        //checks for interaction between player and all the coins
@@ -410,8 +431,6 @@ class ThirdPersonCameraGame {
         // obj.rotateOnAxis(new THREE.Vector3(0,1,0),Math.PI);
         obj.rotation.y += 0.02;
       }
-      
-      console.log(this.ChangeView);
 
      
       //coin jumping
@@ -438,16 +457,39 @@ class ThirdPersonCameraGame {
         //Call EndGame function
          this.EndGame();
       }
-      //console.log(ObstaclePositions);
-      this.ObstacleCollision(this.control.myPosition);
-      
+      // //console.log(ObstaclePositions);
+      // this.ObstacleCollision(this.control.myPosition);
+
+      //Detecting collision and reacting
+      this.forward=this.control.UserInput.keys.forward;
+      this.backward=this.control.UserInput.keys.backward;
+      var detected=this.ObstacleCollision(this.control.myPosition);
+      if (this.hit==true && detected==false){
+        // this.control.UserInput.keys.forward=true;
+        this.control.UserInput.keys.backward=false;
+        this.control.UserInput.keys.forward=false;
+        this.hit=false;
+        
+      }
+      if (detected==true){
+            if(this.forward==true && this.hit==false){
+              this.control.UserInput.keys.forward=false;
+              this.control.UserInput.keys.backward=true;  
+              this.hit=true;
+              console.log("forward hit")
+            }
+            if(this.backward==true && this.hit ==false){
+              this.control.UserInput.keys.forward=true;
+              this.control.UserInput.keys.backward=false;   
+              this.hit=true; 
+              console.log("backward hit")
+            }
+            this.hit=true;
+      }
+
       //this.scorekeeper.innerHTML += "Lives: "+this.Lives+"\n";
       this.liveskeeper.innerHTML="Lives Left: "+this.Lives;
       this.renderer.setClearColor( 0x000000 );
-  
- 
-
-      //original
       this.renderer.render(this.scene, this.camera);
       this.Step(t - this.old_animation_frames);
       this.old_animation_frames = t;
