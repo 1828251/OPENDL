@@ -1,4 +1,5 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.118/build/three.module.js';
+import {OrbitControls} from 'https://threejsfundamentals.org/threejs/resources/threejs/r122/examples/jsm/controls/OrbitControls.js';
 import {BasicCharacterController} from './Controls.js';
 import {Coins} from './Coins.js'
 
@@ -12,11 +13,22 @@ class ThirdPersonCamera {
     this.LookingAt = new THREE.Vector3();
   }
 
-  calc_offset() {
+  calc_offset(View) {
     // Calculate the idea offset.
     // THis represents the angle at which the position the camera will be
     // we position the camera slightly to the right and over the shoulder of the character
-    const idealOffset = new THREE.Vector3(-15, 20, -30);
+    // const idealOffset = new THREE.Vector3(-15, 20, -30);
+    var idealOffset;
+    if(View ==0){
+      idealOffset = new THREE.Vector3(-15, 20, -30);
+    }
+    else if(View ==1){
+      idealOffset = new THREE.Vector3(0, 20, -30);
+    }
+    else if(View == 2){
+      idealOffset = new THREE.Vector3(0, 15, 10);
+    }
+    // const idealOffset = new THREE.Vector3(0, 15, 10);
     idealOffset.applyQuaternion(this.params.target.Rotation);
     idealOffset.add(this.params.target.Position);
     return idealOffset;
@@ -32,8 +44,8 @@ class ThirdPersonCamera {
     return idealLookat;
   }
 
-  Update(timeGone) {
-    const idealOffset = this.calc_offset();
+  Update(timeGone,View) {
+    const idealOffset = this.calc_offset(View);
     const idealLookat = this.calc_look();
     //We are just updating the camera's position relative to the time gone.
     // we add a certain delay to have the camera have a natural adjustment as the player moves through the scene
@@ -87,7 +99,7 @@ class ThirdPersonCameraGame {
 
     // creating the scene
     this.scene = new THREE.Scene();
-
+  
 
     //Creating a loading manager which we will use for  a loading screen while the scene loads.
      this.manager =  new THREE.LoadingManager(()=>{ 
@@ -181,10 +193,21 @@ class ThirdPersonCameraGame {
     this.old_animation_frames = null;
     //Loading our animated character
     this.LoadAnimatedModel();
-    
+    document.addEventListener("keydown",(e) =>  this.onDocumentKeyDown(e), false);
+    this.ChangeView = 0;
     this.request_animation_frame();
     
     
+  }
+
+  onDocumentKeyDown(e) {
+   var code = e.keyCode;
+    if(code ==86){
+      if(this.ChangeView==2){
+        this.ChangeView = -1;
+      }
+      this.ChangeView+=1;
+    }
   }
   //Event listener which will remove the dom element once everything is loaded.
   onTransitionEnd( event ) {
@@ -362,11 +385,13 @@ class ThirdPersonCameraGame {
     this.renderer.setSize(window.innerWidth, window.innerHeight);
   }
 
+
   request_animation_frame() {
     requestAnimationFrame((t) => {
       if (this.old_animation_frames === null) {
         this.old_animation_frames = t;
       }
+      this.counter 
       this.request_animation_frame();
 
        //checks for interaction between player and all the coins
@@ -385,6 +410,8 @@ class ThirdPersonCameraGame {
         // obj.rotateOnAxis(new THREE.Vector3(0,1,0),Math.PI);
         obj.rotation.y += 0.02;
       }
+      
+      console.log(this.ChangeView);
 
      
       //coin jumping
@@ -413,9 +440,14 @@ class ThirdPersonCameraGame {
       }
       //console.log(ObstaclePositions);
       this.ObstacleCollision(this.control.myPosition);
-
+      
       //this.scorekeeper.innerHTML += "Lives: "+this.Lives+"\n";
       this.liveskeeper.innerHTML="Lives Left: "+this.Lives;
+      this.renderer.setClearColor( 0x000000 );
+  
+ 
+
+      //original
       this.renderer.render(this.scene, this.camera);
       this.Step(t - this.old_animation_frames);
       this.old_animation_frames = t;
@@ -446,7 +478,7 @@ class ThirdPersonCameraGame {
       this.control.Update(timeGoneS);
     }
 
-    this.ThirdPersonCamera.Update(timeGoneS);
+    this.ThirdPersonCamera.Update(timeGoneS,this.ChangeView);
   }
   EndGame(){
     //get the players score and store it in local storage
