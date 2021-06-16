@@ -14,14 +14,24 @@ body {
     
 }
 h1{
-    color: #eeeeee;
-    font-family: "Times New Roman", Times, serif;
+    
+    color: #fff;
+    font-family: 'Monoton', cursive;
+    font-size: 40px;
+    text-shadow:
+    0 0 5px #fff,
+    0 0 10px #fff,
+    0 0 35px #0ff,
+    0 0 60px #0ff,
+    0 0 70px #0ff,
+    0 0 80px #0ff,
+    0 0 100px #0ff;
     animation: slideUp .8s ease-in-out  forwards 1s;
 
 }
 #Middle{
     position: fixed;
-    top: 50%;
+    top: 60%;
     left: 50%;
     
     transform: translate(-50%, -50%);
@@ -59,11 +69,11 @@ button{
     margin: 5px;
     
 }
-@keyframes slideUp {
+/* @keyframes slideUp {
     0% {
       transform: translateY(300px);
     }
     100% {
       transform: translateY(0px);
     }
-  }
+  } */
