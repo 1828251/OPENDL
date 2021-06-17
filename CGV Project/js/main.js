@@ -1,5 +1,4 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.118/build/three.module.js';
-import {GLTFLoader} from 'https://cdn.jsdelivr.net/npm/three@0.118.1/examples/jsm/loaders/GLTFLoader.js';
 import {BasicCharacterController} from './Controls.js';
 import {Coins} from './Coins.js'
 
@@ -61,7 +60,6 @@ class ThirdPersonCamera {
 
 class ThirdPersonCameraGame {
   constructor() {
-    this.Lives = 3;
     this.conesPos = [new THREE.Vector3(0,2,-200),new THREE.Vector3(0,2,-2100)];
     this.spikesPos = [new THREE.Vector3(0,0,-450),new THREE.Vector3(0,0,-510),new THREE.Vector3(0,0,-570),new THREE.Vector3(0,0,-630),new THREE.Vector3(0,0,-1750),new THREE.Vector3(0,0,-1810),new THREE.Vector3(0,0,-1870),new THREE.Vector3(0,0,-1930)];
     this.sandbagsPos = [new THREE.Vector3(0,0,-90), new THREE.Vector3(0,0,-360), new THREE.Vector3(0,0,-860), new THREE.Vector3(0,0,-1360), new THREE.Vector3(0,0,-1860), new THREE.Vector3(0,0,-2360)];
@@ -175,9 +173,8 @@ class ThirdPersonCameraGame {
     //Creating all coins
     this.coinPositions=[];
     this.score=0;
-    // setting DOM elements to display the score, time left and lives left.
+    // setting DOM elements to display the score, time left.
     this.scorekeeper=document.getElementById("Score");
-    this.liveskeeper = document.getElementById("Lives");
     this.timekeeper = document.getElementById("time");
     var pauseBtn = document.getElementById('pause');
     pauseBtn.onclick = () => {
@@ -243,9 +240,6 @@ class ThirdPersonCameraGame {
 
     this.LoadModel(barriertext,this.scene,x,y,z,this.manager,this.Obstacles,this.Dimensions);
 
-    console.log(this.Obstacles);
-    console.log(this.Dimensions);
-
     floor.scale.set(120,0,-10000);
     var d = -20000;
     //looping and ensuring our floor is long enough for the round.
@@ -268,8 +262,6 @@ class ThirdPersonCameraGame {
     
     if (isPlay) {
     this.request_animation_frame();
-    } else {
-      this.clock.stop();
     }
     
   }
@@ -291,8 +283,7 @@ class ThirdPersonCameraGame {
   //detects if characters comes into contact with an obstacle
   var detected=false;
   for (var k=0;k<this.Obstacles.length;++k){
-    if (Math.abs(currPosition.z-this.Obstacles[k].position.z)<(this.Dimensions[k][1]/2)+2 && Math.abs(currPosition.x-this.Obstacles[k].position.x)<(this.Dimensions[k][0]/2)+2 && currPosition.y < 10){
-      console.log("hit");  
+    if (Math.abs(currPosition.z-this.Obstacles[k].position.z)<(this.Dimensions[k][1]/2)+2 && Math.abs(currPosition.x-this.Obstacles[k].position.x)<(this.Dimensions[k][0]/2)+2 && currPosition.y < 10){ 
       detected=true;
     }
   }
@@ -319,8 +310,6 @@ class ThirdPersonCameraGame {
     var cone;
     for (var i=0;i<10;++i){
       cone=Cones(i);
-      //console.log(spike.max.z);
-      //console.log(new THREE.Box3().setFromObject(spike).max.z-new THREE.Box3().setFromObject(spike).min.z);
       this.Dimensions[i]=[new THREE.Box3().setFromObject(cone).max.x-new THREE.Box3().setFromObject(cone).min.x,new THREE.Box3().setFromObject(cone).max.z-new THREE.Box3().setFromObject(cone).min.z];
       ObstaclePositions.push(cone);
       scene.add(cone);
@@ -487,17 +476,16 @@ class ThirdPersonCameraGame {
             this.clock.start();
       }
 
-      this.time -= (this.clock.getElapsedTime()/1000);
-      if(this.time<20){
-        this.timekeeper.style.color = 'red';
+      if (this.time > 0) {
+        if (this.time<20){
+            this.timekeeper.style.color = 'red';
+          }
+        this.time -= (this.clock.getElapsedTime()/1000);
       }
+      
 
       this.timekeeper.innerHTML = "Time Left: "+this.time;
-      //Check if time is up or lives are finished
-      if(this.time <0 || this.Lives ==0){
-        //Call EndGame function
-         this.EndGame();
-      }
+      
 
 
       //Detecting collision and reacting
@@ -516,25 +504,25 @@ class ThirdPersonCameraGame {
               this.control.UserInput.keys.forward=false;
               this.control.UserInput.keys.backward=true;  
               this.hit=true;
-              console.log("forward hit")
             }
             if(this.backward==true && this.hit ==false){
               this.control.UserInput.keys.forward=true;
               this.control.UserInput.keys.backward=false;   
               this.hit=true; 
-              console.log("backward hit")
             }
             this.hit=true;
       }
-
-
-      //console.log(ObstaclePositions);
       this.ObstacleCollision(this.control.myPosition);
-      //this.scorekeeper.innerHTML += "Lives: "+this.Lives+"\n";
-      this.liveskeeper.innerHTML="Lives Left: "+this.Lives;
       this.renderer.render(this.scene, this.camera);
+      //Check if time is finished
+      if(this.time <0){
+        //Call EndGame function
+         this.EndGame();
+      } else {
       this.Step(t - this.old_animation_frames);
       this.old_animation_frames = t;
+    }
+      
       }
     });
   
@@ -577,7 +565,9 @@ class ThirdPersonCameraGame {
     }
     localStorage.setItem("outcome",passed);
     //Change the page to the end page which shows summary of details
-    window.location.replace("endPage.html");
+    this.clock.stop();
+    this.time = 0;
+    window.location.replace("endPage.html");;
   }
   
 }
