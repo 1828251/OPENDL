@@ -287,8 +287,12 @@ class ThirdPersonCameraGame {
   }
 
   
-  CreateTree(){
-    const mat  =  new THREE.MeshStandardMaterial({color:0x00ff00});
+  CreateTree(manager){
+    const textureLoader  = new THREE.TextureLoader(manager);
+    var gridTexture=textureLoader.load('./textures/level3/grid-texture.png');
+    // gridTexture.wrapS=THREE.RepeatWrapping;
+    // gridTexture.wrapT=THREE.RepeatWrapping;
+    const mat  =  new THREE.MeshStandardMaterial({map:gridTexture});
     // mat.wireframe = true;
     const group = new THREE.Group();
     const level1 = new THREE.Mesh(
@@ -384,7 +388,7 @@ class ThirdPersonCameraGame {
       scene.add( mesh );
     } );
    
-    var Tree1 = this.CreateTree();
+    var Tree1 = this.CreateTree(manager);
     Tree1.position.set(x,y+8,10);
     // this.scene.add(obj);
     var d = 30;
