@@ -453,7 +453,7 @@ class ThirdPersonCameraGame {
 
       this.timekeeper.innerHTML = "Time Left: "+this.time;
       //Check if time is up or lives are finished
-      if(this.time <0 || this.Lives ==0){
+      if(this.time <=0 || this.Lives ==0){
         //Call EndGame function
          this.EndGame();
       }
