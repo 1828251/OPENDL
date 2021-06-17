@@ -198,7 +198,13 @@ class ThirdPersonCameraGame {
     }
     var muteBtn = document.getElementById('mute');
     muteBtn.onclick = () => {
-      document.getElementById('level-music').muted = !(document.getElementById('level-music').muted);
+      if (window.localStorage.getItem('mute') === 'true') {
+        window.localStorage.setItem('mute','false');
+        document.getElementById('level-music').muted = !(document.getElementById('level-music').muted);
+      } else {
+        window.localStorage.setItem('mute','true');
+        document.getElementById('level-music').muted = !(document.getElementById('level-music').muted);
+      }
     }
     this.x=0;
     var coin;

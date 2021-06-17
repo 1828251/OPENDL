@@ -65,8 +65,8 @@
         window.location.href = "level3.html";
         localStorage.setItem('Level','Level 3');
     }
-	
 
-
-
+    if (window.localStorage.getItem('mute') === "true") {
+		sound.muted = true;
+	} 
 </script>
