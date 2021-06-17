@@ -69,7 +69,7 @@ class ThirdPersonCameraGame {
     this.scaffoldingPos = [new THREE.Vector3(0,0,-1600)];
     this.cranePos = [new THREE.Vector3(0,100,-3000)];
     this.clock = new THREE.Clock();
-    this.time = 70;
+    this.time = 60;
     this.init();
   }
 
@@ -500,7 +500,7 @@ class ThirdPersonCameraGame {
 
       this.timekeeper.innerHTML = "Time Left: "+this.time;
       //Check if time is up or lives are finished
-      if(this.time <0 || this.Lives ==0){
+      if(this.time <=0 ){
         //Call EndGame function
          this.EndGame();
       }
@@ -566,7 +566,7 @@ class ThirdPersonCameraGame {
 
     //Check if the player scored high enough to be considered a pass and store in local storage
     var passed = "Failed";
-    if(playerScore>=20){
+    if(playerScore>=25){
       passed = "Passed";
       localStorage.setItem('Level2',true);
     }
