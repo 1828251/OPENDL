@@ -61,7 +61,6 @@ class ThirdPersonCamera {
 
 class ThirdPersonCameraGame {
   constructor() {
-    this.Lives = 3;
     this.discoballs = [];
     this.clock = new THREE.Clock();
     this.time = 50;
@@ -176,9 +175,8 @@ class ThirdPersonCameraGame {
     //Creating all coins
     this.coinPositions=[];
     this.score=0;
-    // setting DOM elements to display the score, time left and lives left.
+    // setting DOM elements to display the score, time left.
     this.scorekeeper=document.getElementById("Score");
-    this.liveskeeper = document.getElementById("Lives");
     this.timekeeper = document.getElementById("time");
     var pauseBtn = document.getElementById('pause');
     pauseBtn.onclick = () => {
@@ -235,8 +233,6 @@ class ThirdPersonCameraGame {
     this.grid = new THREE.GridHelper(limit * 2, division, "blue", "blue");
 
 // 
-    console.log(this.Obstacles);
-    console.log(this.Dimensions);
     this.scene.add(this.grid);
     
 
@@ -275,12 +271,10 @@ class ThirdPersonCameraGame {
   var detected=false;
   for (var k=0;k<this.Obstacles.length;++k){
     if (Math.abs(currPosition.z-this.Obstacles[k].position.z)<(this.Dimensions[k][1]/2)+2 && Math.abs(currPosition.x-this.Obstacles[k].position.x)<(this.Dimensions[k][0]/2)+2 && currPosition.y < 10){
-      console.log("hit");  
       detected=true;
     }
   }
   return detected;
-  //console.log(this.Obstacles);
   }
 
   CreateDiscoBall(z,textureLoader){
@@ -468,7 +462,6 @@ class ThirdPersonCameraGame {
         if (Math.abs(this.control.myPosition.z-this.coinPositions[i].position.z)<0.5 && Math.abs(this.control.myPosition.x-this.coinPositions[i].position.x)<5){
           this.coinSound.play();
           this.score+=1;
-          //console.log("score: "+this.score);
           this.scene.remove(this.coinPositions[i]);
           this.coinPositions.splice(i,1);
         }
@@ -528,19 +521,14 @@ class ThirdPersonCameraGame {
               this.control.UserInput.keys.forward=false;
               this.control.UserInput.keys.backward=true;  
               this.hit=true;
-              console.log("forward hit")
             }
             if(this.backward==true && this.hit ==false){
               this.control.UserInput.keys.forward=true;
               this.control.UserInput.keys.backward=false;   
               this.hit=true; 
-              console.log("backward hit")
             }
             this.hit=true;
       }
-
-      //this.scorekeeper.innerHTML += "Lives: "+this.Lives+"\n";
-      this.liveskeeper.innerHTML="Lives Left: "+this.Lives;
       this.renderer.setClearColor( 0x000000 );
       this.renderer.render(this.scene, this.camera);
       if(this.time <0){

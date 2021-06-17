@@ -194,10 +194,7 @@ class BasicCharacterControllerProxy {
       forward.multiplyScalar(velocity.z * timeInSeconds);
       //(this.canMove) ? (this.myPosition.y > 0.0) ? space.multiplyScalar(timeInSeconds * (velocity.y + gravity * 0.05)) : space.multiplyScalar(velocity.y * timeInSeconds) : space.multiplyScalar(0);
       (this.myPosition.y > 0.0) ? space.multiplyScalar(timeInSeconds * (velocity.y + gravity * 0.05)) : space.multiplyScalar(velocity.y * timeInSeconds)
-      //console.log("z velocity: ", velocity.z)
-      console.log("time",timeInSeconds,"y position:", this.myPosition.y)
-
-     // space.setY(timeInSeconds * (velocity.y + gravity * 0.05));
+     
 
   
       controlObject.position.add(forward);
