@@ -64,7 +64,7 @@ class ThirdPersonCameraGame {
   constructor() {
     this.discoballs = [];
     this.clock = new THREE.Clock();
-    this.time = 70;
+    this.time = 50;
     this.init();
   }
 
@@ -575,7 +575,7 @@ class ThirdPersonCameraGame {
 
     //Check if the player scored high enough to be considered a pass and store in local storage
     var passed = "Failed";
-    if(playerScore>=20){
+    if(playerScore>=30){
       passed = "Passed";
     }
     localStorage.setItem("outcome",passed);
