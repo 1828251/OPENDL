@@ -110,10 +110,7 @@ button{
   -webkit-animation: fadeIn 1s;
   animation: fadeIn 1s;
 }
-.popup .hide{
-    -webkit-animation: fadeOut 5s;
-    animation: fadeOut 5s;
-}
+
 
 /* Add animation (fade in the popup) */
 @-webkit-keyframes fadeIn {
@@ -125,12 +122,3 @@ button{
   from {opacity: 0;}
   to {opacity:1 ;}
 }
-@-webkit-keyframes fadeOut {
-    from {opacity: 1;}
-    to {opacity: 0;}
-  }
-  
-  @keyframes fadeOut {
-    from {opacity: 1;}
-    to {opacity:0 ;}
-  }
