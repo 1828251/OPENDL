@@ -565,12 +565,20 @@ class ThirdPersonCameraGame {
     var passed = "Failed";
     if(playerScore>=30){
       passed = "Passed";
+      localStorage.setItem("outcome",passed);
+      //Change the page to the end page which shows summary of details
+      this.clock.stop();
+      this.time = 0;
+      window.location.replace("endPage.html");
     }
-    localStorage.setItem("outcome",passed);
-    //Change the page to the end page which shows summary of details
-    this.clock.stop();
-    this.time = 0;
-    window.location.replace("endPage.html");
+    else{
+      localStorage.setItem("outcome",passed);
+      //Change the page to the end page which shows summary of details
+      this.clock.stop();
+      this.time = 0;
+      window.location.replace("failed.html");
+    }
+   
   }
   
 }
