@@ -79,17 +79,20 @@ button{
 /* The actual popup (appears on top) */
 .popup .popuptext {
   visibility: hidden;
-  width: 160px;
-  background-color: #3498db;
+  width: 200px;
+  background-color:red;
   color: #fff;
   text-align: center;
   border-radius: 6px;
+  border-width: 2px;
+  border-style: double;
+  border-color: rgb(255, 153, 0);
   padding: 8px 0;
-  position: fixed;
+  position: absolute;
   z-index: 1;
-  bottom: 125%;
-  left: 30%;
-  margin-left: -80px;
+  bottom: 35px;
+  /* left: 80%; */
+  margin-left: -100px;
 }
 
 /* Popup arrow */
