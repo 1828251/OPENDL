@@ -36,8 +36,12 @@
     h2.innerHTML = "Level "+outcome+" !"
     const score = document.getElementById('score');
     score.innerHTML ="Total Coins Collected: "+myScore
+    var level1Passed = window.onload = localStorage.getItem('Level1');
+    var level2Passed = window.onload = localStorage.getItem('Level2');
 
     setTimeout(function(){
+        localStorage.setItem('Level1',level1Passed);
+        localStorage.setItem('Level2',level2Passed);
         window.location.replace("index.html");
     },10000);
     var sound = document.getElementById("sound");

@@ -187,7 +187,7 @@ class ThirdPersonCameraGame {
         isPlay = false;
         document.getElementById('pause-menu').classList.toggle('active');
       } 
-    };ww
+    };
     var resumeBtn = document.getElementById('resume');
     resumeBtn.onclick = () => {
       if (isPlay === false) {

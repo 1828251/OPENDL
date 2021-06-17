@@ -573,6 +573,7 @@ class ThirdPersonCameraGame {
     var passed = "Failed";
     if(playerScore>=20){
       passed = "Passed";
+      localStorage.setItem('Level1',true);
     }
     localStorage.setItem("outcome",passed);
     //Change the page to the end page which shows summary of details
