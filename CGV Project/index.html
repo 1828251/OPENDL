@@ -23,13 +23,13 @@
             <h1>Brought To You By OPEN-DL</h1>
 
         </div>
-        
+       
         <div id ="Middle" class = "Options">
             <div id='Buttons' class='buttons'>
                 <button type ="button" id ='level1'>Level 1</button><br><br>
                 <button type ="button" id = 'level2'>Level 2</button><br><br>
                 <button type ="button" id = 'level3'>Level 3</button><br><br>
-                <button type ="button" id = 'buttons'>How to play</button><br><br>
+                <button type ="button" id = 'how-to-play'>How to play</button><br><br>
                 <button type ="button" id = 'credits'>Credits</button><br><br>
             </div>
         
@@ -37,6 +37,9 @@
                 <canvas id ="charac" width="20" height="20"></canvas>
                 <script type="module" src="./js/loadingScreen.js"></script>
             </div>
+            <div class="popup" onclick="displayPopup()">
+                <span class="popuptext" id="myPopup"></span>
+              </div>
             
         
          </div>
@@ -46,27 +49,68 @@
 
 
 <script>
+    function displayPopup() {
+        var popup = document.getElementById("myPopup");
+        popup.classList.toggle("show");
+    }
+    const PopupTxt = document.getElementById("myPopup");
     var sound = document.getElementById("sound");
-    sound.volume = 0.4;       
+    sound.volume = 0.4;  
+    
+    var level1Passed = window.onload = localStorage.getItem('Level1');
+    var level2Passed = window.onload = localStorage.getItem('Level2');
 
     const level1 = document.getElementById('level1');
     const level2 = document.getElementById('level2');
-    const level3 = document.getElementById('level3')
+    const level3 = document.getElementById('level3');
+    const howtoplay = document.getElementById('how-to-play');
+    const credits = document.getElementById('credits');
 
     level1.onclick = function() {
         window.location.href = "three.html";
         localStorage.setItem('Level','Level 1');
     }
     level2.onclick = function() {
-        window.location.href = "level2.html";
+        if(level1Passed){
+            window.location.href = "level2.html";
+        }
+        PopupTxt.innerHTML = "You need to pass level 1 in order to unlock level 2.";
+        displayPopup();
+
         localStorage.setItem('Level','Level 2');
     }
     level3.onclick = function() {
-        window.location.href = "level3.html";
+        if(level2Passed){
+            window.location.href = "level3.html";
+        }
+        if(level1Passed && level2Passed==false){
+            PopupTxt.innerHTML = "You need to pass level 2 in order to unlock level 3.";
+            displayPopup();
+        }
+        else{ 
+            PopupTxt.innerHTML = "You need to pass level 1 and level 2 in order to unlock level 3.";
+            displayPopup();
+
+        }
+       
+        
+        
         localStorage.setItem('Level','Level 3');
+    }
+    howtoplay.onclick = function(){
+        window.location.href = "how-to-play.html";
+    }
+    credits.onclick = function() {
+        window.location.href = "credits.html";
     }
 
     if (window.localStorage.getItem('mute') === "true") {
 		sound.muted = true;
 	} 
+    window.onunload = () => {
+   // Clear the local storage
+   localStorage.removeItem('Level1');
+   localStorage.removeItem('Level2');
+   localStorage.setItem('mute',"false")
+}
 </script>
