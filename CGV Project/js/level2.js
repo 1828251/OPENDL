@@ -59,7 +59,6 @@ class ThirdPersonCamera {
 
 class ThirdPersonCameraGame {
   constructor() {
-    this.Lives = 3;
     this.conesPos = [new THREE.Vector3(0,2,-200),new THREE.Vector3(0,2,-2100)];
     this.spikesPos = [new THREE.Vector3(0,0,-450),new THREE.Vector3(0,0,-510),new THREE.Vector3(0,0,-570),new THREE.Vector3(0,0,-630),new THREE.Vector3(0,0,-1750),new THREE.Vector3(0,0,-1810),new THREE.Vector3(0,0,-1870),new THREE.Vector3(0,0,-1930)];
     this.sandbagsPos = [new THREE.Vector3(0,0,-90), new THREE.Vector3(0,0,-360), new THREE.Vector3(0,0,-860), new THREE.Vector3(0,0,-1360), new THREE.Vector3(0,0,-1860), new THREE.Vector3(0,0,-2360)];
@@ -69,7 +68,7 @@ class ThirdPersonCameraGame {
     this.scaffoldingPos = [new THREE.Vector3(0,0,-1600)];
     this.cranePos = [new THREE.Vector3(0,100,-3000)];
     this.clock = new THREE.Clock();
-    this.time = 70;
+    this.time = 60;
     this.init();
   }
 
@@ -174,9 +173,8 @@ class ThirdPersonCameraGame {
     //Creating all coins
     this.coinPositions=[];
     this.score=0;
-    // setting DOM elements to display the score, time left and lives left.
+    // setting DOM elements to display the score, time left left.
     this.scorekeeper=document.getElementById("Score");
-    this.liveskeeper = document.getElementById("Lives");
     this.timekeeper = document.getElementById("time");
     var pauseBtn = document.getElementById('pause');
     pauseBtn.onclick = () => {
@@ -240,9 +238,6 @@ class ThirdPersonCameraGame {
     this.Dimensions=[];
     //loading all our obstacles into the scene
     this.LoadObstacles(this.scene,this.Obstacles,this.manager);
-    
-    console.log(this.Obstacles);
-    console.log(this.Dimensions);
 
     floor.scale.set(120,0,-10000);
     var d = -20000;
@@ -296,7 +291,6 @@ class ThirdPersonCameraGame {
     var detected=false;
     for (var k=0;k<this.Obstacles.length;++k){
       if (Math.abs(currPosition.z-this.Obstacles[k].position.z)<(this.Dimensions[k][1]/2)+2 && Math.abs(currPosition.x-this.Obstacles[k].position.x)<(this.Dimensions[k][0]/2)+2 && currPosition.y < 10){
-        console.log("hit");  
         detected=true;
       }
     }
@@ -328,8 +322,6 @@ class ThirdPersonCameraGame {
     var spike;
     for (var i=0;i<10;++i){
       spike=Spikes(i);
-      //console.log(spike.max.z);
-      //console.log(new THREE.Box3().setFromObject(spike).max.z-new THREE.Box3().setFromObject(spike).min.z);
       this.Dimensions[i]=[new THREE.Box3().setFromObject(spike).max.x-new THREE.Box3().setFromObject(spike).min.x,new THREE.Box3().setFromObject(spike).max.z-new THREE.Box3().setFromObject(spike).min.z];
       ObstaclePositions.push(spike);
       scene.add(spike);
@@ -500,7 +492,7 @@ class ThirdPersonCameraGame {
 
       this.timekeeper.innerHTML = "Time Left: "+this.time;
       //Check if time is up or lives are finished
-      if(this.time <0 || this.Lives ==0){
+      if(this.time <=0 ){
         //Call EndGame function
          this.EndGame();
       }
@@ -520,12 +512,6 @@ class ThirdPersonCameraGame {
             this.control.UserInput.keys.backward=true;
             this.hit=true;
       }
-
-      
-      
-
-      //this.scorekeeper.innerHTML += "Lives: "+this.Lives+"\n";
-      this.liveskeeper.innerHTML="Lives Left: "+this.Lives;
       this.renderer.render(this.scene, this.camera);
       this.Step(t - this.old_animation_frames);
       this.old_animation_frames = t;
@@ -566,8 +552,9 @@ class ThirdPersonCameraGame {
 
     //Check if the player scored high enough to be considered a pass and store in local storage
     var passed = "Failed";
-    if(playerScore>=20){
+    if(playerScore>=25){
       passed = "Passed";
+      localStorage.setItem('Level2',true);
     }
     localStorage.setItem("outcome",passed);
     //Change the page to the end page which shows summary of details
