@@ -13,7 +13,7 @@
 		<link rel="stylesheet" type="text/css" href="./css/endPage.css"/>
 	</head>
 	<body>
-		<audio autoplay loop >
+		<audio id='sound' autoplay loop >
             <source src="./audio/levitate.mp3" type="audio/mp3"></sources>
         </audio>
         <div id = "Info">
@@ -40,5 +40,9 @@
     setTimeout(function(){
         window.location.replace("index.html");
     },10000);
-
+    var sound = document.getElementById("sound");
+    sound.volume = 0.4; 
+    if (window.localStorage.getItem('mute') === 'true') {
+		sound.muted = true;
+	} 
 </script>

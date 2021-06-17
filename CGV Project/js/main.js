@@ -3,7 +3,7 @@ import {GLTFLoader} from 'https://cdn.jsdelivr.net/npm/three@0.118.1/examples/js
 import {BasicCharacterController} from './Controls.js';
 import {Coins} from './Coins.js'
 
-
+var isPlay = true;
 class ThirdPersonCamera {
   constructor(paramaters) {
     this.params = paramaters;
@@ -107,6 +107,25 @@ class ThirdPersonCameraGame {
     // creating the scene
     this.scene = new THREE.Scene();
 
+  //Audio listener to facilitate coin sound effects
+  this.coinListener = new THREE.AudioListener();
+  this.camera.add(this.coinListener);
+
+   this.coinSound = new THREE.Audio(this.coinListener);
+   this.audioLoader = new THREE.AudioLoader().load('./audio/coin-touch.wav', (buffer) => {
+      this.coinSound.setBuffer(buffer);
+      this.coinSound.setVolume(1.5);
+    });
+  //Audio listener to facilitate jump sound effects  
+  this.jumpListener = new THREE.AudioListener();
+  this.camera.add(this.jumpListener);
+
+  this.jumpSound = new THREE.Audio(this.jumpListener);
+  this.audioLoader2 = new THREE.AudioLoader().load('./audio/player-jumping.wav', (buffer) => {
+    this.jumpSound.setBuffer(buffer);
+    this.jumpSound.setVolume(1.5);
+  });
+
 
     //Creating a loading manager which we will use for  a loading screen while the scene loads.
     this.manager =  new THREE.LoadingManager(()=>{ 
@@ -125,12 +144,11 @@ class ThirdPersonCameraGame {
     light.target.position.set(0, 0, 0);
     light.castShadow = true;
     light.shadow.bias = -0.001;
-    light.shadow.mapSize.width = 4096;
-    light.shadow.mapSize.height = 4096;
-    light.shadow.camera.near = 0.1;
-    light.shadow.camera.far = 500.0;
+    light.shadow.mapSize.width = 512;
+    light.shadow.mapSize.height = 512;
     light.shadow.camera.near = 0.5;
     light.shadow.camera.far = 500.0;
+    light.shadow.camera.near = 0.5;
     light.shadow.camera.left = 50;
     light.shadow.camera.right = -50;
     light.shadow.camera.top = 50;
@@ -161,6 +179,34 @@ class ThirdPersonCameraGame {
     this.scorekeeper=document.getElementById("Score");
     this.liveskeeper = document.getElementById("Lives");
     this.timekeeper = document.getElementById("time");
+    var pauseBtn = document.getElementById('pause');
+    pauseBtn.onclick = () => {
+      if (isPlay === true) {
+        isPlay = false;
+        document.getElementById('pause-menu').classList.toggle('active');
+      } 
+    };
+    var resumeBtn = document.getElementById('resume');
+    resumeBtn.onclick = () => {
+      if (isPlay === false) {
+        isPlay = true;
+        document.getElementById('pause-menu').classList.toggle('active');
+      }
+    };
+    var exitBtn = document.getElementById('exit');
+    exitBtn.onclick = () => {
+      window.location.replace("index.html");
+    }
+    var muteBtn = document.getElementById('mute');
+    muteBtn.onclick = () => {
+      if (window.localStorage.getItem('mute') === 'true') {
+        window.localStorage.setItem('mute','false');
+        document.getElementById('level-music').muted = !(document.getElementById('level-music').muted);
+      } else {
+        window.localStorage.setItem('mute','true');
+        document.getElementById('level-music').muted = !(document.getElementById('level-music').muted);
+      }
+    }
     this.x=0;
     var coin;
     //looping and creating coins in the scene
@@ -219,8 +265,12 @@ class ThirdPersonCameraGame {
     this.LoadAnimatedModel();
     document.addEventListener("keydown",(e) =>  this.onDocumentKeyDown(e), false);
     this.ChangeView = 0;
-    this.request_animation_frame();
     
+    if (isPlay) {
+    this.request_animation_frame();
+    } else {
+      this.clock.stop();
+    }
     
   }
   onDocumentKeyDown(e) {
@@ -239,9 +289,6 @@ class ThirdPersonCameraGame {
 
   ObstacleCollision(currPosition){
   //detects if characters comes into contact with an obstacle
-    
-  var forward=this.control.UserInput.keys.forward;
-  var backward=this.control.UserInput.keys.backward;
   var detected=false;
   for (var k=0;k<this.Obstacles.length;++k){
     if (Math.abs(currPosition.z-this.Obstacles[k].position.z)<(this.Dimensions[k][1]/2)+2 && Math.abs(currPosition.x-this.Obstacles[k].position.x)<(this.Dimensions[k][0]/2)+2 && currPosition.y < 10){
@@ -403,27 +450,34 @@ class ThirdPersonCameraGame {
   }
 
   request_animation_frame() {
-    requestAnimationFrame((t) => {
+    
+    requestAnimationFrame((t) => { 
       if (this.old_animation_frames === null) {
         this.old_animation_frames = t;
-      }
+      } 
       this.request_animation_frame();
-
+      if (isPlay === true) {
+      
        //checks for interaction between player and all the coins
        for (var i=0;i<this.coinPositions.length;++i){
         if (Math.abs(this.control.myPosition.z-this.coinPositions[i].position.z)<0.5 && Math.abs(this.control.myPosition.x-this.coinPositions[i].position.x)<5){
+          this.coinSound.play();
           this.score+=1;
-          //console.log("score: "+this.score);
           this.scene.remove(this.coinPositions[i]);
           this.coinPositions.splice(i,1);
         }
       }
 
+      //enables jump sound to play
+      if (this.control.UserInput.keys.space && this.control.myPosition.y < 0.5) {
+        this.jumpSound.play();
+      }
+
      
       //coin jumping
-      this.x+=0.2;
+      this.x += 0.2;
       for (var i=0;i<this.coinPositions.length;++i){
-        this.coinPositions[i].position.y+=(Math.sin(this.x)/10);
+        this.coinPositions[i].position.y += (Math.sin(this.x)/10);
       }
 
       //Update the score of the player
@@ -432,8 +486,8 @@ class ThirdPersonCameraGame {
       if(!this.isPlayerMoved()){
             this.clock.start();
       }
-   
-      this.time = this.time-(this.clock.getElapsedTime()/1000)
+
+      this.time -= (this.clock.getElapsedTime()/1000);
       if(this.time<20){
         this.timekeeper.style.color = 'red';
       }
@@ -481,9 +535,9 @@ class ThirdPersonCameraGame {
       this.renderer.render(this.scene, this.camera);
       this.Step(t - this.old_animation_frames);
       this.old_animation_frames = t;
+      }
     });
-
-    
+  
   }
 
   isPlayerMoved(){

@@ -3,7 +3,7 @@ import {OrbitControls} from 'https://threejsfundamentals.org/threejs/resources/t
 import {BasicCharacterController} from './Controls.js';
 import {Coins} from './Coins.js'
 
-
+var isPlay = true;
 class ThirdPersonCamera {
   constructor(paramaters) {
     this.params = paramaters;
@@ -101,6 +101,26 @@ class ThirdPersonCameraGame {
     // creating the scene
     this.scene = new THREE.Scene();
 
+    //Audio listener to facilitate coin sound effects
+  this.coinListener = new THREE.AudioListener();
+  this.camera.add(this.coinListener);
+
+   this.coinSound = new THREE.Audio(this.coinListener);
+   this.audioLoader = new THREE.AudioLoader().load('./audio/coin-touch.wav', (buffer) => {
+      this.coinSound.setBuffer(buffer);
+      this.coinSound.setVolume(1.5);
+    });
+  //Audio listener to facilitate jump sound effects  
+  this.jumpListener = new THREE.AudioListener();
+  this.camera.add(this.jumpListener);
+
+  this.jumpSound = new THREE.Audio(this.jumpListener);
+  this.audioLoader2 = new THREE.AudioLoader().load('./audio/player-jumping.wav', (buffer) => {
+    this.jumpSound.setBuffer(buffer);
+    this.jumpSound.setVolume(1.5);
+  });
+
+
 
     //Creating a loading manager which we will use for  a loading screen while the scene loads.
      this.manager =  new THREE.LoadingManager(()=>{ 
@@ -161,6 +181,34 @@ class ThirdPersonCameraGame {
     this.scorekeeper=document.getElementById("Score");
     this.liveskeeper = document.getElementById("Lives");
     this.timekeeper = document.getElementById("time");
+    var pauseBtn = document.getElementById('pause');
+    pauseBtn.onclick = () => {
+      if (isPlay === true) {
+        isPlay = false;
+        document.getElementById('pause-menu').classList.toggle('active');
+      } 
+    };ww
+    var resumeBtn = document.getElementById('resume');
+    resumeBtn.onclick = () => {
+      if (isPlay === false) {
+        isPlay = true;
+        document.getElementById('pause-menu').classList.toggle('active');
+      }
+    };
+    var exitBtn = document.getElementById('exit');
+    exitBtn.onclick = () => {
+      window.location.replace("index.html");
+    }
+    var muteBtn = document.getElementById('mute');
+    muteBtn.onclick = () => {
+      if (window.localStorage.getItem('mute') === 'true') {
+        window.localStorage.setItem('mute','false');
+        document.getElementById('level-music').muted = !(document.getElementById('level-music').muted);
+      } else {
+        window.localStorage.setItem('mute','true');
+        document.getElementById('level-music').muted = !(document.getElementById('level-music').muted);
+      }
+    }
     this.x=0;
     var coin;
     //looping and creating coins in the scene
@@ -200,8 +248,12 @@ class ThirdPersonCameraGame {
     this.LoadAnimatedModel();
     document.addEventListener("keydown",(e) =>  this.onDocumentKeyDown(e), false);
     this.ChangeView = 0;
+    if (isPlay) {
     this.request_animation_frame();
-    
+    }
+    else {
+      this.clock.stop();
+    }
     
   }
   onDocumentKeyDown(e) {
@@ -406,7 +458,7 @@ class ThirdPersonCameraGame {
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(window.innerWidth, window.innerHeight);
   }
-
+  
   request_animation_frame() {
     requestAnimationFrame((t) => {
       if (this.old_animation_frames === null) {
@@ -414,10 +466,11 @@ class ThirdPersonCameraGame {
       }
       this.counter
       this.request_animation_frame();
-
+      if (isPlay) {
        //checks for interaction between player and all the coins
        for (var i=0;i<this.coinPositions.length;++i){
         if (Math.abs(this.control.myPosition.z-this.coinPositions[i].position.z)<0.5 && Math.abs(this.control.myPosition.x-this.coinPositions[i].position.x)<5){
+          this.coinSound.play();
           this.score+=1;
           //console.log("score: "+this.score);
           this.scene.remove(this.coinPositions[i]);
@@ -437,6 +490,11 @@ class ThirdPersonCameraGame {
       this.x+=0.2;
       for (var i=0;i<this.coinPositions.length;++i){
         this.coinPositions[i].position.y+=(Math.sin(this.x)/10);
+      }
+
+      //enables jump sound to play
+      if (this.control.UserInput.keys.space && this.control.myPosition.y < 0.5) {
+        this.jumpSound.play();
       }
 
       //Update the score of the player
@@ -493,6 +551,7 @@ class ThirdPersonCameraGame {
       this.renderer.render(this.scene, this.camera);
       this.Step(t - this.old_animation_frames);
       this.old_animation_frames = t;
+      } 
     });
 
     
