@@ -563,22 +563,18 @@ class ThirdPersonCameraGame {
 
     //Check if the player scored high enough to be considered a pass and store in local storage
     var passed = "Failed";
-    if(playerScore>=30){
+    if(playerScore>=25){
       passed = "Passed";
-      localStorage.setItem("outcome",passed);
-      //Change the page to the end page which shows summary of details
-      this.clock.stop();
-      this.time = 0;
-      window.location.replace("endPage.html");
     }
-    else{
-      localStorage.setItem("outcome",passed);
-      //Change the page to the end page which shows summary of details
-      this.clock.stop();
-      this.time = 0;
+    localStorage.setItem("outcome",passed);
+    //Change the page to the end page which shows summary of details
+    this.clock.stop();
+    this.time = 0;
+    if (passed=="Failed"){
       window.location.replace("failed.html");
+    }else{
+      window.location.replace("winning.html");
     }
-   
   }
   
 }
