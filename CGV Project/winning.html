@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>WINNER</title>
+		<style>
+			body { margin: 0; }
+		</style>
+        <link rel="stylesheet" type="text/css" href="./css/Credits.css"/>
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+       <link href="https://fonts.googleapis.com/css2?family=Monoton&family=Righteous&display=swap" rel="stylesheet">
+        
+	</head>
+	<body>
+        <audio id="sound" autoplay loop >
+            <source src="./audio/levitate.mp3" type="audio/mp3"></sources>
+        </audio>
+
+        
+
+        <div id="TOP">
+            <h2>YOU'VE WON!!!</h2>
+            <h3>You've collected enough coins to meet DUA LIPA!</h3>
+
+            <img src="images/polaroid-min.png" width=30% height=30% align-items=centre style="margin-top: -10px;">
+            <h3 style="margin-top: -10px;">OPENDL hopes you had a fun time rocking and conquering our levels!</h3>
+        </div>
+        
+        <div id ="Middle" class = "Options">
+            <div id='Buttons' class='buttons'>
+                <!-- <button type ="button" id = 'buttons'>How to play</button><br><br> -->
+                <button type ="button" id = 'home'>Home</button><br><br>
+            </div>
+         </div>
+	</body>
+</html>
+
+
+
+<script>
+    var sound = document.getElementById("sound");
+    sound.volume = 0.4;    
+
+    const home = document.getElementById('home');
+
+    home.onclick = function() {
+        window.location.href = "index.html";
+    }
+
+    if (window.localStorage.getItem('mute') === "true") {
+		sound.muted = true;
+	} 
+</script>
