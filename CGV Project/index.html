@@ -29,7 +29,7 @@
                 <button type ="button" id ='level1'>Level 1</button><br><br>
                 <button type ="button" id = 'level2'>Level 2</button><br><br>
                 <button type ="button" id = 'level3'>Level 3</button><br><br>
-                <button type ="button" id = 'buttons'>How to play</button><br><br>
+                <button type ="button" id = 'how-to-play'>How to play</button><br><br>
                 <button type ="button" id = 'credits'>Credits</button><br><br>
             </div>
         
@@ -51,7 +51,9 @@
 
     const level1 = document.getElementById('level1');
     const level2 = document.getElementById('level2');
-    const level3 = document.getElementById('level3')
+    const level3 = document.getElementById('level3');
+    const howtoplay = document.getElementById('how-to-play');
+    const credits = document.getElementById('credits');
 
     level1.onclick = function() {
         window.location.href = "three.html";
@@ -64,6 +66,12 @@
     level3.onclick = function() {
         window.location.href = "level3.html";
         localStorage.setItem('Level','Level 3');
+    }
+    howtoplay.onclick = function(){
+        window.location.href = "how-to-play.html";
+    }
+    credits.onclick = function() {
+        window.location.href = "credits.html";
     }
 
     if (window.localStorage.getItem('mute') === "true") {

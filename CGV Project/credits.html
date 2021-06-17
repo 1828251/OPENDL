@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Runner Credits</title>
+		<style>
+			body { margin: 0; }
+		</style>
+        <link rel="stylesheet" type="text/css" href="./css/Credits.css"/>
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+       <link href="https://fonts.googleapis.com/css2?family=Monoton&family=Righteous&display=swap" rel="stylesheet">
+        
+	</head>
+	<body>
+        <audio id="sound" autoplay loop >
+            <source src="./audio/levitate.mp3" type="audio/mp3"></sources>
+        </audio>
+
+        
+
+        <div id="TOP">
+            <h2>Credits</h2>
+            <h3>Brought to you by OPENDL, our Runner game inspired by Dua Lipa,<br> aims to bring you endless fun and challenges.<br> Using trending modern techniques mixed up with retro audio, designs and game play,<br> you will definitely be hooked for hours!</h3>
+            <h3><br> Our creative team:<br>
+                Fatima Daya 1620146 <br> 
+                Yaseen Haffejee 1827555<br>
+                Jeremy Crouch 1598024<br>
+                Ziyaad Ballim 1828251<br>
+            </h3>
+            <br>
+            <h3>
+                The following resources have contributed to the creation of this game:<br>
+                youtube.com: various audio from 8 bit Universe <br>
+                https://gamedevelopment.tutsplus.com/tutorials/creating-a-simple-3d-endless-runner-game-using-three-js--cms-29157 <br>
+                Various sources from google images <br>
+                https://www.humus.name/index.php?page=Textures <br>
+                sound effects: mixkit.co<br>
+                Multiple techniques and implementations from threejs.org
+            </h3>
+        </div>
+        
+        <div id ="Middle" class = "Options">
+            <div id='Buttons' class='buttons'>
+                <!-- <button type ="button" id = 'buttons'>How to play</button><br><br> -->
+                <button type ="button" id = 'home'>Home</button><br><br>
+            </div>
+        
+            <div id="Canvas" class="canvas">
+                <canvas id ="charac" width="20" height="20"></canvas>
+                <script type="module" src="./js/loadingScreen.js"></script>
+            </div>
+            
+        
+         </div>
+	</body>
+</html>
+
+
+
+<script>
+    var sound = document.getElementById("sound");
+    sound.volume = 0.4;    
+
+    const home = document.getElementById('home');
+
+    home.onclick = function() {
+        window.location.href = "index.html";
+    }
+
+    if (window.localStorage.getItem('mute') === "true") {
+		sound.muted = true;
+	} 
+</script>
