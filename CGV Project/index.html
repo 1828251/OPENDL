@@ -74,16 +74,20 @@
         if(level1Passed){
             window.location.href = "level2.html";
         }
-        PopupTxt.innerHTML = "You need to pass level 1 in order to unlock level 2.";
+        else{ 
+            PopupTxt.innerHTML = "You need to pass level 1 in order to unlock level 2.";
         displayPopup();
 
         localStorage.setItem('Level','Level 2');
+
+        }
+        
     }
     level3.onclick = function() {
         if(level2Passed){
             window.location.href = "level3.html";
         }
-        if(level1Passed && level2Passed==false){
+        else if(level1Passed && level2Passed==false){
             PopupTxt.innerHTML = "You need to pass level 2 in order to unlock level 3.";
             displayPopup();
         }
