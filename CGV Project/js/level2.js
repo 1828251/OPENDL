@@ -260,7 +260,7 @@ class ThirdPersonCameraGame {
 
 
     //Loading a texture to apply as the "floor"
-    const cubeTexture = new THREE.TextureLoader().load('./textures/level2/laser.jpg');
+    const cubeTexture = new THREE.TextureLoader(this.manager).load('./textures/level2/laser.jpg');
     cubeTexture.wrapS = THREE.RepeatWrapping;
     cubeTexture.wrapT = THREE.RepeatWrapping;
     cubeTexture.repeat.set(10,40);
@@ -446,7 +446,7 @@ class ThirdPersonCameraGame {
 
     // this obj will act as the parent for the barriers on the side to prevent user from falling off
     var obj =  new THREE.Object3D();
-    const loader = new THREE.TextureLoader(manager);
+    const loader = new THREE.TextureLoader(this.manager);
   
     loader.load(path, function(Texture){
       //Load the model 

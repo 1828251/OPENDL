@@ -71,7 +71,7 @@ class ThirdPersonCameraGame {
 
   init() {
 
-    // defining a renderer for the scene
+    // defining a rendererPhongMat for the scene
     this.renderer = new THREE.WebGLRenderer({
       antialias: true,
       depthTest: true,
