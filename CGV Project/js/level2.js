@@ -352,7 +352,7 @@ class ThirdPersonCameraGame {
     //Create traffic obstacles function
     function Moons(z){
       var moongeo = new THREE.SphereGeometry( 8, 30, 30 );
-      const moontexture = new THREE.TextureLoader().load("./textures/level2/moonfloor.png");
+      const moontexture = new THREE.TextureLoader(manager).load("./textures/level2/moonfloor.png");
             moontexture.wrapS=THREE.RepeatWrapping;
             moontexture.wrapT=THREE.RepeatWrapping;
             moontexture.repeat.set(1,1);
@@ -382,7 +382,7 @@ class ThirdPersonCameraGame {
     //Creating Blitz obstacles function 
     function Checkbox(z){
       var checkgeo = new THREE.BoxGeometry( 12, 12, 12 );
-      const checktexture = new THREE.TextureLoader().load("./textures/level2/checker.png");
+      const checktexture = new THREE.TextureLoader(manager).load("./textures/level2/checker.png");
             checktexture.wrapS=THREE.RepeatWrapping;
             checktexture.wrapT=THREE.RepeatWrapping;
             checktexture.repeat.set(1,1);
@@ -413,7 +413,7 @@ class ThirdPersonCameraGame {
     //Creating cylinder obstacles function 
     function Cylinder(z){
       var cylindergeo = new THREE.OctahedronGeometry( 10,0);
-      const cylindertexture = new THREE.TextureLoader().load("./textures/level2/Purple.jpg");
+      const cylindertexture = new THREE.TextureLoader(manager).load("./textures/level2/Purple.jpg");
             cylindertexture.wrapS=THREE.RepeatWrapping;
             cylindertexture.wrapT=THREE.RepeatWrapping;
             cylindertexture.repeat.set(3,3);
@@ -446,7 +446,7 @@ class ThirdPersonCameraGame {
 
     // this obj will act as the parent for the barriers on the side to prevent user from falling off
     var obj =  new THREE.Object3D();
-    const loader = new THREE.TextureLoader(this.manager);
+    const loader = new THREE.TextureLoader(manager);
   
     loader.load(path, function(Texture){
       //Load the model 
