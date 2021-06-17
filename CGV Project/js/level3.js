@@ -101,6 +101,26 @@ class ThirdPersonCameraGame {
     // creating the scene
     this.scene = new THREE.Scene();
 
+    //Audio listener to facilitate coin sound effects
+  this.coinListener = new THREE.AudioListener();
+  this.camera.add(this.coinListener);
+
+   this.coinSound = new THREE.Audio(this.coinListener);
+   this.audioLoader = new THREE.AudioLoader().load('./audio/coin-touch.wav', (buffer) => {
+      this.coinSound.setBuffer(buffer);
+      this.coinSound.setVolume(1.5);
+    });
+  //Audio listener to facilitate jump sound effects  
+  this.jumpListener = new THREE.AudioListener();
+  this.camera.add(this.jumpListener);
+
+  this.jumpSound = new THREE.Audio(this.jumpListener);
+  this.audioLoader2 = new THREE.AudioLoader().load('./audio/player-jumping.wav', (buffer) => {
+    this.jumpSound.setBuffer(buffer);
+    this.jumpSound.setVolume(1.5);
+  });
+
+
 
     //Creating a loading manager which we will use for  a loading screen while the scene loads.
      this.manager =  new THREE.LoadingManager(()=>{ 
@@ -444,6 +464,7 @@ class ThirdPersonCameraGame {
        //checks for interaction between player and all the coins
        for (var i=0;i<this.coinPositions.length;++i){
         if (Math.abs(this.control.myPosition.z-this.coinPositions[i].position.z)<0.5 && Math.abs(this.control.myPosition.x-this.coinPositions[i].position.x)<5){
+          this.coinSound.play();
           this.score+=1;
           //console.log("score: "+this.score);
           this.scene.remove(this.coinPositions[i]);
@@ -463,6 +484,11 @@ class ThirdPersonCameraGame {
       this.x+=0.2;
       for (var i=0;i<this.coinPositions.length;++i){
         this.coinPositions[i].position.y+=(Math.sin(this.x)/10);
+      }
+
+      //enables jump sound to play
+      if (this.control.UserInput.keys.space && this.control.myPosition.y < 0.5) {
+        this.jumpSound.play();
       }
 
       //Update the score of the player
