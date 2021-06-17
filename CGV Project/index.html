@@ -6,16 +6,17 @@
 		<style>
 			body { margin: 0; }
 		</style>
-       <link rel="preconnect" href="https://fonts.gstatic.com">
-       <link href="https://fonts.googleapis.com/css2?family=Monoton&family=Righteous&display=swap" rel="stylesheet">
         <link rel="stylesheet" type="text/css" href="./css/index.css"/>
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+       <link href="https://fonts.googleapis.com/css2?family=Monoton&family=Righteous&display=swap" rel="stylesheet">
         
 	</head>
 	<body>
-        <audio autoplay loop >
+        <audio id="sound" autoplay loop >
             <source src="./audio/levitate.mp3" type="audio/mp3"></sources>
         </audio>
 
+        
 
         <div id="TOP">
             <h1>Runner</h1><br>
@@ -45,6 +46,8 @@
 
 
 <script>
+    var sound = document.getElementById("sound");
+    sound.volume = 0.4;       
 
     const level1 = document.getElementById('level1');
     const level2 = document.getElementById('level2');
@@ -63,6 +66,7 @@
         localStorage.setItem('Level','Level 3');
     }
 
-
-
+    if (window.localStorage.getItem('mute') === "true") {
+		sound.muted = true;
+	} 
 </script>
