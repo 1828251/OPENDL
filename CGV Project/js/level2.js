@@ -260,11 +260,7 @@ class ThirdPersonCameraGame {
     this.ChangeView = 0;
     if (isPlay) {
       this.request_animation_frame();
-    } else {
-      this.clock.stop();
     }
-    
-    
   }
   //Event listener which will remove the dom element once everything is loaded.
   onTransitionEnd( event ) {
@@ -484,19 +480,16 @@ class ThirdPersonCameraGame {
       if(!this.isPlayerMoved()){
             this.clock.start();
       }
-   
-      this.time = this.time-(this.clock.getElapsedTime()/1000)
-      if(this.time<20){
-        this.timekeeper.style.color = 'red';
+      if (this.time > 0) {
+        if (this.time<20){
+            this.timekeeper.style.color = 'red';
+          }
+        this.time -= (this.clock.getElapsedTime()/1000);
       }
+      
 
       this.timekeeper.innerHTML = "Time Left: "+this.time;
       //Check if time is up or lives are finished
-      if(this.time <=0 ){
-        //Call EndGame function
-         this.EndGame();
-      }
-
       //Detecting collision and reacting
       this.forward=this.control.UserInput.keys.forward;
       this.backward=this.control.UserInput.keys.backward;
@@ -513,9 +506,17 @@ class ThirdPersonCameraGame {
             this.hit=true;
       }
       this.renderer.render(this.scene, this.camera);
-      this.Step(t - this.old_animation_frames);
-      this.old_animation_frames = t;
+      
+     
+
+      if(this.time < 0){
+        //Call EndGame function
+         this.EndGame();
+      } else {
+        this.Step(t - this.old_animation_frames);
+        this.old_animation_frames = t;
       }
+    }
     });
 
     
@@ -558,7 +559,9 @@ class ThirdPersonCameraGame {
     }
     localStorage.setItem("outcome",passed);
     //Change the page to the end page which shows summary of details
-    window.location.replace("endPage.html");
+    this.clock.stop();
+    this.time = 0;
+    window.location.replace("endPage.html");;
   }
   
 }

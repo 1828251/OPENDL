@@ -1,5 +1,4 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.118/build/three.module.js';
-import {GLTFLoader} from 'https://cdn.jsdelivr.net/npm/three@0.118.1/examples/jsm/loaders/GLTFLoader.js';
 import {BasicCharacterController} from './Controls.js';
 import {Coins} from './Coins.js'
 
@@ -263,8 +262,6 @@ class ThirdPersonCameraGame {
     
     if (isPlay) {
     this.request_animation_frame();
-    } else {
-      this.clock.stop();
     }
     
   }
@@ -479,17 +476,16 @@ class ThirdPersonCameraGame {
             this.clock.start();
       }
 
-      this.time -= (this.clock.getElapsedTime()/1000);
-      if(this.time<20){
-        this.timekeeper.style.color = 'red';
+      if (this.time > 0) {
+        if (this.time<20){
+            this.timekeeper.style.color = 'red';
+          }
+        this.time -= (this.clock.getElapsedTime()/1000);
       }
+      
 
       this.timekeeper.innerHTML = "Time Left: "+this.time;
-      //Check if time is finished
-      if(this.time <0){
-        //Call EndGame function
-         this.EndGame();
-      }
+      
 
 
       //Detecting collision and reacting
@@ -518,8 +514,15 @@ class ThirdPersonCameraGame {
       }
       this.ObstacleCollision(this.control.myPosition);
       this.renderer.render(this.scene, this.camera);
+      //Check if time is finished
+      if(this.time <0){
+        //Call EndGame function
+         this.EndGame();
+      } else {
       this.Step(t - this.old_animation_frames);
       this.old_animation_frames = t;
+    }
+      
       }
     });
   
@@ -562,7 +565,9 @@ class ThirdPersonCameraGame {
     }
     localStorage.setItem("outcome",passed);
     //Change the page to the end page which shows summary of details
-    window.location.replace("endPage.html");
+    this.clock.stop();
+    this.time = 0;
+    window.location.replace("endPage.html");;
   }
   
 }
