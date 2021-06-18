@@ -521,7 +521,7 @@ class ThirdPersonCameraGame {
 
         //checks for interaction between player and all the coins
         for (var i = 0; i < this.coinPositions.length; ++i) {
-          if (Math.abs(this.control.myPosition.z - this.coinPositions[i].position.z) < 0.5 && Math.abs(this.control.myPosition.x - this.coinPositions[i].position.x) < 5) {
+          if (Math.abs(this.control.myPosition.z - this.coinPositions[i].position.z) < 1.5 && Math.abs(this.control.myPosition.x - this.coinPositions[i].position.x) < 7) {
             this.coinSound.play();
             this.score += 1;
             this.scene.remove(this.coinPositions[i]);
@@ -546,11 +546,11 @@ class ThirdPersonCameraGame {
           this.jumpSound.play();
         }
 
-        //coin jumping
-        this.x += 0.2;
-        for (var i = 0; i < this.coinPositions.length; ++i) {
-          this.coinPositions[i].position.y += (Math.sin(this.x) / 10);
-        }
+        // //coin jumping
+        // this.x += 0.2;
+        // for (var i = 0; i < this.coinPositions.length; ++i) {
+        //   this.coinPositions[i].position.y += (Math.sin(this.x) / 10);
+        // }
 
         //Update the score of the player
         this.scorekeeper.innerHTML = "Score: " + this.score;
