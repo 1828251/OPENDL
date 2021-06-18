@@ -16,7 +16,6 @@ class ThirdPersonCamera {
     // Calculate the idea offset.
     // THis represents the angle at which the position the camera will be
     // we position the camera slightly to the right and over the shoulder of the character
-    // const idealOffset = new THREE.Vector3(-15, 20, -30);
     var idealOffset;
     if (View == 0) {
       idealOffset = new THREE.Vector3(-15, 20, -30);
@@ -27,8 +26,6 @@ class ThirdPersonCamera {
     else if (View == 2) {
       idealOffset = new THREE.Vector3(0, 15, 10);
     }
-    // const idealOffset = new THREE.Vector3(0, 15, 10);
-    // const idealOffset = new THREE.Vector3(-15, 20, -30);
     idealOffset.applyQuaternion(this.params.target.Rotation);
     idealOffset.add(this.params.target.Position);
     return idealOffset;
@@ -128,7 +125,6 @@ class ThirdPersonCameraGame {
 
 
     // we add DirectionalLight to the scene
-    // let light = new THREE.DirectionalLight(0xFFFFFF, 1.0);
     let light = new THREE.DirectionalLight('#800080', 1.0);
     light.position.set(-100, 100, 100);
     light.target.position.set(0, 0, 0);
@@ -138,7 +134,6 @@ class ThirdPersonCameraGame {
     this.scene.add(light);
 
     //Loading the texture for the scene background
-    // const loader = new THREE.CubeTextureLoader();
     this.texture = new THREE.CubeTextureLoader().load([
       './textures/level3/posx.png',
       './textures/level3/negx.png',
@@ -150,10 +145,6 @@ class ThirdPersonCameraGame {
     this.texture.format = THREE.RGBFormat;
     this.texture.encoding = THREE.sRGBEncoding;
     this.scene.background = this.texture;
-
-    // this.pmrem = new THREE.PMREMGenerator(this.renderer);
-    // // this.pmrem.fromCubemap(texture);
-    // this.pmrem.fromScene(this.scene);
 
 
     //Creating all coins
@@ -204,7 +195,6 @@ class ThirdPersonCameraGame {
     var y = 0;
     var z = 13;
     // //Loading the barriers on the side
-    // this.LoadModel(this.scene,x,y,z,this.manager);
     // //loading all our obstacles into the scene
 
     this.hit = false;
@@ -442,7 +432,6 @@ class ThirdPersonCameraGame {
         this.discoballs.forEach(rotateDiscoBall);
 
         function rotateDiscoBall(obj) {
-          // obj.rotateOnAxis(new THREE.Vector3(0,1,0),Math.PI);
           obj.rotation.y += 0.02;
         }
 
@@ -475,14 +464,11 @@ class ThirdPersonCameraGame {
         this.timekeeper.innerHTML = "Time Left: " + this.time;
         //Check if time finished
 
-        // this.ObstacleCollision(this.control.myPosition);
-
         //Detecting collision and reacting
         this.forward = this.control.UserInput.keys.forward;
         this.backward = this.control.UserInput.keys.backward;
         var detected = this.ObstacleCollision(this.control.myPosition);
         if (this.hit == true && detected == false) {
-          // this.control.UserInput.keys.forward=true;
           this.control.UserInput.keys.backward = false;
           this.control.UserInput.keys.forward = false;
           this.hit = false;

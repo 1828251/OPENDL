@@ -16,7 +16,6 @@ class ThirdPersonCamera {
     // Calculate the idea offset.
     // THis represents the angle at which the position the camera will be
     // we position the camera slightly to the right and over the shoulder of the character
-    // const idealOffset = new THREE.Vector3(-15, 20, -30);
     var idealOffset;
     if (View == 0) {
       idealOffset = new THREE.Vector3(-15, 20, -30);
@@ -27,7 +26,6 @@ class ThirdPersonCamera {
     else if (View == 2) {
       idealOffset = new THREE.Vector3(0, 15, 10);
     }
-    // const idealOffset = new THREE.Vector3(0, 15, 10);
     idealOffset.applyQuaternion(this.params.target.Rotation);
     idealOffset.add(this.params.target.Position);
     return idealOffset;
@@ -140,59 +138,22 @@ class ThirdPersonCameraGame {
     this.light1 = new THREE.DirectionalLight(0xFFFFFF, 1);
     this.light1.position.set(-100, 100, -100);
     this.light1.target.position.set(0, 0, 0);
-    // light.castShadow = true;
-    // light.shadow.bias = -0.001;
-    // light.shadow.mapSize.width = 4096;
-    // light.shadow.mapSize.height = 4096;
-    // light.shadow.camera.near = 0.1;
-    // light.shadow.camera.far = 500.0;
-    // light.shadow.camera.near = 0.5;
-    // light.shadow.camera.far = 500.0;
-    // light.shadow.camera.left = 500;
-    // light.shadow.camera.right = -500;
-    // light.shadow.camera.top = 500;
-    // light.shadow.camera.bottom = -500;
     this.scene.add(this.light1);
 
 
     //adding ambient light so all objects are lit up better
     var light = new THREE.AmbientLight(0xFFFFFF, 0.25);
-    // light.castShadow = true;
     this.scene.add(light);
 
 
     this.light2 = new THREE.DirectionalLight("#FF0000", 0.5);
     this.light2.position.set(-100, 100, -700);
     this.light2.target.position.set(0, 0, 0);
-    // light.castShadow = true;
-    // light.shadow.bias = -0.001;
-    // light.shadow.mapSize.width = 4096;
-    // light.shadow.mapSize.height = 4096;
-    // light.shadow.camera.near = 0.1;
-    // light.shadow.camera.far = 500.0;
-    // light.shadow.camera.near = 0.5;
-    // light.shadow.camera.far = 500.0;
-    // light.shadow.camera.left = 500;
-    // light.shadow.camera.right = -500;
-    // light.shadow.camera.top = 500;
-    // light.shadow.camera.bottom = -500;
     this.scene.add(this.light2);
 
     this.light3 = new THREE.DirectionalLight("#FFFF00", 0.5);
     this.light3.position.set(100, 100, -1200);
     this.light3.target.position.set(0, 0, -100);
-    // light.castShadow = true;
-    // light.shadow.bias = -0.001;
-    // light.shadow.mapSize.width = 4096;
-    // light.shadow.mapSize.height = 4096;
-    // light.shadow.camera.near = 0.1;
-    // light.shadow.camera.far = 500.0;
-    // light.shadow.camera.near = 0.5;
-    // light.shadow.camera.far = 500.0;
-    // light.shadow.camera.left = 500;
-    // light.shadow.camera.right = -500;
-    // light.shadow.camera.top = 500;
-    // light.shadow.camera.bottom = -500;
     this.scene.add(this.light3);
 
 
@@ -262,16 +223,11 @@ class ThirdPersonCameraGame {
     cubeTexture.wrapS = THREE.RepeatWrapping;
     cubeTexture.wrapT = THREE.RepeatWrapping;
     cubeTexture.repeat.set(10, 40);
-    // const geometry = new THREE.BoxGeometry();
-    //Platform which is a floor is represented by a cube
     const geometry = new THREE.PlaneGeometry(50, 10000, 10, 10);
-    // const material = new THREE.MeshBasicMaterial({map:cubeTexture});
     const material = new THREE.MeshStandardMaterial({ map: cubeTexture });
     const floor = new THREE.Mesh(geometry, material);
-    // floor.receiveShadow = true;
     floor.rotation.x += Math.PI / 2;
     floor.scale.set(5, 50, -100);
-    // floor.castShadow = true;
     this.scene.add(floor);
     var x = 0;
     var y = 0;
@@ -289,20 +245,6 @@ class ThirdPersonCameraGame {
 
 
     this.LoadModel(barriertext, this.scene, x, y, z, this.manager, this.Obstacles, this.Dimensions);
-
-    console.log(this.Obstacles);
-    console.log(this.Dimensions);
-
-    // floor.scale.set(120,0,-10000);
-    // var d = -20000;
-    // // looping and ensuring our floor is long enough for the round.
-    // for(var i =0;i<10;i++){
-    //     const newFloor = new THREE.Mesh( geometry, material );
-    //     newFloor.position.set(0,0,d);
-    //     d = d - 10000;
-    //     this.scene.add( newFloor );
-    //     newFloor.scale.set(120,0,-10000);
-    // }
 
 
 
@@ -339,7 +281,6 @@ class ThirdPersonCameraGame {
     var detected = false;
     for (var k = 0; k < this.Obstacles.length; ++k) {
       if (Math.abs(currPosition.z - this.Obstacles[k].position.z) < (this.Dimensions[k][1] / 2) + 2 && Math.abs(currPosition.x - this.Obstacles[k].position.x) < (this.Dimensions[k][0] / 2) + 2 && currPosition.y < 10) {
-        console.log("hit");
         detected = true;
       }
     }
@@ -355,10 +296,7 @@ class ThirdPersonCameraGame {
       moontexture.wrapT = THREE.RepeatWrapping;
       moontexture.repeat.set(1, 1);
       const moonmat = new THREE.MeshStandardMaterial({ map: moontexture });
-      // const conemat = new THREE.MeshStandardMaterial( {color: "red"} );
       var moon = new THREE.Mesh(moongeo, moonmat);
-      // cone.castShadow = true;
-      // cone.receiveShadow = false;
       moon.position.y = 12;
       moon.position.z = -60 * z - 15;
       moon.position.x = Math.floor(Math.random() * 100) - 50;
@@ -369,8 +307,6 @@ class ThirdPersonCameraGame {
     var moon;
     for (var i = 0; i < 10; ++i) {
       moon = Moons(i);
-      //console.log(spike.max.z);
-      //console.log(new THREE.Box3().setFromObject(spike).max.z-new THREE.Box3().setFromObject(spike).min.z);
       this.Dimensions[i] = [new THREE.Box3().setFromObject(moon).max.x - new THREE.Box3().setFromObject(moon).min.x, new THREE.Box3().setFromObject(moon).max.z - new THREE.Box3().setFromObject(moon).min.z];
       ObstaclePositions.push(moon);
       this.light1.target = moon;
@@ -386,13 +322,10 @@ class ThirdPersonCameraGame {
       checktexture.repeat.set(1, 1);
       const checkmat = new THREE.MeshStandardMaterial({ map: checktexture });
       var check = new THREE.Mesh(checkgeo, checkmat);
-      // blitz.castShadow = true;
       check.position.z = -60 * z - 15;
       check.position.y = 12;
       check.position.x = Math.floor(Math.random() * 100) - 50;
 
-
-      //blitz.rotation.z=90;
       return check;
     }
 
@@ -404,7 +337,6 @@ class ThirdPersonCameraGame {
       ObstaclePositions.push(check);
       this.light2.target = check;
       scene.add(check);
-      // scene.add(boxCamera);
     }
 
 
@@ -417,7 +349,6 @@ class ThirdPersonCameraGame {
       cylindertexture.repeat.set(3, 3);
       const cylindermat = new THREE.MeshStandardMaterial({ map: cylindertexture });
       var cylinder = new THREE.Mesh(cylindergeo, cylindermat);
-      // cylinder.castShadow = true;
       cylinder.position.z = -60 * z - 15;
       cylinder.position.y = 10;
       cylinder.position.x = Math.floor(Math.random() * 100) - 50;
@@ -455,7 +386,6 @@ class ThirdPersonCameraGame {
       Texture.repeat.set(2, 2);
       const barrierMat = new THREE.MeshStandardMaterial({ map: Texture });
 
-      //scene.add(barrier)
       var barrierleft;
       var barrierright;
       for (var i = 30; i < 1000; i += 2) {
@@ -546,12 +476,6 @@ class ThirdPersonCameraGame {
           this.jumpSound.play();
         }
 
-        // //coin jumping
-        // this.x += 0.2;
-        // for (var i = 0; i < this.coinPositions.length; ++i) {
-        //   this.coinPositions[i].position.y += (Math.sin(this.x) / 10);
-        // }
-
         //Update the score of the player
         this.scorekeeper.innerHTML = "Score: " + this.score;
         //Check if the player has moved and start clock
@@ -573,7 +497,6 @@ class ThirdPersonCameraGame {
         this.backward = this.control.UserInput.keys.backward;
         var detected = this.ObstacleCollision(this.control.myPosition);
         if (this.hit == true && detected == false) {
-          // this.control.UserInput.keys.forward=true;
           this.control.UserInput.keys.backward = false;
           this.control.UserInput.keys.forward = false;
           this.hit = false;
@@ -584,13 +507,11 @@ class ThirdPersonCameraGame {
             this.control.UserInput.keys.forward = false;
             this.control.UserInput.keys.backward = true;
             this.hit = true;
-            console.log("forward hit")
           }
           if (this.backward == true && this.hit == false) {
             this.control.UserInput.keys.forward = true;
             this.control.UserInput.keys.backward = false;
             this.hit = true;
-            console.log("backward hit")
           }
           this.hit = true;
         }
@@ -599,11 +520,7 @@ class ThirdPersonCameraGame {
         this.light3.rotation.y += 0.1;
 
 
-
-        //console.log(ObstaclePositions);
         this.ObstacleCollision(this.control.myPosition);
-        //this.scorekeeper.innerHTML += "Lives: "+this.Lives+"\n";
-        //this.liveskeeper.innerHTML="Lives Left: "+this.Lives;
         this.renderer.render(this.scene, this.camera);
 
 
@@ -616,7 +533,6 @@ class ThirdPersonCameraGame {
         this.backward = this.control.UserInput.keys.backward;
         var detected = this.ObstacleCollision(this.control.myPosition);
         if (this.hit == true && detected == false) {
-          // this.control.UserInput.keys.forward=true;
           this.control.UserInput.keys.backward = false;
           this.hit = false;
 

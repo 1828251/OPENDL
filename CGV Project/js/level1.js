@@ -16,7 +16,6 @@ class ThirdPersonCamera {
     // Calculate the idea offset.
     // THis represents the angle at which the position the camera will be
     // we position the camera slightly to the right and over the shoulder of the character
-    // const idealOffset = new THREE.Vector3(-15, 20, -30);
     var idealOffset;
     if (View == 0) {
       idealOffset = new THREE.Vector3(-15, 20, -30);
@@ -27,7 +26,6 @@ class ThirdPersonCamera {
     else if (View == 2) {
       idealOffset = new THREE.Vector3(0, 15, 10);
     }
-    // const idealOffset = new THREE.Vector3(0, 15, 10);
     idealOffset.applyQuaternion(this.params.target.Rotation);
     idealOffset.add(this.params.target.Position);
     return idealOffset;
@@ -319,7 +317,6 @@ class ThirdPersonCameraGame {
       blitz.position.z = -60 * z - 15;
       blitz.position.y = 5;
       blitz.position.x = Math.floor(Math.random() * 100) - 50;
-      //blitz.rotation.z=90;
       return blitz;
     }
 
@@ -375,7 +372,6 @@ class ThirdPersonCameraGame {
       Texture.repeat.set(2, 2);
       const barrierMat = new THREE.MeshBasicMaterial({ map: Texture });
 
-      //scene.add(barrier)
       var barrierleft;
       var barrierright;
       for (var i = 30; i < 1000; i += 2) {
@@ -485,7 +481,6 @@ class ThirdPersonCameraGame {
         this.backward = this.control.UserInput.keys.backward;
         var detected = this.ObstacleCollision(this.control.myPosition);
         if (this.hit == true && detected == false) {
-          // this.control.UserInput.keys.forward=true;
           this.control.UserInput.keys.backward = false;
           this.control.UserInput.keys.forward = false;
           this.hit = false;
