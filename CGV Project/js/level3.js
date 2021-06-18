@@ -357,7 +357,8 @@ class ThirdPersonCameraGame {
         bevelOffset: 0,
         bevelSegments: 3
       });
-      var textMaterial = new THREE.MeshPhongMaterial({ color: '#bc12fe' });
+      var textMaterial = new THREE.MeshPhongMaterial({ color: '#bc12fe' , specular: 0x050505,
+      shininess: 400});
 
       var mesh = new THREE.Mesh(geometry, textMaterial);
       mesh.position.set(40, 10, 30);
