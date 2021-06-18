@@ -60,16 +60,8 @@ class ThirdPersonCamera {
 
 class ThirdPersonCameraGame {
   constructor() {
-    this.conesPos = [new THREE.Vector3(0, 2, -200), new THREE.Vector3(0, 2, -2100)];
-    this.spikesPos = [new THREE.Vector3(0, 0, -450), new THREE.Vector3(0, 0, -510), new THREE.Vector3(0, 0, -570), new THREE.Vector3(0, 0, -630), new THREE.Vector3(0, 0, -1750), new THREE.Vector3(0, 0, -1810), new THREE.Vector3(0, 0, -1870), new THREE.Vector3(0, 0, -1930)];
-    this.sandbagsPos = [new THREE.Vector3(0, 0, -90), new THREE.Vector3(0, 0, -360), new THREE.Vector3(0, 0, -860), new THREE.Vector3(0, 0, -1360), new THREE.Vector3(0, 0, -1860), new THREE.Vector3(0, 0, -2360)];
-    this.wheelbarrowsPos = [new THREE.Vector3(35, 0, -50), new THREE.Vector3(35, 0, -350), new THREE.Vector3(35, 0, -850), new THREE.Vector3(35, 0, -1350), new THREE.Vector3(35, 0, -1850), new THREE.Vector3(35, 0, -2350)];
-    this.barrelsPos = [new THREE.Vector3(-40, 0, -30), new THREE.Vector3(-40, 0, -330), new THREE.Vector3(-40, 0, -830), new THREE.Vector3(-40, 0, -1330), new THREE.Vector3(-40, 0, -1830), new THREE.Vector3(-40, 0, -2330)];
-    this.cementPos = [new THREE.Vector3(0, 0, -1000)];
-    this.scaffoldingPos = [new THREE.Vector3(0, 0, -1600)];
-    this.cranePos = [new THREE.Vector3(0, 100, -3000)];
     this.clock = new THREE.Clock();
-    this.time = 60;
+    this.time = 70;
     this.init();
   }
 
@@ -137,77 +129,34 @@ class ThirdPersonCameraGame {
 
 
     // we add DirectionalLight to the scene
-    this.light1 = new THREE.DirectionalLight(0xFFFFFF, 1);
-    this.light1.position.set(-100, 100, -100);
-    this.light1.target.position.set(0, 0, 0);
-    // light.castShadow = true;
-    // light.shadow.bias = -0.001;
-    // light.shadow.mapSize.width = 4096;
-    // light.shadow.mapSize.height = 4096;
-    // light.shadow.camera.near = 0.1;
-    // light.shadow.camera.far = 500.0;
-    // light.shadow.camera.near = 0.5;
-    // light.shadow.camera.far = 500.0;
-    // light.shadow.camera.left = 500;
-    // light.shadow.camera.right = -500;
-    // light.shadow.camera.top = 500;
-    // light.shadow.camera.bottom = -500;
-    this.scene.add(this.light1);
-
-
-    //adding ambient light so all objects are lit up better
-    var light = new THREE.AmbientLight(0xFFFFFF, 0.25);
-    // light.castShadow = true;
+    let light = new THREE.DirectionalLight(0xFFFFFF, 1.0);
+    light.position.set(-100, 100, 100);
+    light.target.position.set(0, 0, 0);
+    light.castShadow = true;
+    light.shadow.bias = -0.001;
+    light.shadow.mapSize.width = 512;
+    light.shadow.mapSize.height = 512;
+    light.shadow.camera.near = 0.5;
+    light.shadow.camera.far = 500.0;
+    light.shadow.camera.near = 0.5;
+    light.shadow.camera.left = 50;
+    light.shadow.camera.right = -50;
+    light.shadow.camera.top = 50;
+    light.shadow.camera.bottom = -50;
     this.scene.add(light);
-
-
-    this.light2 = new THREE.DirectionalLight("#FF0000", 0.5);
-    this.light2.position.set(-100, 100, -700);
-    this.light2.target.position.set(0, 0, 0);
-    // light.castShadow = true;
-    // light.shadow.bias = -0.001;
-    // light.shadow.mapSize.width = 4096;
-    // light.shadow.mapSize.height = 4096;
-    // light.shadow.camera.near = 0.1;
-    // light.shadow.camera.far = 500.0;
-    // light.shadow.camera.near = 0.5;
-    // light.shadow.camera.far = 500.0;
-    // light.shadow.camera.left = 500;
-    // light.shadow.camera.right = -500;
-    // light.shadow.camera.top = 500;
-    // light.shadow.camera.bottom = -500;
-    this.scene.add(this.light2);
-
-    this.light3 = new THREE.DirectionalLight("#FFFF00", 0.5);
-    this.light3.position.set(100, 100, -1200);
-    this.light3.target.position.set(0, 0, -100);
-    // light.castShadow = true;
-    // light.shadow.bias = -0.001;
-    // light.shadow.mapSize.width = 4096;
-    // light.shadow.mapSize.height = 4096;
-    // light.shadow.camera.near = 0.1;
-    // light.shadow.camera.far = 500.0;
-    // light.shadow.camera.near = 0.5;
-    // light.shadow.camera.far = 500.0;
-    // light.shadow.camera.left = 500;
-    // light.shadow.camera.right = -500;
-    // light.shadow.camera.top = 500;
-    // light.shadow.camera.bottom = -500;
-    this.scene.add(this.light3);
-
-
-
-
+    //adding ambient light so all objects are lit up better
+    light = new THREE.AmbientLight(0xFFFFFF, 0.25);
+    this.scene.add(light);
 
     //Loading the texture for the scene background
     const loader = new THREE.CubeTextureLoader();
     const texture = loader.load([
-      './textures/level2/posx.png',
-      './textures/level2/negx.png',
-      './textures/level2/posy.png',
-      './textures/level2/negy.png',
-      './textures/level2/posz.png',
-      './textures/level2/negz.png',
+      './textures/level1/posx.jpg',
+      './textures/level1/negx.jpg',
+      './textures/level1/posy.jpg',
+      './textures/level1/negy.jpg',
+      './textures/level1/posz.jpg',
+      './textures/level1/negz.jpg',
     ]);
     texture.encoding = THREE.sRGBEncoding;
     this.scene.background = texture;
@@ -216,7 +165,7 @@ class ThirdPersonCameraGame {
     //Creating all coins
     this.coinPositions = [];
     this.score = 0;
-    // setting DOM elements to display the score, time left left.
+    // setting DOM elements to display the score, time left.
     this.scorekeeper = document.getElementById("Score");
     this.timekeeper = document.getElementById("time");
     var pauseBtn = document.getElementById('pause');
@@ -258,25 +207,18 @@ class ThirdPersonCameraGame {
 
 
     //Loading a texture to apply as the "floor"
-    const cubeTexture = new THREE.TextureLoader(this.manager).load('./textures/level2/laser.jpg');
+    const cubeTexture = new THREE.TextureLoader().load('./textures/level1/road.jpg');
     cubeTexture.wrapS = THREE.RepeatWrapping;
     cubeTexture.wrapT = THREE.RepeatWrapping;
-    cubeTexture.repeat.set(10, 40);
-    // const geometry = new THREE.BoxGeometry();
+    cubeTexture.repeat.set(1, 40);
     //Platform which is a floor is represented by a cube
-    const geometry = new THREE.PlaneGeometry(50, 10000, 10, 10);
-    // const material = new THREE.MeshBasicMaterial({map:cubeTexture});
-    const material = new THREE.MeshStandardMaterial({ map: cubeTexture });
+    const geometry = new THREE.BoxGeometry();
+    const material = new THREE.MeshBasicMaterial({ map: cubeTexture });
     const floor = new THREE.Mesh(geometry, material);
-    // floor.receiveShadow = true;
-    floor.rotation.x += Math.PI / 2;
-    floor.scale.set(5, 50, -100);
-    // floor.castShadow = true;
     this.scene.add(floor);
     var x = 0;
     var y = 0;
     var z = 13;
-
 
     this.hit = false;
     this.Obstacles = [];
@@ -284,26 +226,22 @@ class ThirdPersonCameraGame {
     //loading all our obstacles into the scene
     this.LoadObstacles(this.scene, this.Obstacles, this.manager);
 
-    const barriertext = './textures/level2/diamond.jpg'
+    const barriertext = './textures/level1/barrier.jpg'
     //Loading the barriers on the side
 
 
     this.LoadModel(barriertext, this.scene, x, y, z, this.manager, this.Obstacles, this.Dimensions);
 
-    console.log(this.Obstacles);
-    console.log(this.Dimensions);
-
-    // floor.scale.set(120,0,-10000);
-    // var d = -20000;
-    // // looping and ensuring our floor is long enough for the round.
-    // for(var i =0;i<10;i++){
-    //     const newFloor = new THREE.Mesh( geometry, material );
-    //     newFloor.position.set(0,0,d);
-    //     d = d - 10000;
-    //     this.scene.add( newFloor );
-    //     newFloor.scale.set(120,0,-10000);
-    // }
-
+    floor.scale.set(120, 0, -10000);
+    var d = -20000;
+    //looping and ensuring our floor is long enough for the round.
+    for (var i = 0; i < 10; i++) {
+      const newFloor = new THREE.Mesh(geometry, material);
+      newFloor.position.set(0, 0, d);
+      d = d - 10000;
+      this.scene.add(newFloor);
+      newFloor.scale.set(120, 0, -10000);
+    }
 
 
 
@@ -313,9 +251,11 @@ class ThirdPersonCameraGame {
     this.LoadAnimatedModel();
     document.addEventListener("keydown", (e) => this.onDocumentKeyDown(e), false);
     this.ChangeView = 0;
+
     if (isPlay) {
       this.request_animation_frame();
     }
+
   }
   onDocumentKeyDown(e) {
     var code = e.keyCode;
@@ -333,13 +273,9 @@ class ThirdPersonCameraGame {
 
   ObstacleCollision(currPosition) {
     //detects if characters comes into contact with an obstacle
-
-    var forward = this.control.UserInput.keys.forward;
-    var backward = this.control.UserInput.keys.backward;
     var detected = false;
     for (var k = 0; k < this.Obstacles.length; ++k) {
       if (Math.abs(currPosition.z - this.Obstacles[k].position.z) < (this.Dimensions[k][1] / 2) + 2 && Math.abs(currPosition.x - this.Obstacles[k].position.x) < (this.Dimensions[k][0] / 2) + 2 && currPosition.y < 10) {
-        console.log("hit");
         detected = true;
       }
     }
@@ -348,76 +284,63 @@ class ThirdPersonCameraGame {
 
   LoadObstacles(scene, ObstaclePositions, manager) {
     //Create traffic obstacles function
-    function Moons(z) {
-      var moongeo = new THREE.SphereGeometry(8, 30, 30);
-      const moontexture = new THREE.TextureLoader(manager).load("./textures/level2/moonfloor.png");
-      moontexture.wrapS = THREE.RepeatWrapping;
-      moontexture.wrapT = THREE.RepeatWrapping;
-      moontexture.repeat.set(1, 1);
-      const moonmat = new THREE.MeshStandardMaterial({ map: moontexture });
-      // const conemat = new THREE.MeshStandardMaterial( {color: "red"} );
-      var moon = new THREE.Mesh(moongeo, moonmat);
-      // cone.castShadow = true;
-      // cone.receiveShadow = false;
-      moon.position.y = 12;
-      moon.position.z = -60 * z - 15;
-      moon.position.x = Math.floor(Math.random() * 100) - 50;
-      return moon;
+    function Cones(z) {
+      var conegeo = new THREE.ConeGeometry(5, 20, 32);
+      const conetexture = new THREE.TextureLoader().load("./textures/level1/trafficcone.jpg");
+      conetexture.wrapS = THREE.RepeatWrapping;
+      conetexture.wrapT = THREE.RepeatWrapping;
+      conetexture.repeat.set(1, 1);
+      const conemat = new THREE.MeshBasicMaterial({ map: conetexture });
+      var cone = new THREE.Mesh(conegeo, conemat);
+      cone.position.y = 10;
+      cone.position.z = -60 * z - 15;
+      cone.position.x = Math.floor(Math.random() * 100) - 50;
+      return cone;
     }
 
     //Creating cones and adding to the scene
-    var moon;
+    var cone;
     for (var i = 0; i < 10; ++i) {
-      moon = Moons(i);
-      //console.log(spike.max.z);
-      //console.log(new THREE.Box3().setFromObject(spike).max.z-new THREE.Box3().setFromObject(spike).min.z);
-      this.Dimensions[i] = [new THREE.Box3().setFromObject(moon).max.x - new THREE.Box3().setFromObject(moon).min.x, new THREE.Box3().setFromObject(moon).max.z - new THREE.Box3().setFromObject(moon).min.z];
-      ObstaclePositions.push(moon);
-      this.light1.target = moon;
-      scene.add(moon);
+      cone = Cones(i);
+      this.Dimensions[i] = [new THREE.Box3().setFromObject(cone).max.x - new THREE.Box3().setFromObject(cone).min.x, new THREE.Box3().setFromObject(cone).max.z - new THREE.Box3().setFromObject(cone).min.z];
+      ObstaclePositions.push(cone);
+      scene.add(cone);
     }
 
     //Creating Blitz obstacles function 
-    function Checkbox(z) {
-      var checkgeo = new THREE.BoxGeometry(12, 12, 12);
-      const checktexture = new THREE.TextureLoader(manager).load("./textures/level2/checker.png");
-      checktexture.wrapS = THREE.RepeatWrapping;
-      checktexture.wrapT = THREE.RepeatWrapping;
-      checktexture.repeat.set(1, 1);
-      const checkmat = new THREE.MeshStandardMaterial({ map: checktexture });
-      var check = new THREE.Mesh(checkgeo, checkmat);
-      // blitz.castShadow = true;
-      check.position.z = -60 * z - 15;
-      check.position.y = 12;
-      check.position.x = Math.floor(Math.random() * 100) - 50;
-
-
+    function Blitz(z) {
+      var blitzgeo = new THREE.BoxGeometry(20, 20, 20);
+      const blitztexture = new THREE.TextureLoader().load("./textures/level1/brick.jpg");
+      blitztexture.wrapS = THREE.RepeatWrapping;
+      blitztexture.wrapT = THREE.RepeatWrapping;
+      blitztexture.repeat.set(1, 1);
+      const blitzmat = new THREE.MeshBasicMaterial({ map: blitztexture });
+      var blitz = new THREE.Mesh(blitzgeo, blitzmat);
+      blitz.position.z = -60 * z - 15;
+      blitz.position.y = 5;
+      blitz.position.x = Math.floor(Math.random() * 100) - 50;
       //blitz.rotation.z=90;
-      return check;
+      return blitz;
     }
 
     //Creating blitz and adding to the scene 
-    var check;
+    var blitz;
     for (var i = 10; i < 20; ++i) {
-      check = Checkbox(i);
-      this.Dimensions[i] = [new THREE.Box3().setFromObject(check).max.x - new THREE.Box3().setFromObject(check).min.x, new THREE.Box3().setFromObject(check).max.z - new THREE.Box3().setFromObject(check).min.z];
-      ObstaclePositions.push(check);
-      this.light2.target = check;
-      scene.add(check);
-      // scene.add(boxCamera);
+      blitz = Blitz(i);
+      this.Dimensions[i] = [new THREE.Box3().setFromObject(blitz).max.x - new THREE.Box3().setFromObject(blitz).min.x, new THREE.Box3().setFromObject(blitz).max.z - new THREE.Box3().setFromObject(blitz).min.z];
+      ObstaclePositions.push(blitz);
+      scene.add(blitz);
     }
-
 
     //Creating cylinder obstacles function 
     function Cylinder(z) {
-      var cylindergeo = new THREE.OctahedronGeometry(10, 0);
-      const cylindertexture = new THREE.TextureLoader(manager).load("./textures/level2/Purple.jpg");
+      var cylindergeo = new THREE.TorusGeometry(7, 3, 16, 100);
+      const cylindertexture = new THREE.TextureLoader().load("./textures/level1/tyre.png");
       cylindertexture.wrapS = THREE.RepeatWrapping;
       cylindertexture.wrapT = THREE.RepeatWrapping;
-      cylindertexture.repeat.set(3, 3);
-      const cylindermat = new THREE.MeshStandardMaterial({ map: cylindertexture });
+      cylindertexture.repeat.set(2, 2);
+      const cylindermat = new THREE.MeshBasicMaterial({ map: cylindertexture });
       var cylinder = new THREE.Mesh(cylindergeo, cylindermat);
-      // cylinder.castShadow = true;
       cylinder.position.z = -60 * z - 15;
       cylinder.position.y = 10;
       cylinder.position.x = Math.floor(Math.random() * 100) - 50;
@@ -430,14 +353,11 @@ class ThirdPersonCameraGame {
       cylinder = Cylinder(i);
       this.Dimensions[i] = [new THREE.Box3().setFromObject(cylinder).max.x - new THREE.Box3().setFromObject(cylinder).min.x, new THREE.Box3().setFromObject(cylinder).max.z - new THREE.Box3().setFromObject(cylinder).min.z];
       ObstaclePositions.push(cylinder);
-      this.light3.target = cylinder;
       scene.add(cylinder);
     }
 
-
     return ObstaclePositions;
   }
-
 
 
   LoadModel(path, scene, x, y, z, manager, Obstacles, Dimensions) {
@@ -453,7 +373,7 @@ class ThirdPersonCameraGame {
       Texture.wrapS = THREE.RepeatWrapping;
       Texture.wrapT = THREE.RepeatWrapping;
       Texture.repeat.set(2, 2);
-      const barrierMat = new THREE.MeshStandardMaterial({ map: Texture });
+      const barrierMat = new THREE.MeshBasicMaterial({ map: Texture });
 
       //scene.add(barrier)
       var barrierleft;
@@ -511,13 +431,13 @@ class ThirdPersonCameraGame {
   }
 
   request_animation_frame() {
+
     requestAnimationFrame((t) => {
       if (this.old_animation_frames === null) {
         this.old_animation_frames = t;
       }
       this.request_animation_frame();
       if (isPlay === true) {
-
 
         //checks for interaction between player and all the coins
         for (var i = 0; i < this.coinPositions.length; ++i) {
@@ -529,22 +449,11 @@ class ThirdPersonCameraGame {
           }
         }
 
-
-        //enables jump sound to play    
+        //enables jump sound to play
         if (this.control.UserInput.keys.space && this.control.myPosition.y < 0.5) {
           this.jumpSound.play();
         }
 
-        //coin jumping
-        this.x += 0.2;
-        for (var i = 0; i < this.coinPositions.length; ++i) {
-          this.coinPositions[i].position.y += (Math.sin(this.x) / 10);
-        }
-
-        //enables jump sound to play    
-        if (this.control.UserInput.keys.space && this.control.myPosition.y < 0.5) {
-          this.jumpSound.play();
-        }
 
         //coin jumping
         this.x += 0.2;
@@ -558,6 +467,7 @@ class ThirdPersonCameraGame {
         if (!this.isPlayerMoved()) {
           this.clock.start();
         }
+
         if (this.time > 0) {
           if (this.time < 20) {
             this.timekeeper.style.color = 'red';
@@ -567,7 +477,9 @@ class ThirdPersonCameraGame {
 
 
         this.timekeeper.innerHTML = "Time Left: " + this.time;
-        //Check if time is up or lives are finished
+
+
+
         //Detecting collision and reacting
         this.forward = this.control.UserInput.keys.forward;
         this.backward = this.control.UserInput.keys.backward;
@@ -584,52 +496,17 @@ class ThirdPersonCameraGame {
             this.control.UserInput.keys.forward = false;
             this.control.UserInput.keys.backward = true;
             this.hit = true;
-            console.log("forward hit")
           }
           if (this.backward == true && this.hit == false) {
             this.control.UserInput.keys.forward = true;
             this.control.UserInput.keys.backward = false;
             this.hit = true;
-            console.log("backward hit")
           }
           this.hit = true;
         }
-        this.light1.rotation.y += 0.1;
-        this.light2.rotation.y += 0.1;
-        this.light3.rotation.y += 0.1;
-
-
-
-        //console.log(ObstaclePositions);
         this.ObstacleCollision(this.control.myPosition);
-        //this.scorekeeper.innerHTML += "Lives: "+this.Lives+"\n";
-        //this.liveskeeper.innerHTML="Lives Left: "+this.Lives;
         this.renderer.render(this.scene, this.camera);
-
-
-
-
-        this.timekeeper.innerHTML = "Time Left: " + this.time;
-        //Check if time is up or lives are finished
-        //Detecting collision and reacting
-        this.forward = this.control.UserInput.keys.forward;
-        this.backward = this.control.UserInput.keys.backward;
-        var detected = this.ObstacleCollision(this.control.myPosition);
-        if (this.hit == true && detected == false) {
-          // this.control.UserInput.keys.forward=true;
-          this.control.UserInput.keys.backward = false;
-          this.hit = false;
-
-        }
-        if (detected == true) {
-          this.control.UserInput.keys.forward = false;
-          this.control.UserInput.keys.backward = true;
-          this.hit = true;
-        }
-        this.renderer.render(this.scene, this.camera);
-
-
-
+        //Check if time is finished
         if (this.time < 0) {
           //Call EndGame function
           this.EndGame();
@@ -637,9 +514,9 @@ class ThirdPersonCameraGame {
           this.Step(t - this.old_animation_frames);
           this.old_animation_frames = t;
         }
+
       }
     });
-
 
   }
 
@@ -674,9 +551,9 @@ class ThirdPersonCameraGame {
 
     //Check if the player scored high enough to be considered a pass and store in local storage
     var passed = "Failed";
-    if (playerScore >= 25) {
+    if (playerScore >= 20) {
       passed = "Passed";
-      localStorage.setItem('Level2', true);
+      localStorage.setItem('Level1', true);
       localStorage.setItem("outcome", passed);
       this.clock.stop();
       this.time = 0;
@@ -684,12 +561,12 @@ class ThirdPersonCameraGame {
     }
     else {
       localStorage.setItem("outcome", passed);
-      //Change the page to the end page which shows summary of details
       this.clock.stop();
       this.time = 0;
       window.location.replace("failed.html");
 
     }
+    //Change the page to the end page which shows summary of details
 
   }
 

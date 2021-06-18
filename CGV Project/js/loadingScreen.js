@@ -1,5 +1,5 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.118/build/three.module.js';
-import {FBXLoader} from 'https://cdn.jsdelivr.net/npm/three@0.118.1/examples/jsm/loaders/FBXLoader.js';
+import { FBXLoader } from 'https://cdn.jsdelivr.net/npm/three@0.118.1/examples/jsm/loaders/FBXLoader.js';
 
 class LoadModelDemo {
   constructor() {
@@ -66,8 +66,8 @@ class LoadModelDemo {
     this.RAF();
   }
 
-// Loading our animated model AJ.
-// FBX loader since our model is .fbx format
+  // Loading our animated model AJ.
+  // FBX loader since our model is .fbx format
   LoadAnimatedModel() {
     const loader = new FBXLoader();
     loader.setPath('./models/Character/');
@@ -119,7 +119,7 @@ class LoadModelDemo {
       this.mixers.map(m => m.update(timeElapsedS));
     }
 
-    
+
   }
 }
 let _APP = null;

@@ -1,55 +1,37 @@
 body {
-    background-color: rgb(9, 30, 46);
-    overflow: hidden;
-    font-family: 'Montserrat', sans-serif;
+  background-color: rgb(9, 30, 46);
+  overflow: hidden;
+  font-family: "Montserrat", sans-serif;
 }
-#Info{
-    position: fixed;
-    top: 40%;
-    left: 50%;
-        
-    transform: translate(-50%, -50%);
-    
-}
-h1{
-    color: #eeeeee;
-    font-family: 'Montserrat', sans-serif;
-    text-shadow:
-    0 0 5px #fff,
-    0 0 5px #fff,
-    0 0 35px #0ff,
-    0 0 60px #0ff,
-    0 0 70px #0ff,
-    0 0 80px #0ff,
-    0 0 100px #0ff;
-    transition:all .8s ease;
-    animation: slideUp .8s ease-in-out  forwards 1s;
-}
-h2{
-    color: #eeeeee;
-    font-family: 'Montserrat', sans-serif;
-    text-shadow:
-    0 0 5px #fff,
-    0 0 5px #fff,
-    0 0 35px #0ff,
-    0 0 60px #0ff,
-    0 0 70px #0ff,
-    0 0 80px #0ff,
-    0 0 100px #0ff;
-    transition:all .8s ease;
-    animation: slideUp .8s ease-in-out  forwards 1s;
+#Info {
+  position: fixed;
+  top: 40%;
+  left: 50%;
 
-
+  transform: translate(-50%, -50%);
 }
-.canvas{
-    position:fixed;
-    
- }
- @keyframes slideUp {
-    0% {
-      transform: translateY(300px);
-    }
-    100% {
-      transform: translateY(0px);
-    }
+h1 {
+  color: #eeeeee;
+  font-family: "Montserrat", sans-serif;
+  text-shadow: 0 0 5px #fff, 0 0 5px #fff, 0 0 35px #0ff, 0 0 60px #0ff, 0 0 70px #0ff, 0 0 80px #0ff, 0 0 100px #0ff;
+  transition: all 0.8s ease;
+  animation: slideUp 0.8s ease-in-out forwards 1s;
+}
+h2 {
+  color: #eeeeee;
+  font-family: "Montserrat", sans-serif;
+  text-shadow: 0 0 5px #fff, 0 0 5px #fff, 0 0 35px #0ff, 0 0 60px #0ff, 0 0 70px #0ff, 0 0 80px #0ff, 0 0 100px #0ff;
+  transition: all 0.8s ease;
+  animation: slideUp 0.8s ease-in-out forwards 1s;
+}
+.canvas {
+  position: fixed;
+}
+@keyframes slideUp {
+  0% {
+    transform: translateY(300px);
   }
+  100% {
+    transform: translateY(0px);
+  }
+}

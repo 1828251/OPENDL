@@ -16,6 +16,14 @@
             <source src="./audio/levitate.mp3" type="audio/mp3"></sources>
         </audio>
 
+        <div id="mute_loud_button" style="margin: 15px">
+            <img id="mute-button" src = "./images/Mute_Icon.svg" alt="Pause Button"
+            width="32"
+            height="32"/>
+            <img id="loud-button" src = "./images/Play_Icon.svg" alt="Pause Button"
+            width="32"
+            height="32"/>
+        </div>
         
 
         <div id="TOP">
@@ -60,6 +68,35 @@
     var level1Passed = window.onload = localStorage.getItem('Level1');
     var level2Passed = window.onload = localStorage.getItem('Level2');
 
+    if (window.localStorage.getItem('mute') === null) {
+        document.getElementById('loud-button').style = "display: none";
+        document.getElementById('mute-button').style = "";
+    } else if (window.localStorage.getItem('mute') === "true") {
+        document.getElementById('loud-button').style = "";
+        document.getElementById('mute-button').style = "display: none";
+    } else if (window.localStorage.getItem('mute') === "false") {
+        document.getElementById('loud-button').style = "display: none";
+        document.getElementById('mute-button').style = "";
+    }
+    var mlBtn = document.getElementById("mute_loud_button");
+   // document.getElementById('loud-button').style = "display: none";
+    mlBtn.onclick = () => {
+        if (window.localStorage.getItem('mute') === "true") {
+            document.getElementById('loud-button').style = "display: none";
+            document.getElementById('mute-button').style = "";
+            sound.muted = false;
+            window.localStorage.setItem('mute',"false");
+        } else {
+            document.getElementById('loud-button').style = "";
+            document.getElementById('mute-button').style = "display: none";
+            sound.muted = true;
+            window.localStorage.setItem('mute',"true");
+        } 
+        // else {
+            
+        // }
+    };
+
     const level1 = document.getElementById('level1');
     const level2 = document.getElementById('level2');
     const level3 = document.getElementById('level3');
@@ -67,21 +104,17 @@
     const credits = document.getElementById('credits');
 
     level1.onclick = function() {
-        window.location.href = "three.html";
+        window.location.href = "level1.html";
         localStorage.setItem('Level','Level 1');
     }
     level2.onclick = function() {
         if(level1Passed){
             window.location.href = "level2.html";
-        }
-        else{ 
-            PopupTxt.innerHTML = "You need to pass level 1 in order to unlock level 2.";
+        } else {
+        PopupTxt.innerHTML = "You need to pass level 1 in order to unlock level 2.";
         displayPopup();
-
         localStorage.setItem('Level','Level 2');
-
         }
-        
     }
     level3.onclick = function() {
         if(level2Passed){
@@ -96,10 +129,7 @@
             displayPopup();
 
         }
-       
-        
-        
-        localStorage.setItem('Level','Level 3');
+    localStorage.setItem('Level','Level 3');
     }
     howtoplay.onclick = function(){
         window.location.href = "how-to-play.html";
@@ -115,6 +145,5 @@
    // Clear the local storage
    localStorage.removeItem('Level1');
    localStorage.removeItem('Level2');
-   localStorage.setItem('mute',"false")
 }
 </script>

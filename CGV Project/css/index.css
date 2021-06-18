@@ -1,75 +1,61 @@
 body {
-    background-color: rgb(9, 30, 46);
-    overflow: hidden;
-    font-family: 'Montserrat', sans-serif;
+  background-color: rgb(9, 30, 46);
+  overflow: hidden;
+  font-family: "Montserrat", sans-serif;
 }
 
-#TOP{
-    position:relative;
-    margin:0 auto;
-    clear:left;
-    height:auto;
-    z-index: 0;
-    text-align:center;
-    /* animation: slideUp .8s ease-in-out  forwards 1s; */
+#TOP {
+  position: relative;
+  margin: 0 auto;
+  clear: left;
+  height: auto;
+  z-index: 0;
+  text-align: center;
+  /* animation: slideUp .8s ease-in-out  forwards 1s; */
+}
+h1 {
+  color: #fff;
+  font-family: "Monoton", cursive;
+  font-size: 40px;
+  text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 35px #0ff, 0 0 60px #0ff, 0 0 70px #0ff, 0 0 80px #0ff, 0 0 100px #0ff;
+  animation: slideUp 0.8s ease-in-out forwards 1s;
+}
+#Middle {
+  position: fixed;
+  top: 60%;
+  left: 50%;
 
-    
+  transform: translate(-50%, -50%);
+  animation: slideUp 0.8s ease-in-out forwards 1s;
 }
-h1{
-    
-    color: #fff;
-    font-family: 'Monoton', cursive;
-    font-size: 40px;
-    text-shadow:
-    0 0 5px #fff,
-    0 0 10px #fff,
-    0 0 35px #0ff,
-    0 0 60px #0ff,
-    0 0 70px #0ff,
-    0 0 80px #0ff,
-    0 0 100px #0ff;
-    animation: slideUp .8s ease-in-out  forwards 1s;
+.buttons {
+  position: fixed;
+  top: 50%;
+  left: 50%;
 
+  transform: translate(-50%, -50%);
+  /* animation: slideUp .8s ease-in-out  forwards 1s; */
 }
-#Middle{
-    position: fixed;
-    top: 60%;
-    left: 50%;
-    
-    transform: translate(-50%, -50%);
-    animation: slideUp .8s ease-in-out  forwards 1s;
-
+.canvas {
+  position: fixed;
 }
-.buttons{
-    position: fixed;
-    top: 50%;
-    left: 50%;
-   
-    transform: translate(-50%, -50%);
-    /* animation: slideUp .8s ease-in-out  forwards 1s; */
-
-}
-.canvas{
-   position:fixed;
-}
-button{
-    align-self: center;
-    display: inline-block;
-    background-color: #3498db;
-    border-radius: 10px;
-    border: 4px double #cccccc;
-    color: #eeeeee;
-    text-align: center;
-    font-size: 28px;
-    padding: 20px;
-    width: 200px;
-    -webkit-transition: all 0.5s;
-    -moz-transition: all 0.5s;
-    -o-transition: all 0.5s;
-    transition: all 0.5s;
-    cursor: pointer;
-    margin: 5px;
-    
+button {
+  align-self: center;
+  display: inline-block;
+  background-color: #3498db;
+  border-radius: 10px;
+  border: 4px double #cccccc;
+  color: #eeeeee;
+  text-align: center;
+  font-size: 28px;
+  padding: 20px;
+  width: 200px;
+  -webkit-transition: all 0.5s;
+  -moz-transition: all 0.5s;
+  -o-transition: all 0.5s;
+  transition: all 0.5s;
+  cursor: pointer;
+  margin: 5px;
 }
 /* Popup container */
 .popup {
@@ -82,7 +68,7 @@ button{
 .popup .popuptext {
   visibility: hidden;
   width: 200px;
-  background-color:red;
+  background-color: red;
   color: #fff;
   text-align: center;
   border-radius: 6px;
@@ -116,14 +102,21 @@ button{
   animation: fadeIn 1s;
 }
 
-
 /* Add animation (fade in the popup) */
 @-webkit-keyframes fadeIn {
-  from {opacity: 0;}
-  to {opacity: 1;}
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes fadeIn {
-  from {opacity: 0;}
-  to {opacity:1 ;}
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
