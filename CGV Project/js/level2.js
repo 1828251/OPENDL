@@ -82,7 +82,7 @@ class ThirdPersonCameraGame {
     });
     this.renderer.outputEncoding = THREE.sRGBEncoding;
     this.renderer.shadowMap.enabled = true;
-    this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    this.renderer.shadowMap.type = THREE.BasicShadowMap;
     this.renderer.setPixelRatio(window.devicePixelRatio);
     this.renderer.setSize(window.innerWidth, window.innerHeight);
 
@@ -291,12 +291,18 @@ class ThirdPersonCameraGame {
     //Create traffic obstacles function
     function Moons(z) {
       var moongeo = new THREE.SphereGeometry(8, 30, 30);
-      const moontexture = new THREE.TextureLoader(manager).load("./textures/level2/moonfloor.png");
-      moontexture.wrapS = THREE.RepeatWrapping;
-      moontexture.wrapT = THREE.RepeatWrapping;
-      moontexture.repeat.set(1, 1);
-      const moonmat = new THREE.MeshStandardMaterial({ map: moontexture });
+      // const moontexture = new THREE.TextureLoader(manager).load("./textures/level2/moonfloor.png");
+      // moontexture.wrapS = THREE.RepeatWrapping;
+      // moontexture.wrapT = THREE.RepeatWrapping;
+      // moontexture.repeat.set(1, 1);
+      // const moonmat = new THREE.MeshStandardMaterial({ map: moontexture });
+  
+      const moonmat = new THREE.MeshStandardMaterial( {color: "#add8e6"} );
+      moonmat.map = THREE.ImageUtils.loadTexture("./textures/level2/moonfloor.png");
+      moonmat.bumpMap = THREE.ImageUtils.loadTexture("./textures/level2/moonfloor.png");
       var moon = new THREE.Mesh(moongeo, moonmat);
+      // moon.castShadow = true;
+      // cone.receiveShadow = false;
       moon.position.y = 12;
       moon.position.z = -60 * z - 15;
       moon.position.x = Math.floor(Math.random() * 100) - 50;
@@ -309,7 +315,7 @@ class ThirdPersonCameraGame {
       moon = Moons(i);
       this.Dimensions[i] = [new THREE.Box3().setFromObject(moon).max.x - new THREE.Box3().setFromObject(moon).min.x, new THREE.Box3().setFromObject(moon).max.z - new THREE.Box3().setFromObject(moon).min.z];
       ObstaclePositions.push(moon);
-      this.light1.target = moon;
+      // this.light1.target = moon;
       scene.add(moon);
     }
 

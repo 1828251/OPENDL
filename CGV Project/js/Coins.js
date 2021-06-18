@@ -6,8 +6,9 @@ function Coins(z) {
       cointexture.wrapS = THREE.RepeatWrapping;
       cointexture.wrapT = THREE.RepeatWrapping;
       cointexture.repeat.set(1, 1);
-      const coinmat = new THREE.MeshBasicMaterial({ map: cointexture });
+      const coinmat = new THREE.MeshStandardMaterial({ map: cointexture });
       var coin = new THREE.Mesh(coingeo, coinmat);
+      coin.castShadow = true;
       coin.position.y = 10;
       coin.position.z = -30 * z;
       coin.position.x = Math.floor(Math.random() * 100) - 50;
