@@ -129,6 +129,7 @@ class ThirdPersonCameraGame {
     light.position.set(-100, 100, 100);
     light.target.position.set(0, 0, 0);
     this.scene.add(light);
+
     //adding ambient light so all objects are lit up better
     light = new THREE.AmbientLight(0xFFFFFF, 0.25);
     this.scene.add(light);
@@ -259,12 +260,13 @@ class ThirdPersonCameraGame {
     discotext.repeat.set(2, 2);
     var material;
     if (z % 2 == 0) {
-      material = new THREE.MeshBasicMaterial({ map: discotext });
+      material = new THREE.MeshPhongMaterial({ map: discotext });
     }
     else {
-      material = new THREE.MeshBasicMaterial({ envMap: this.texture, color: "white" });
+      material = new THREE.MeshPhongMaterial({ envMap: this.texture, color: "white" });
     }
-    var discoball = new THREE.Mesh(discogeom, material)
+    var discoball = new THREE.Mesh(discogeom, material);
+    // discoball.material.flatShading = false;
     discoball.position.set(Math.floor(Math.random() * 100) - 50, 15, -60 * z - 15);
     discoball.scale.set(0.75, 0.75, 0.75);
     return discoball;
@@ -276,30 +278,30 @@ class ThirdPersonCameraGame {
     var gridTexture = textureLoader.load('./textures/level3/grid-texture.png');
     const mat = new THREE.MeshStandardMaterial({ map: gridTexture });
     const group = new THREE.Group();
-    const level1 = new THREE.Mesh(
+    const triangle1 = new THREE.Mesh(
       new THREE.ConeGeometry(1.5, 2, 8),
       mat
     )
-    level1.position.y = 4
-    group.add(level1)
-    const level2 = new THREE.Mesh(
+    triangle1.position.y = 4
+    group.add(triangle1)
+    const triangle2 = new THREE.Mesh(
       new THREE.ConeGeometry(2, 2, 8),
       mat
     )
-    level2.position.y = 3
-    group.add(level2)
-    const level3 = new THREE.Mesh(
+    triangle2.position.y = 3
+    group.add(triangle2)
+    const triangle3 = new THREE.Mesh(
       new THREE.ConeGeometry(3, 2, 8),
       mat
     )
-    level3.position.y = 2
-    group.add(level3)
-    const trunk = new THREE.Mesh(
+    triangle3.position.y = 2
+    group.add(triangle3)
+    const treeTrunk = new THREE.Mesh(
       new THREE.CylinderGeometry(0.5, 0.5, 2),
       new THREE.MeshLambertMaterial({ color: 0xbb6600 })
     )
-    trunk.position.y = 0
-    group.add(trunk)
+    treeTrunk.position.y = 0
+    group.add(treeTrunk)
     group.scale.set(4, 8, 4);
 
     return group
