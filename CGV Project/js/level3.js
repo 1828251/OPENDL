@@ -135,7 +135,7 @@ class ThirdPersonCameraGame {
     this.scene.add(light);
 
     //Loading the texture for the scene background
-    this.texture = new THREE.CubeTextureLoader().load([
+    this.texture = new THREE.CubeTextureLoader(this.manager).load([
       './textures/level3/posx.png',
       './textures/level3/negx.png',
       './textures/level3/posy.png',

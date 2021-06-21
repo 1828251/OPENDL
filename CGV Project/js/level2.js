@@ -296,10 +296,10 @@ class ThirdPersonCameraGame {
       // moontexture.wrapT = THREE.RepeatWrapping;
       // moontexture.repeat.set(1, 1);
       // const moonmat = new THREE.MeshStandardMaterial({ map: moontexture });
-  
+      const textloader = new THREE.TextureLoader(manager);
       const moonmat = new THREE.MeshStandardMaterial( {color: "#add8e6"} );
-      moonmat.map = THREE.ImageUtils.loadTexture("./textures/level2/moonfloor.png");
-      moonmat.bumpMap = THREE.ImageUtils.loadTexture("./textures/level2/moonfloor.png");
+      moonmat.map = textloader.load("./textures/level2/moonfloor.png");
+      moonmat.bumpMap = textloader.load("./textures/level2/moonfloor.png");
       var moon = new THREE.Mesh(moongeo, moonmat);
       // moon.castShadow = true;
       // cone.receiveShadow = false;
